@@ -1,0 +1,4288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proof of Play — Football Social Value Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F4F1EB;
+  --cream-dark: #EAE6DC;
+  --green: #0B3D20;
+  --green-mid: #1A5C34;
+  --green-light: #E8F2EB;
+  --gold: #B8750E;
+  --gold-light: #FDF3E3;
+  --text: #1A1A18;
+  --text-mid: #4A4A44;
+  --text-muted: #7A7A72;
+  --border: #D8D4C8;
+  --white: #FFFFFF;
+  --shadow: 0 2px 16px rgba(11,61,32,0.08);
+  --shadow-lg: 0 8px 40px rgba(11,61,32,0.12);
+  --r: 12px;
+  --r-sm: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+/* ─── HEADER ─────────────────────────────── */
+.header {
+  background: var(--green);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.2);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brand-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.brand-tag {
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-top: 3px;
+}
+
+.header-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255,255,255,0.18);
+}
+
+.fmha-badge {
+  font-size: 11px;
+  color: rgba(255,255,255,0.65);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+
+.fmha-badge strong {
+  color: rgba(255,255,255,0.9);
+  font-weight: 600;
+}
+
+.header-total {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.running-total {
+  text-align: right;
+}
+
+.running-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.running-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #6EE89A;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  transition: all 0.3s ease;
+}
+
+/* ─── HERO ─────────────────────────────── */
+.hero {
+  background: var(--green);
+  padding: 56px 32px 56px;
+  position: relative;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(110,232,154,0.06), transparent 65%);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero-inner {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 48px;
+  align-items: start;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-content { max-width: 640px; min-width: 0; }
+
+.hero-stats-panel {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(110,232,154,0.2);
+  min-width: 0;
+  border-radius: 14px;
+  padding: 24px;
+  margin-top: 8px;
+}
+.hero-stats-panel-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 16px;
+}
+.hero-stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.hero-stat-item {
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.hero-stat-item:last-child { border-bottom: none; padding-bottom: 0; }
+.hero-stat-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #6EE89A;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+.hero-stat-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-stats-panel { display: none; }
+}
+
+.hero-eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #6EE89A;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 4vw, 58px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: #6EE89A;
+}
+
+.hero p {
+  font-size: 17px;
+  color: rgba(255,255,255,0.65);
+  max-width: 580px;
+  line-height: 1.65;
+}
+
+.hero-explainer {
+  font-size: 18px !important;
+  color: rgba(255,255,255,0.85) !important;
+  margin-bottom: 14px;
+}
+
+.hero-sub {
+  font-size: 15px !important;
+  color: rgba(255,255,255,0.55) !important;
+  margin-bottom: 0;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 24px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.hero-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.hero-pill span.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6EE89A;
+  flex-shrink: 0;
+}
+
+/* ─── PROGRESS ─────────────────────────── */
+.progress-bar-wrap {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  position: sticky;
+  top: 64px;
+  z-index: 90;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.progress-steps {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  gap: 0;
+}
+
+.progress-steps::-webkit-scrollbar { display: none; }
+
+.step-tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  flex-shrink: 0;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: inherit;
+}
+
+.step-tab:hover { color: var(--green); }
+
+.step-tab.active {
+  color: var(--green);
+  border-bottom-color: var(--green);
+}
+
+.step-tab.complete {
+  color: var(--green-mid);
+}
+
+.step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--cream-dark);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.step-tab.active .step-num {
+  background: var(--green);
+  color: white;
+}
+
+.step-tab.complete .step-num {
+  background: var(--green-light);
+  color: var(--green);
+}
+
+/* ─── MAIN LAYOUT ─────────────────────── */
+.main {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 0;
+  max-width: 1280px;
+  margin: 0 auto;
+  min-height: 60vh;
+  align-items: start;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── INPUT AREA ─────────────────────── */
+.input-area {
+  padding: 40px 40px 80px;
+  border-right: 1px solid var(--border);
+}
+
+.section-panel {
+  display: none;
+}
+
+.section-panel.active {
+  display: block;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-header {
+  margin-bottom: 32px;
+}
+
+.section-number {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.section-header h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.section-header p {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 520px;
+}
+
+.field-group {
+  margin-bottom: 28px;
+}
+
+.field-group-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 18px;
+  margin-top: 8px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--green-mid);
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.field-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field.full { grid-column: 1 / -1; }
+
+label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-mid);
+}
+
+label .hint {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 12px;
+  display: block;
+  margin-top: 2px;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--white);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  -webkit-appearance: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(11,61,32,0.08);
+}
+
+input[type="number"] { -moz-appearance: textfield; }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A7A72' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 34px;
+}
+
+textarea { resize: vertical; min-height: 80px; }
+
+.input-suffix {
+  position: relative;
+}
+
+.input-suffix input { padding-right: 42px; }
+
+.input-suffix .suffix-label {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.band-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--cream-dark);
+}
+
+.band-row:last-child { border-bottom: none; }
+
+.band-label {
+  font-size: 13px;
+  color: var(--text-mid);
+  font-weight: 500;
+}
+
+.band-label small {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.band-value {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gold);
+  text-align: right;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 0;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+
+.toggle-group button {
+  flex: 1;
+  padding: 10px 14px;
+  border: none;
+  background: var(--white);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s;
+  border-right: 1px solid var(--border);
+}
+
+.toggle-group button:last-child { border-right: none; }
+
+.toggle-group button.active {
+  background: var(--green);
+  color: white;
+}
+
+.info-box {
+  background: var(--green-light);
+  border: 1px solid rgba(11,61,32,0.14);
+  border-radius: var(--r-sm);
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--green-mid);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.info-box strong { font-weight: 600; }
+
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.btn {
+  padding: 13px 28px;
+  border-radius: var(--r-sm);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.18s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: var(--green);
+  color: white;
+}
+
+.btn-primary:hover { background: var(--green-mid); transform: translateY(-1px); }
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--text-mid);
+  border: 1.5px solid var(--border);
+}
+
+.btn-secondary:hover { border-color: var(--green); color: var(--green); }
+
+.btn-gold {
+  background: var(--gold);
+  color: white;
+}
+
+.btn-gold:hover { background: #9A6208; transform: translateY(-1px); }
+
+.slider-wrap {
+  margin-top: 8px;
+}
+
+.slider-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.slider-val {
+  font-size: 22px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  color: var(--green);
+  min-width: 48px;
+  text-align: right;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--cream-dark);
+  outline: none;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--green);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(11,61,32,0.25);
+  border: 3px solid white;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--white);
+  cursor: pointer;
+  transition: border-color 0.18s;
+}
+
+.checkbox-row:hover { border-color: var(--green); }
+
+.checkbox-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--green);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+.checkbox-label {
+  flex: 1;
+}
+
+.checkbox-label strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.checkbox-label span {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ─── SIDEBAR ─────────────────────────── */
+.sidebar {
+  padding: 32px 28px;
+  position: sticky;
+  top: 112px;
+  height: fit-content;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  align-self: start;
+  padding-bottom: 48px;
+}
+
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.sv-total-card {
+  background: var(--green);
+  border-radius: var(--r);
+  padding: 28px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.sv-total-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(110,232,154,0.08);
+}
+
+.sv-total-eyebrow {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.sv-total-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 4px;
+  transition: all 0.3s ease;
+}
+
+.sv-total-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+}
+
+.sv-breakdown {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.sv-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--white);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+}
+
+.sv-line-label {
+  font-size: 12px;
+  color: var(--text-mid);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sv-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sv-line-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--green);
+  transition: all 0.3s;
+}
+
+.sv-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.sv-stat {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 14px;
+}
+
+.sv-stat-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1;
+  margin-bottom: 4px;
+  transition: all 0.3s;
+}
+
+.sv-stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.sroi-card {
+  background: var(--gold-light);
+  border: 1px solid rgba(184,117,14,0.2);
+  border-radius: var(--r-sm);
+  padding: 16px;
+  margin-bottom: 20px;
+  display: none;
+}
+
+.sroi-card.visible { display: block; }
+
+.sroi-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.sroi-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.sroi-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.nd-card {
+  background: var(--cream-dark);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 16px;
+}
+
+.nd-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.nd-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text-mid);
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.nd-row:last-child { border-bottom: none; }
+
+.nd-row strong {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  color: var(--green);
+  font-weight: 700;
+}
+
+/* ─── OUTPUTS ─────────────────────────── */
+.outputs-section {
+  background: var(--white);
+  border-top: 2px solid var(--green);
+  position: relative;
+  z-index: 20;
+  isolation: isolate;
+  clear: both;
+}
+
+.outputs-header {
+  background: var(--green);
+  padding: 32px 40px 0;
+  position: relative;
+  z-index: 21;
+}
+
+.outputs-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+
+.output-tabs {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.output-tabs::-webkit-scrollbar { display: none; }
+
+.output-tab {
+  padding: 14px 22px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s;
+  flex-shrink: 0;
+}
+
+.output-tab:hover { color: rgba(255,255,255,0.85); }
+
+.output-tab.active {
+  color: white;
+  border-bottom-color: #6EE89A;
+}
+
+.output-body {
+  padding: 40px;
+}
+
+.output-panel { display: none; }
+.output-panel.active { display: block; animation: fadeIn 0.25s ease; }
+
+/* Report blocks */
+.report-block {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 32px;
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.report-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.report-block h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: -0.02em;
+}
+
+.report-block p.subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.copy-btn:hover { border-color: var(--green); color: var(--green); }
+.copy-btn.copied { background: var(--green-light); border-color: var(--green); color: var(--green); }
+
+.report-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+/* Chairman's one-pager */
+.chairman-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+}
+
+.chairman-top {
+  background: var(--green);
+  padding: 32px 36px;
+  color: white;
+}
+
+.chairman-club {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.chairman-subtitle {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  font-weight: 400;
+}
+
+.chairman-hero {
+  text-align: center;
+  padding: 40px 36px;
+  border-bottom: 1px solid var(--border);
+}
+
+.chairman-big-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 72px;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.chairman-big-label {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 10px;
+}
+
+.chairman-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.chairman-cell {
+  padding: 24px 28px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.chairman-cell:nth-child(2),
+.chairman-cell:nth-child(4) { border-right: none; }
+.chairman-cell:nth-child(3),
+.chairman-cell:nth-child(4) { border-bottom: none; }
+
+.chairman-cell-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cell-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chairman-cell-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.chairman-cell-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.chairman-quote-box {
+  padding: 28px 36px;
+  border-top: 1px solid var(--border);
+  background: var(--cream);
+}
+
+.chairman-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.chairman-attribution {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.chairman-footer {
+  padding: 16px 36px;
+  background: var(--cream-dark);
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chairman-footer strong {
+  color: var(--green);
+  font-weight: 600;
+}
+
+/* Social posts */
+.social-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.social-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 20px;
+}
+
+.social-platform {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.social-text {
+  font-size: 13px;
+  color: var(--text);
+  white-space: pre-wrap;
+  line-height: 1.65;
+  margin-bottom: 12px;
+}
+
+/* Funding section */
+.funder-card {
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.funder-header {
+  padding: 20px 24px;
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.funder-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+.funder-amount {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.funder-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tag-open { background: var(--green-light); color: var(--green); }
+.tag-rolling { background: var(--gold-light); color: var(--gold); }
+
+.funder-body {
+  padding: 20px 24px;
+}
+
+.funder-criteria {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.funder-crit {
+  font-size: 12px;
+  color: var(--text-mid);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
+}
+
+.funder-crit::before {
+  content: '✓';
+  color: var(--green);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.funder-statement {
+  background: var(--green-light);
+  border-left: 3px solid var(--green);
+  padding: 14px 16px;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  font-size: 13px;
+  color: var(--green-mid);
+  line-height: 1.65;
+  margin-bottom: 14px;
+}
+
+.funder-statement strong { font-weight: 600; }
+
+/* Methodology table */
+.method-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.method-table th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 10px 16px;
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+}
+
+.method-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  line-height: 1.5;
+  vertical-align: top;
+}
+
+.method-table tr:last-child td { border-bottom: none; }
+.method-table tr:hover td { background: var(--cream); }
+
+.method-table .val-cell {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--green);
+  white-space: nowrap;
+}
+
+.method-table a {
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 11px;
+}
+
+.method-table a:hover { text-decoration: underline; }
+
+.method-caveat {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 20px 24px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-top: 24px;
+}
+
+.method-caveat strong { color: var(--text); font-weight: 600; }
+
+/* Footer */
+.footer {
+  background: var(--green);
+  padding: 32px 40px;
+  text-align: center;
+}
+
+.footer p {
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.7;
+}
+
+.footer strong { color: rgba(255,255,255,0.8); }
+
+/* ─── REALITY LAYER ────────────────────── */
+.reality-layer {
+  background: var(--green);
+  border-radius: var(--r);
+  padding: 32px;
+  margin-bottom: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.reality-layer::before {
+  content: '';
+  position: absolute;
+  bottom: -60px;
+  right: -60px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.03);
+  pointer-events: none;
+}
+
+.reality-header {
+  margin-bottom: 24px;
+}
+
+.reality-eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(255,255,255,0.5);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.reality-tagline {
+  font-size: 16px;
+  color: rgba(255,255,255,0.75);
+  font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.reality-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.reality-cell {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--r-sm);
+  padding: 18px 16px;
+}
+
+.reality-cell-risk {
+  background: rgba(251,146,60,0.15);
+  border-color: rgba(251,146,60,0.3);
+}
+
+.reality-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+  margin-bottom: 8px;
+  letter-spacing: -0.03em;
+  transition: all 0.3s;
+}
+
+.reality-num.risk-col { color: #FB923D; }
+
+.reality-desc {
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.5;
+}
+
+.reality-note {
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 16px;
+  line-height: 1.6;
+}
+
+/* ─── RISK CARD ─────────────────────────── */
+.risk-card {
+  background: #FFF7ED;
+  border: 1px solid rgba(251,146,60,0.3);
+  border-left: 3px solid #FB923D;
+  border-radius: var(--r-sm);
+  padding: 16px;
+  margin-bottom: 10px;
+}
+
+/* ─── CONFIDENCE GRADING ─────────────────────────────── */
+.conf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+/* Reported by club — green */
+.conf-reported {
+  background: #D4EDDA;
+  color: #1A6B32;
+  border: 1px solid #A8D5B5;
+}
+.conf-reported::before { content: '●'; font-size: 8px; }
+/* Estimated from model — amber */
+.conf-estimated {
+  background: #FFF3CD;
+  color: #856404;
+  border: 1px solid #FFEAA7;
+}
+.conf-estimated::before { content: '●'; font-size: 8px; }
+/* Contextual area data — blue */
+.conf-contextual {
+  background: #D1ECF1;
+  color: #0C5460;
+  border: 1px solid #A8D8E1;
+}
+.conf-contextual::before { content: '●'; font-size: 8px; }
+/* Scenario estimate — orange */
+.conf-scenario {
+  background: #FFE8D6;
+  color: #7D3700;
+  border: 1px solid #FFCBA4;
+}
+.conf-scenario::before { content: '●'; font-size: 8px; }
+/* Legacy aliases — keep working */
+.conf-green { background: #D4EDDA; color: #1A6B32; border: 1px solid #A8D5B5; }
+.conf-green::before { content: '●'; font-size: 8px; }
+.conf-amber { background: #FFF3CD; color: #856404; border: 1px solid #FFEAA7; }
+.conf-amber::before { content: '●'; font-size: 8px; }
+
+/* ─── IMD LOOKUP ─────────────────────────────────────── */
+.imd-result {
+  margin-top: 10px;
+  padding: 12px 16px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  display: none;
+}
+.imd-result.visible { display: block; }
+.imd-result.imd-priority {
+  background: #D4EDDA;
+  border: 1px solid #A8D5B5;
+  color: #1A6B32;
+}
+.imd-result.imd-mid {
+  background: var(--gold-light);
+  border: 1px solid #F5D78C;
+  color: #6B4C00;
+}
+.imd-result.imd-low {
+  background: var(--cream-dark);
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+}
+.imd-result strong { display: block; font-size: 14px; margin-bottom: 3px; }
+.postcode-row { display: flex; gap: 10px; align-items: flex-end; }
+.postcode-row input { flex: 1; }
+.btn-lookup {
+  background: var(--green);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  height: 42px;
+}
+.btn-lookup:hover { background: var(--green-mid); }
+.btn-lookup.loading { opacity: 0.6; cursor: not-allowed; }
+
+/* ─── FUNDER ELIGIBILITY ─────────────────────────────── */
+.funder-card.ineligible { opacity: 0.55; }
+.funder-card.ineligible .funder-name::after {
+  content: ' — may not be eligible based on your area';
+  font-size: 11px;
+  font-weight: 400;
+  color: #856404;
+}
+.funder-priority-badge {
+  display: inline-block;
+  background: #D4EDDA;
+  color: #1A6B32;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-left: 8px;
+  border: 1px solid #A8D5B5;
+}
+.funder-card .imd-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--cream-dark);
+  border-radius: var(--r-sm);
+}
+
+/* ─── PARTICIPANT QUOTES IN REPORT ───────────────────── */
+.participant-quote-block {
+  border-left: 3px solid var(--green);
+  padding: 10px 16px;
+  margin: 12px 0;
+  background: var(--green-light);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+}
+.participant-quote-block p { font-style: italic; color: var(--text); margin-bottom: 4px; }
+.participant-quote-block small { color: var(--text-muted); font-size: 12px; }
+
+.risk-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #C2410C;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.risk-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #EA580C;
+  transition: all 0.3s;
+}
+
+.risk-desc {
+  font-size: 11px;
+  color: #9A3412;
+  margin-top: 6px;
+  line-height: 1.55;
+}
+
+/* ─── LIVE ND HINT ──────────────────────── */
+.live-nd-hint {
+  background: var(--green-light);
+  border: 1px solid rgba(11,61,32,0.16);
+  border-left: 3px solid var(--green);
+  border-radius: var(--r-sm);
+  padding: 16px 18px;
+  margin-bottom: 4px;
+  animation: fadeIn 0.3s ease;
+}
+
+.live-nd-inner {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.live-nd-icon {
+  font-size: 18px;
+  color: var(--green);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transform: rotate(180deg);
+  display: inline-block;
+}
+
+.live-nd-text {
+  font-size: 14px;
+  color: var(--green-mid);
+  line-height: 1.65;
+}
+
+.live-nd-text strong { font-weight: 600; }
+
+/* ─── EMAIL CAPTURE ─────────────────────── */
+.email-capture {
+  background: var(--cream-dark);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 28px 32px;
+  margin-top: 24px;
+  margin-bottom: 40px;
+}
+
+.email-capture-inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.email-capture-text {
+  flex: 1;
+  min-width: 200px;
+}
+
+.email-capture-text strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.email-capture-text span {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.email-capture-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.email-capture-form input {
+  width: 180px;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--white);
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+}
+
+.email-capture-form input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(11,61,32,0.08);
+}
+
+.email-capture-sent span {
+  font-size: 14px;
+  color: var(--green);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .reality-grid { grid-template-columns: 1fr 1fr; }
+  .email-capture-form input { width: 100%; }
+  .email-capture-form { width: 100%; }
+}
+
+/* ─── UTILITIES ─────────────────────────── */
+@media (max-width: 1024px) {
+  .main { grid-template-columns: 1fr; }
+  .sidebar { position: static; max-height: none; padding: 24px 32px; border-top: 1px solid var(--border); }
+}
+
+@media (max-width: 768px) {
+  .header { padding: 0 20px; }
+  .hero { padding: 40px 20px 36px; }
+  .input-area { padding: 28px 20px 60px; }
+  .output-body { padding: 24px 20px; }
+  .field-row, .field-row-3 { grid-template-columns: 1fr; }
+  .social-grid, .funder-criteria, .chairman-grid { grid-template-columns: 1fr; }
+  .sv-stats { grid-template-columns: 1fr 1fr; }
+  .running-total { display: none; }
+}
+
+@media print {
+  .header, .progress-bar-wrap, .hero, .input-area, .sidebar,
+  .output-tabs, .nav-buttons, .copy-btn, .btn,
+  .outputs-header, .email-capture-section,
+  .no-print { display: none !important; }
+  .hero { display: none !important; margin: 0 !important; padding: 0 !important; height: 0 !important; }
+  @page { margin: 16mm 14mm; }
+  body { background: white !important; font-size: 12px; color: #1A1A18 !important; }
+  .outputs-section { border: none !important; }
+  .output-panel { display: block !important; }
+  .output-body { padding: 0 !important; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .chairman-top { background: #0B3D20 !important; }
+  .chairman-subtitle { color: rgba(255,255,255,0.92) !important; }
+  .chairman-cell-label, .chairman-cell-desc,
+  .chairman-big-label, .chairman-attribution { color: #3A3A38 !important; }
+  .chairman-quote-box { background: #f4f1eb !important; }
+  .chairman-footer { color: #3A3A38 !important; background: #e8e4da !important; }
+  .nd-card { background: #f4f1eb !important; }
+  .nd-label, .nd-row span, .risk-label, .risk-desc { color: #1A1A18 !important; }
+  .risk-value { color: #B8750E !important; }
+  .sv-total-card { background: #0B3D20 !important; }
+  .report-content, .report-content * { color: #1A1A18 !important; }
+  .funder-card { break-inside: avoid; }
+  .conf-badge { color: #1A1A18 !important; }
+}
+
+/* ─── HOW THIS IS CALCULATED MODALS ─────────────────── */
+.calc-link {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  border-bottom: 1px dotted var(--border);
+  display: inline-block;
+  margin-top: 4px;
+  transition: color 0.15s;
+}
+.calc-link:hover { color: var(--green); }
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.modal-overlay.active { display: flex; }
+
+.modal-card {
+  background: var(--white);
+  border-radius: var(--r);
+  max-width: 560px;
+  width: 100%;
+  box-shadow: 0 24px 64px rgba(11,61,32,0.18);
+  overflow: hidden;
+  animation: modalIn 0.2s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-header {
+  background: var(--green);
+  padding: 20px 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.modal-badge-wrap { margin-top: 6px; }
+.modal-close {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: background 0.15s;
+}
+.modal-close:hover { background: rgba(255,255,255,0.25); }
+.modal-body { padding: 24px; }
+.modal-body p {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.65;
+  margin-bottom: 14px;
+}
+.modal-formula {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 12px 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--green);
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+.modal-sources {
+  font-size: 11px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  line-height: 1.7;
+}
+.modal-sources strong { color: var(--text-mid); }
+.modal-footer {
+  padding: 12px 24px;
+  background: var(--cream);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-methodology-link {
+  font-size: 12px;
+  color: var(--green);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+.modal-methodology-link:hover { text-decoration: underline; }
+.modal-dismiss {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 6px 14px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.modal-dismiss:hover { border-color: var(--green); color: var(--green); }
+
+/* ─── CLUB TYPE SELECTOR ─────────────────────────── */
+.club-type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.club-type-btn {
+  padding: 12px 10px;
+  border: 2px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--white);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-mid);
+  text-align: center;
+  transition: all 0.18s;
+  line-height: 1.3;
+}
+.club-type-btn:hover { border-color: var(--green); color: var(--green); }
+.club-type-btn.active {
+  border-color: var(--green);
+  background: var(--green-light);
+  color: var(--green);
+  font-weight: 600;
+}
+.club-type-btn .type-icon { font-size: 18px; display: block; margin-bottom: 4px; }
+/* ─── SESSIONS FREQUENCY ─────────────────────────── */
+.sessions-wrap { display: flex; gap: 8px; align-items: center; }
+.sessions-input {
+  width: 70px;
+  text-align: center;
+}
+.sessions-unit-toggle {
+  display: flex;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.sessions-unit-btn {
+  padding: 10px 12px;
+  border: none;
+  background: var(--white);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s;
+  border-right: 1px solid var(--border);
+}
+.sessions-unit-btn:last-child { border-right: none; }
+.sessions-unit-btn.active { background: var(--green); color: white; }
+
+/* ─── USE CASES BLOCK ────────────────────────────────── */
+.use-cases {
+  margin-top: 28px;
+  max-width: 600px;
+}
+.use-cases-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 12px;
+}
+.use-case-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.use-case-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.use-case-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.use-case-text {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.55;
+}
+.use-case-text strong {
+  color: rgba(255,255,255,0.85);
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div>
+      <div class="brand-name">Proof of Play</div>
+      <div class="brand-tag">Football Social Value Calculator</div>
+    </div>
+    <div class="header-divider"></div>
+    <div class="fmha-badge">Powered by <strong>FMHA</strong></div>
+  </div>
+  <div class="header-total">
+    <div class="running-total">
+      <div class="running-label">Estimated Annual Social Value</div>
+      <div class="running-value" id="headerTotal">£0</div>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+    <div class="hero-eyebrow">Football Social Value Calculator</div>
+    <h1>Find out what your<br><em>club is really worth.</em></h1>
+    <p class="hero-explainer">Social value is the measurable impact your club has on people's health, wellbeing and community — beyond the football itself. Every club generates it every week. Most have never seen the number.</p>
+    <p class="hero-sub">This tool calculates that number. It produces a full report, a press release, ready-to-post social content and a funding guide — everything your club needs to tell its story properly.</p>
+    <div class="hero-meta">
+      <div class="hero-pill"><span class="dot"></span> Takes about 10 minutes to complete</div>
+      <div class="hero-pill"><span class="dot"></span> Built on HM Treasury & Sport England methodology</div>
+      <div class="hero-pill"><span class="dot"></span> No login required.</div>
+    <div style="margin-top:24px; background:rgba(110,232,154,0.06); border:1px solid rgba(110,232,154,0.15); border-radius:10px; padding:16px 20px; max-width:600px;">
+      <p style="font-size:13px; color:rgba(255,255,255,0.75); line-height:1.65; margin:0;">
+        <strong style="color:#6EE89A;">The figures this tool produces are not invented.</strong> They apply published government and academic research to your club's own data — the same methodology used by Sport England, NHS commissioners and local authorities to evaluate community investment. Every value can be traced to a named source. <span style="color:rgba(255,255,255,0.5);">See the Methodology tab in your results.</span>
+      </p>
+    </div>
+    <div class="use-cases">
+      <div class="use-cases-title">How clubs are using this</div>
+      <div class="use-case-list">
+        <div class="use-case-item">
+          <span class="use-case-icon">🏟️</span>
+          <span class="use-case-text"><strong>Stadium &amp; facility grants.</strong> A newly promoted club used their Proof of Play report to support a council grant application for stadium improvements — demonstrating the community return on that investment before a single brick was laid.</span>
+        </div>
+        <div class="use-case-item">
+          <span class="use-case-icon">📋</span>
+          <span class="use-case-text"><strong>Lease renewals &amp; asset transfers.</strong> Local authorities are now legally required to maximise public benefit when making funding decisions. A quantified social value report gives your club the evidence the council needs to justify supporting you over a commercial tenant.</span>
+        </div>
+        <div class="use-case-item">
+          <span class="use-case-icon">🤝</span>
+          <span class="use-case-text"><strong>Sponsorship &amp; AGM reporting.</strong> Clubs are using their reports to open conversations with local businesses, demonstrate community impact to their own membership, and strengthen grant applications across Sport England, the Football Foundation and local funding streams.</span>
+        </div>
+      </div>
+    </div>
+    </div><!-- /hero-meta -->
+  </div><!-- /hero-content -->
+    <div class="hero-stats-panel">
+      <div class="hero-stats-panel-title">What clubs have discovered</div>
+      <div class="hero-stat-row">
+        <div class="hero-stat-item">
+          <div class="hero-stat-val">£1.97M</div>
+          <div class="hero-stat-label">Annual social value — Ampthill Town FC, 444 players</div>
+        </div>
+        <div class="hero-stat-item">
+          <div class="hero-stat-val">£39.34</div>
+          <div class="hero-stat-label">Social return per £1 spent — same club</div>
+        </div>
+        <div class="hero-stat-item">
+          <div class="hero-stat-val">10 mins</div>
+          <div class="hero-stat-label">Average time to complete — no login, no account</div>
+        </div>
+        <div class="hero-stat-item">
+          <div class="hero-stat-val">£122.9bn</div>
+          <div class="hero-stat-label">Annual social value of community sport in England (Sport England, Year 2 (November 2025))</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRESS BAR -->
+<nav class="progress-bar-wrap">
+  <div class="progress-steps">
+    <button class="step-tab active" onclick="goToSection('club')">
+      <span class="step-num" id="sn-club">1</span> Club Details
+    </button>
+    <button class="step-tab" onclick="goToSection('players')">
+      <span class="step-num" id="sn-players">2</span> Players
+    </button>
+    <button class="step-tab" onclick="goToSection('volunteers')">
+      <span class="step-num" id="sn-volunteers">3</span> Volunteers & Workforce
+    </button>
+    <button class="step-tab" onclick="goToSection('community')">
+      <span class="step-num" id="sn-community">4</span> Community
+    </button>
+    <button class="step-tab" onclick="goToSection('financials')">
+      <span class="step-num" id="sn-financials">5</span> Financials & Extras
+    </button>
+    <button class="step-tab" onclick="goToSection('outputs'); scrollToOutputs()">
+      <span class="step-num" id="sn-outputs">↓</span> View Results
+    </button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- INPUT AREA -->
+  <div class="input-area">
+
+    <!-- SECTION 1: Club -->
+    <div class="section-panel active" id="panel-club">
+      <div class="section-header">
+        <div class="section-number">Step 1 of 5</div>
+        <h2>About your club</h2>
+        <p>Tell us the basics. This information appears in your report, press release and funding summaries.</p>
+      </div>
+
+      <div class="field-row">
+        <div class="field full">
+          <label>Club name <span class="hint">As it appears on your club badge and correspondence</span></label>
+          <input type="text" id="clubName" placeholder="e.g. Ampthill Town FC" oninput="updateState('clubName', this.value)">
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Club postcode <span class="hint">Used to look up your area's deprivation index — affects funding eligibility</span></label>
+          <div class="postcode-row">
+            <input type="text" id="clubPostcode" placeholder="e.g. MK45 2HX" oninput="updateState('clubPostcode', this.value.toUpperCase()); this.value = this.value.toUpperCase()">
+            <button class="btn-lookup" id="postcodeBtn" onclick="lookupPostcode()">Look up</button>
+          </div>
+          <div class="imd-result" id="imdResult"></div>
+        </div>
+        <div class="field">
+          <label>Town / area <span class="hint">Where the club is based — appears in your report</span></label>
+          <input type="text" id="area" placeholder="e.g. Ampthill, Bedfordshire" oninput="updateState('area', this.value)">
+        </div>
+        <div class="field">
+          <label>County FA affiliation</label>
+          <input type="text" id="countyFA" placeholder="e.g. Bedfordshire FA" oninput="updateState('countyFA', this.value)">
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Year founded</label>
+          <input type="number" id="yearFounded" placeholder="e.g. 1992" min="1850" max="2025" oninput="updateState('yearFounded', this.value)">
+        </div>
+        <div class="field">
+          <label>FA accreditation level</label>
+          <select id="charterLevel" onchange="updateState('charterLevel', this.value)">
+            <option value="none">None / not accredited</option>
+            <option value="charter">FA Charter Standard Club</option>
+            <option value="development">FA Charter Standard Development Club</option>
+            <option value="community">FA Charter Standard Community Club</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-group-title">Quote for your report & press release</div>
+        <div class="field" style="margin-bottom: 14px;">
+          <label>Quote text <span class="hint">Optional — used in press release and chairman's report. Keep it short and genuine.</span></label>
+          <textarea id="quoteText" placeholder="e.g. We've always known this club matters to our community, but seeing the scale of it laid out like this really brings it home." oninput="updateState('quoteText', this.value)"></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Name</label>
+            <input type="text" id="quoteName" placeholder="e.g. Martin Walker" oninput="updateState('quoteName', this.value)">
+          </div>
+          <div class="field">
+            <label>Role</label>
+            <input type="text" id="quoteRole" placeholder="e.g. Chairman" oninput="updateState('quoteRole', this.value)">
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-group-title">Participant voices <span class="hint" style="font-weight:400; text-transform:none; letter-spacing:0;">Optional — quotes from players, parents/carers/guardians appear in your full report and press release</span></div>
+        <div class="info-box" style="margin-bottom:16px;">Grant assessors respond to human stories, not just numbers. Adding one or two genuine quotes from players or parents/carers/guardians significantly strengthens any application — and makes your press release worth reading. Keep them short and real.</div>
+
+        <div id="participantQuotes">
+          <div class="participant-quote-entry" id="pq-0">
+            <div class="field-row">
+              <div class="field full">
+                <label>Quote <span class="hint">In their own words — don't tidy it up too much</span></label>
+                <textarea id="pq-text-0" placeholder='e.g. "My son was really struggling before he joined. Being part of the team gave him somewhere to belong."' oninput="updateParticipantQuote(0)" rows="2"></textarea>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Name</label><input type="text" id="pq-name-0" placeholder="e.g. Sarah T." oninput="updateParticipantQuote(0)"></div>
+              <div class="field"><label>Role / relationship</label><input type="text" id="pq-role-0" placeholder="e.g. Parent of U12 player" oninput="updateParticipantQuote(0)"></div>
+            </div>
+          </div>
+
+          <div class="participant-quote-entry" id="pq-1" style="margin-top:24px; padding-top:24px; border-top: 2px solid var(--border);">
+            <div class="field-row">
+              <div class="field full">
+                <label>Second quote <span class="hint">Optional</span></label>
+                <textarea id="pq-text-1" placeholder='e.g. "I've been volunteering here for fifteen years. It's the best thing I do with my time."' oninput="updateParticipantQuote(1)" rows="2"></textarea>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Name</label><input type="text" id="pq-name-1" placeholder="e.g. Dave W." oninput="updateParticipantQuote(1)"></div>
+              <div class="field"><label>Role / relationship</label><input type="text" id="pq-role-1" placeholder="e.g. Volunteer coach, 15 years" oninput="updateParticipantQuote(1)"></div>
+            </div>
+          </div>
+
+          <div class="participant-quote-entry" id="pq-2" style="margin-top:24px; padding-top:24px; border-top: 2px solid var(--border);">
+            <div class="field-row">
+              <div class="field full">
+                <label>Third quote <span class="hint">Optional</span></label>
+                <textarea id="pq-text-2" placeholder='e.g. "Football gave me confidence. I was really shy when I started — now I'm captain."' oninput="updateParticipantQuote(2)" rows="2"></textarea>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Name</label><input type="text" id="pq-name-2" placeholder="e.g. Jamie, age 14" oninput="updateParticipantQuote(2)"></div>
+              <div class="field"><label>Role / relationship</label><input type="text" id="pq-role-2" placeholder="e.g. Player" oninput="updateParticipantQuote(2)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-primary" onclick="goToSection('players')">Next: Players →</button>
+      </div>
+    </div>
+    <div class="section-panel" id="panel-players">
+      <div class="section-header">
+        <div class="section-number">Step 2 of 5</div>
+        <h2>Players</h2>
+        <p>Enter registered player numbers by age band and gender. Wellbeing values are higher for younger participants — so the breakdown matters. Use your most recent season's figures.</p>
+      </div>
+
+      <div class="info-box">
+        <strong>Where do these values come from?</strong> Wellbeing figures are drawn from Sport England's Social Value Model Year 2 (November 2025), produced with Sheffield Hallam University, Manchester Metropolitan University and State of Life using HM Treasury WELLBY methodology. Active children aged 11–16 generate £4,300 per year in wellbeing value. Adults generate £2,600.
+      </div>
+
+      <div class="field-group">
+        <div class="field-group-title">Club type</div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">Tell us who plays — this shows only the relevant sections and applies the correct wellbeing values.</p>
+        <div class="club-type-grid">
+          <button type="button" class="club-type-btn active" id="ctype-mixed" onclick="setClubType('mixed')">
+            <span class="type-icon">👥</span>Mixed<br><span style="font-size:11px; font-weight:400;">Youth &amp; adults</span>
+          </button>
+          <button type="button" class="club-type-btn" id="ctype-youth" onclick="setClubType('youth')">
+            <span class="type-icon">🧒</span>Youth only<br><span style="font-size:11px; font-weight:400;">No adult players</span>
+          </button>
+          <button type="button" class="club-type-btn" id="ctype-adult" onclick="setClubType('adult')">
+            <span class="type-icon">🧑</span>Adults only<br><span style="font-size:11px; font-weight:400;">No youth players</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="field-group" id="youth-players-section">
+        <div class="field-group-title">Youth Players</div>
+
+        <div class="band-row">
+          <div class="band-label">Ages 5–6 <small>Mini soccer</small></div>
+          <div class="field"><label>Boys / Male</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_5_6_m', +this.value||0)"></div>
+          <div class="field"><label>Girls / Female</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_5_6_f', +this.value||0)"></div>
+        </div>
+
+        <div class="band-row">
+          <div class="band-label">Ages 7–11 <small>£3,100 / child / year</small></div>
+          <div class="field"><label>Boys / Male</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_7_11_m', +this.value||0)"></div>
+          <div class="field"><label>Girls / Female</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_7_11_f', +this.value||0)"></div>
+        </div>
+
+        <div class="band-row">
+          <div class="band-label">Ages 11–16 <small>£4,300 / child / year</small></div>
+          <div class="field"><label>Boys / Male</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_11_16_m', +this.value||0)"></div>
+          <div class="field"><label>Girls / Female</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_11_16_f', +this.value||0)"></div>
+        </div>
+
+        <div class="band-row">
+          <div class="band-label">Ages 16–18 <small>Youth/adult transition</small></div>
+          <div class="field"><label>Boys / Male</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_16_18_m', +this.value||0)"></div>
+          <div class="field"><label>Girls / Female</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_16_18_f', +this.value||0)"></div>
+        </div>
+      </div><!-- /youth-players-section -->
+
+      <div class="field-group" id="adult-players-section">
+        <div class="field-group-title">Adult Players</div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Male adult players</label>
+            <input type="number" min="0" placeholder="0" oninput="updateState('adult_male', +this.value||0)">
+          </div>
+          <div class="field">
+            <label>Female adult players</label>
+            <input type="number" min="0" placeholder="0" oninput="updateState('adult_female', +this.value||0)">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Disability participants <span class="hint">Walking football, pan-disability, etc. — value: £5,300/year</span></label>
+            <input type="number" min="0" placeholder="0" oninput="updateState('adult_disability', +this.value||0)">
+          </div>
+          <div class="field">
+            <label>Adult sessions <span class="hint">Include training sessions and matches</span></label>
+            <div class="sessions-wrap">
+              <input type="number" class="sessions-input" min="1" max="20" placeholder="2"
+                     oninput="updateState('adult_sessions', this.value||'2')" value="2">
+              <div class="sessions-unit-toggle">
+                <button type="button" class="sessions-unit-btn active" id="adult-unit-week"
+                        onclick="setSessionUnit('adult','week')">/ week</button>
+                <button type="button" class="sessions-unit-btn" id="adult-unit-month"
+                        onclick="setSessionUnit('adult','month')">/ month</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /adult-players-section -->
+
+      <div class="field-group" id="youth-frequency-section">
+        <div class="field-group-title">Youth training frequency</div>
+        <div class="field">
+          <label>Youth sessions on average <span class="hint">Include training sessions and matches</span></label>
+          <div class="sessions-wrap">
+            <input type="number" class="sessions-input" min="1" max="20" placeholder="2"
+                   oninput="updateState('youth_sessions', this.value||'2')" value="2">
+            <div class="sessions-unit-toggle">
+              <button type="button" class="sessions-unit-btn active" id="youth-unit-week"
+                      onclick="setSessionUnit('youth','week')">/ week</button>
+              <button type="button" class="sessions-unit-btn" id="youth-unit-month"
+                      onclick="setSessionUnit('youth','month')">/ month</button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /youth-frequency-section -->
+
+      <div class="live-nd-hint" id="liveNdHint" style="display:none;">
+        <div class="live-nd-inner">
+          <div class="live-nd-icon">↓</div>
+          <div class="live-nd-text">
+            <strong id="liveNdText">Based on what you've entered, around 0 players in your squad may be neurodivergent</strong> — and around <span id="liveMhText">0</span> are likely to experience a mental health difficulty this season. This is already happening in your sessions.
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goToSection('club')">← Back</button>
+        <button class="btn btn-primary" onclick="goToSection('volunteers')">Next: Volunteers →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Volunteers -->
+    <div class="section-panel" id="panel-volunteers">
+      <div class="section-header">
+        <div class="section-number">Step 3 of 5</div>
+        <h2>Volunteers & workforce</h2>
+        <p>Volunteer contribution is typically the single largest component of a club's social value. Enter accurate numbers here — this is where most clubs are pleasantly surprised.</p>
+      </div>
+
+      <div class="info-box">
+        <strong>Methodology:</strong> Volunteer economic value is calculated using the ONS median hourly wage (2024: ~£17/hr) × hours contributed. On top of that, the Sport England's Social Value Model Year 2 places the wellbeing value of volunteering at approximately £2,100 per volunteer per year. Both figures are cited in your methodology appendix.
+      </div>
+
+      <div class="field-group">
+        <div class="field-group-title">Volunteer numbers & hours</div>
+        <div class="field-row" style="align-items: flex-end;">
+          <div class="field">
+            <label>Total volunteers <span class="hint">All club volunteers — coaches, committee, kit washers, everyone</span></label>
+            <input type="number" min="0" placeholder="0" oninput="updateState('num_volunteers', +this.value||0)">
+          </div>
+          <div class="field">
+            <label>Average hours per volunteer per week <span class="hint">Include matchdays and training</span></label>
+            <select onchange="updateState('vol_hours_per_week', this.value)">
+              <option value="2">~2 hours / week</option>
+              <option value="4" selected>~4 hours / week</option>
+              <option value="6">~6 hours / week</option>
+              <option value="8">~8 hours / week</option>
+              <option value="12">~12+ hours / week</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-group-title">Qualified workforce</div>
+        <div class="field-row">
+          <div class="field">
+            <label>FA-qualified coaches <span class="hint">Hold an FA coaching award — e.g. FA Level 1, Level 2, UEFA B/A</span></label>
+            <input type="number" min="0" placeholder="0" oninput="updateState('num_coaches', +this.value||0)">
+          </div>
+          <div class="field">
+            <label>DBS-checked individuals</label>
+            <input type="number" min="0" placeholder="0" oninput="updateState('num_dbs', +this.value||0)">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Paid staff (if any)</label>
+            <input type="number" min="0" placeholder="0" oninput="updateState('num_paid_staff', +this.value||0)">
+          </div>
+          <div class="field">
+            <label>Club welfare officer</label>
+            <select onchange="updateState('has_welfare', this.value)">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goToSection('players')">← Back</button>
+        <button class="btn btn-primary" onclick="goToSection('community')">Next: Community →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Community -->
+    <div class="section-panel" id="panel-community">
+      <div class="section-header">
+        <div class="section-number">Step 4 of 5</div>
+        <h2>Community reach</h2>
+        <p>Many clubs run programmes beyond football — or open their facilities to community groups. This section captures value that most clubs entirely overlook.</p>
+      </div>
+
+      <div class="field-group">
+        <div class="field-group-title">Community programmes</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Number of community programmes <span class="hint">Walking football, holiday camps, disability programmes, mental health sessions, etc.</span></label>
+            <input type="number" min="0" placeholder="0" oninput="updateState('num_programmes', +this.value||0)">
+          </div>
+          <div class="field">
+            <label>Total annual community reach <span class="hint">Total individuals reached across all programmes</span></label>
+            <input type="number" min="0" placeholder="0" oninput="updateState('community_reach', +this.value||0)">
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-group-title">Facilities & wider access</div>
+        <div style="display: grid; gap: 12px;">
+          <label class="checkbox-row">
+            <input type="checkbox" onchange="updateState('facility_community', this.checked)">
+            <div class="checkbox-label">
+              <strong>Club facilities used by non-football community groups</strong>
+              <span>e.g. yoga classes, meetings, mother & toddler groups, Scouts, Taekwondo — any regular non-football use</span>
+            </div>
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" onchange="updateState('has_mental_health', this.checked)">
+            <div class="checkbox-label">
+              <strong>Club actively delivers mental health support activities</strong>
+              <span>Formal or informal — mental health awareness sessions, signposting, wellbeing champions</span>
+            </div>
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" onchange="updateState('school_links', this.checked)">
+            <div class="checkbox-label">
+              <strong>Active school / education links</strong>
+              <span>Curriculum football, School of Football, school holiday programmes</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goToSection('volunteers')">← Back</button>
+        <button class="btn btn-primary" onclick="goToSection('financials')">Next: Financials →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 5: Financials & ND/MH -->
+    <div class="section-panel" id="panel-financials">
+      <div class="section-header">
+        <div class="section-number">Step 5 of 5</div>
+        <h2>Financials & support needs</h2>
+        <p>Optional but powerful. Income figures allow us to calculate your Social Return on Investment — the pound value generated per pound spent. The ND/MH section adds the FMHA dimension no other tool provides.</p>
+      </div>
+
+      <div class="field-group">
+        <div class="field-group-title">Club financials (optional)</div>
+        <div class="field-row">
+          <div class="field input-suffix">
+            <label>Annual club income <span class="hint">Total income — subs, grants, sponsorship, all sources</span></label>
+            <input type="number" min="0" placeholder="0" oninput="updateState('annual_income', +this.value||0)">
+            <span class="suffix-label">£</span>
+          </div>
+          <div class="field input-suffix">
+            <label>Annual club expenditure <span class="hint">Enter this to unlock your Social Return on Investment ratio — £X of social value per £1 spent</span></label>
+            <input type="number" min="0" placeholder="0" oninput="updateState('annual_expenditure', +this.value||0)">
+            <span class="suffix-label">£</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-group-title">Neurodiversity & mental health — the hidden picture</div>
+        <div class="info-box">
+          This section adds FMHA's signature layer. Using established prevalence data, it estimates how many players may be neurodivergent or experiencing a mental health difficulty — and what that means for your club's support responsibilities. This appears as a dedicated section in your full report and press release.
+          <br><br>
+          <strong>Important if using this in a funding application:</strong> these are statistical projections based on national averages — not diagnosed beneficiaries. Grant assessors will challenge any club that presents these figures as confirmed fact. To use them credibly in a bid, pair them with evidence of your club's inclusive coaching practices — for example, FA-qualified coaches, a welfare officer in post, or completion of FMHA neurodiversity training. The numbers show likelihood; your policies show readiness.
+        </div>
+
+        <div class="field" style="margin-bottom: 20px;">
+          <label>Neurodiversity prevalence estimate</label>
+          <div class="slider-wrap">
+            <div class="slider-row">
+              <span style="font-size: 13px; color: var(--text-muted);">Conservative (10%)</span>
+              <span class="slider-val" id="ndPctDisplay">14%</span>
+              <span style="font-size: 13px; color: var(--text-muted);">High (20%)</span>
+            </div>
+            <input type="range" min="10" max="20" value="14" step="1"
+              oninput="updateState('nd_prevalence', this.value); document.getElementById('ndPctDisplay').textContent = this.value + '%'">
+          </div>
+          <span style="font-size: 12px; color: var(--text-muted); margin-top: 8px; display: block;">
+            The 14% figure reflects published estimates of neurodivergent prevalence in youth populations (ADHD: ~5–7%, autism: ~1–2%, dyslexia: ~10%, with significant overlap). Source: NHS Digital; British Dyslexia Association.
+          </span>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Mental health: annual prevalence <span class="hint">Fixed at 25% — NHS Digital Annual Mental Health Survey</span></label>
+            <input type="text" value="25% of players — fixed estimate (NHS Digital)" disabled style="background: var(--cream-dark); color: var(--text-muted);">
+          </div>
+          <div class="field">
+            <label>ND/MH overlap <span class="hint">Research shows ~30% of ND individuals also experience MH difficulties</span></label>
+            <input type="text" value="30% overlap — fixed (ADHD Foundation; NAS)" disabled style="background: var(--cream-dark); color: var(--text-muted);">
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goToSection('community')">← Back</button>
+        <button class="btn btn-gold" onclick="goToSection('outputs'); scrollToOutputs()">
+          Generate Full Report ↓
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /input-area -->
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sv-total-card">
+      <div class="sv-total-eyebrow">Estimated Annual Social Value</div>
+      <div class="sv-total-value" id="sidebarTotal">£0</div>
+      <div class="sv-total-sub" id="sidebarClubName">Enter your details to calculate</div>
+    </div>
+
+    <div class="sv-breakdown">
+      <div class="sv-line" style="flex-direction:column; align-items:flex-start; gap:4px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+          <span class="sv-line-label"><span class="sv-dot" style="background:#10B981"></span>Participant wellbeing <span class="conf-badge conf-estimated" style="margin-left:4px;font-size:9px;padding:1px 5px;">Sport England</span></span>
+          <span class="sv-line-val" id="svWellbeing">£0</span>
+        </div>
+        <span class="calc-link" onclick="openModal('wellbeing')">How this is calculated →</span>
+      </div>
+      <div class="sv-line" style="flex-direction:column; align-items:flex-start; gap:4px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+          <span class="sv-line-label"><span class="sv-dot" style="background:#3B82F6"></span>NHS savings <span class="conf-badge conf-estimated" style="margin-left:4px;font-size:9px;padding:1px 5px;">Sport England</span></span>
+          <span class="sv-line-val" id="svNHS">£0</span>
+        </div>
+        <span class="calc-link" onclick="openModal('nhs')">How this is calculated →</span>
+      </div>
+      <div class="sv-line" style="flex-direction:column; align-items:flex-start; gap:4px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+          <span class="sv-line-label"><span class="sv-dot" style="background:#F59E0B"></span>Volunteer contribution <span class="conf-badge conf-estimated" style="margin-left:4px;font-size:9px;padding:1px 5px;">ONS · Sport England</span></span>
+          <span class="sv-line-val" id="svVol">£0</span>
+        </div>
+        <span class="calc-link" onclick="openModal('volunteer')">How this is calculated →</span>
+      </div>
+      <div class="sv-line" style="flex-direction:column; align-items:flex-start; gap:4px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+          <span class="sv-line-label"><span class="sv-dot" style="background:#8B5CF6"></span>Community impact <span class="conf-badge conf-estimated" style="margin-left:4px;font-size:9px;padding:1px 5px;">Sport England</span></span>
+          <span class="sv-line-val" id="svCommunity">£0</span>
+        </div>
+        <span class="calc-link" onclick="openModal('community')">How this is calculated →</span>
+      </div>
+    </div>
+
+    <div class="sv-stats">
+      <div class="sv-stat">
+        <div class="sv-stat-val" id="statPlayers">0</div>
+        <div class="sv-stat-label">Total players</div>
+      </div>
+      <div class="sv-stat">
+        <div class="sv-stat-val" id="statVols">0</div>
+        <div class="sv-stat-label">Volunteers</div>
+      </div>
+      <div class="sv-stat">
+        <div class="sv-stat-val" id="statReach">0</div>
+        <div class="sv-stat-label">Total reach</div>
+      </div>
+      <div class="sv-stat">
+        <div class="sv-stat-val" id="statVolHrs">0</div>
+        <div class="sv-stat-label">Vol. hours/yr</div>
+      </div>
+    </div>
+
+    <div class="sroi-card" id="sroiCard">
+      <div class="sroi-label">Social Return on Investment</div>
+      <div class="sroi-value">£<span id="sroiVal">0</span> per £1 spent</div>
+      <div class="sroi-desc">For every pound your club spends, this is the estimated social value returned to your community. Enter your annual expenditure in the Financials section to unlock this figure.</div>
+      <span class="calc-link" onclick="openModal('sroi')" style="margin-top:6px;">How this is calculated →</span>
+    </div>
+
+    <div class="risk-card" id="riskCard">
+      <div class="risk-label">⚠ Value at Stake <span class="conf-badge conf-scenario" style="margin-left:6px;">Scenario estimate</span></div>
+      <div class="risk-value" id="riskValue">£0</div>
+      <div class="risk-desc">Scenario estimate: what becomes fragile if players with unmet needs disengage. Based on a 12% assumed disengagement rate — a planning assumption, not an evidence claim.</div>
+      <span class="calc-link" onclick="openModal('risk')" style="margin-top:6px;">How this is calculated →</span>
+    </div>
+
+    <div class="nd-card">
+      <div class="nd-label">Hidden Need Estimate <span class="calc-link" onclick="openModal('nd')" style="margin-left:8px;font-size:10px;">How this is calculated →</span></div>
+      <div class="nd-row">
+        <span>Neurodivergent players</span>
+        <strong id="statND">0</strong>
+      </div>
+      <div class="nd-row">
+        <span>MH difficulty this year</span>
+        <strong id="statMH">0</strong>
+      </div>
+      <div class="nd-row">
+        <span>Need additional support</span>
+        <strong id="statAdditional">0</strong>
+      </div>
+    </div>
+  </aside>
+
+</div><!-- /main -->
+
+<!-- OUTPUTS SECTION -->
+<div class="outputs-section" id="outputs-section">
+  <div class="outputs-header">
+    <div class="outputs-title">Your Report & Outputs</div>
+    <div class="output-tabs">
+      <button class="output-tab active" onclick="setOutputTab('summary')">Chairman's Summary</button>
+      <button class="output-tab" onclick="setOutputTab('report')">Full Report</button>
+      <button class="output-tab" onclick="setOutputTab('press')">Press Release</button>
+      <button class="output-tab" onclick="setOutputTab('social')">Social Posts</button>
+      <button class="output-tab" onclick="setOutputTab('funding')">Funding Guide</button>
+      <button class="output-tab" onclick="setOutputTab('methodology')">Methodology</button>
+    </div>
+  </div>
+
+  <div class="output-body">
+
+    <!-- CHAIRMAN'S SUMMARY -->
+    <div class="output-panel active" id="panel-output-summary">
+
+      <!-- REALITY LAYER -->
+      <div class="reality-layer" id="realityLayer">
+        <div class="reality-header">
+          <div class="reality-eyebrow">What sits inside your club right now</div>
+          <div class="reality-tagline">Most of this is invisible. The value below is real — but so is the fragility.</div>
+        </div>
+        <div class="reality-grid">
+          <div class="reality-cell">
+            <div class="reality-num" id="rl-nd">0</div>
+            <div class="reality-desc">players may be neurodivergent</div>
+          </div>
+          <div class="reality-cell">
+            <div class="reality-num" id="rl-mh">0</div>
+            <div class="reality-desc">likely to experience a mental health difficulty this season</div>
+          </div>
+          <div class="reality-cell">
+            <div class="reality-num" id="rl-add">0</div>
+            <div class="reality-desc">likely to need additional understanding and support</div>
+          </div>
+          <div class="reality-cell reality-cell-risk">
+            <div class="reality-num risk-col" id="rl-risk">£0</div>
+            <div class="reality-desc">of social value at stake if those needs go unmet</div>
+          </div>
+        </div>
+        <div class="reality-note">Estimates based on published NHS Digital and British Dyslexia Association prevalence data. This is not a diagnostic tool — it is a planning reality.</div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; gap:16px; flex-wrap:wrap; margin-top:32px;">
+        <div>
+          <h3 style="font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--green); margin-bottom:4px;">Chairman's One-Pager</h3>
+          <p style="font-size:13px; color:var(--text-muted);">Here's the value your club creates when that environment is held together properly.</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-secondary" onclick="window.print()">Print / Save PDF</button>
+          <button class="copy-btn" onclick="copySection('chairman-content')">Copy text</button>
+        </div>
+      </div>
+
+      <div class="chairman-card" id="chairman-content">
+        <div class="chairman-top">
+          <div class="chairman-club" id="ch-clubName">Your Club</div>
+          <div class="chairman-subtitle">Social Value Assessment · Proof of Play · Powered by FMHA</div>
+        </div>
+        <div class="chairman-hero">
+          <div class="chairman-big-number" id="ch-total">£0</div>
+          <div class="chairman-big-label">estimated annual social value generated for <span id="ch-area">your community</span></div>
+        </div>
+        <div class="chairman-grid">
+          <div class="chairman-cell">
+            <div class="chairman-cell-label"><span class="cell-dot" style="background:#10B981"></span>Participant Wellbeing <span class="conf-badge conf-estimated" style="margin-left:4px;font-size:9px;padding:1px 5px;">Estimated</span></div>
+            <div class="chairman-cell-value" id="ch-wellbeing">£0</div>
+            <div class="chairman-cell-desc" id="ch-wellbeing-desc">From improved life satisfaction across youth and adult players</div>
+          </div>
+          <div class="chairman-cell">
+            <div class="chairman-cell-label"><span class="cell-dot" style="background:#3B82F6"></span>NHS & Health Savings <span class="conf-badge conf-estimated" style="margin-left:4px;font-size:9px;padding:1px 5px;">Estimated</span></div>
+            <div class="chairman-cell-value" id="ch-nhs">£0</div>
+            <div class="chairman-cell-desc" id="ch-nhs-desc">Reduced GP visits, disease prevention and mental health service savings</div>
+          </div>
+          <div class="chairman-cell">
+            <div class="chairman-cell-label"><span class="cell-dot" style="background:#F59E0B"></span>Volunteer Contribution <span class="conf-badge conf-estimated" style="margin-left:4px;font-size:9px;padding:1px 5px;">Estimated</span></div>
+            <div class="chairman-cell-value" id="ch-vol">£0</div>
+            <div class="chairman-cell-desc" id="ch-vol-desc">Economic and wellbeing value of volunteer time</div>
+          </div>
+          <div class="chairman-cell">
+            <div class="chairman-cell-label"><span class="cell-dot" style="background:#8B5CF6"></span>Community Impact <span class="conf-badge conf-estimated" style="margin-left:4px;font-size:9px;padding:1px 5px;">Estimated</span></div>
+            <div class="chairman-cell-value" id="ch-community">£0</div>
+            <div class="chairman-cell-desc" id="ch-community-desc">From community programmes, facility access and social cohesion</div>
+          </div>
+        </div>
+        <div class="chairman-quote-box" id="ch-quote-section">
+          <div class="chairman-quote" id="ch-quote">"We've always known this club matters — but seeing the scale of it laid out like this really brings it home."</div>
+          <div class="chairman-attribution" id="ch-attribution">— Club Representative</div>
+        </div>
+        <div class="chairman-footer">
+          <span>Calculated using <strong>Proof of Play</strong>, powered by FMHA · fmha.academy</span>
+          <span>Sources: Sport England Social Value Model Year 2 (November 2025) · HM Treasury WELLBY · ONS 2024</span>
+        </div>
+      </div><!-- /chairman-card -->
+
+      <!-- EMAIL CAPTURE -->
+      <div class="email-capture" id="emailCapture">
+        <div class="email-capture-inner">
+          <div class="email-capture-text">
+            <strong>Send this report to your inbox</strong>
+            <span>We'll email you a copy of your full results — and let you know about FMHA resources that help clubs act on what they've found.</span>
+          </div>
+          <div class="email-capture-form" id="emailForm">
+            <input type="email" id="captureEmail" placeholder="your@email.com">
+            <input type="text" id="captureName" placeholder="Your name">
+            <button class="btn btn-primary" onclick="submitEmailCapture()">Send my report</button>
+            <p style="font-size:11px; color:var(--text-muted); margin-top:10px; line-height:1.6;">By submitting this form, your club name and results will be shared with your County FA so they can help you access funding and support. All data is kept secure and used only for football development purposes.</p>
+          </div>
+          <div class="email-capture-sent" id="emailSent" style="display:none;">
+            <span>✓ Done — check your inbox. FMHA will be in touch.</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /panel-output-summary -->
+    <div class="output-panel" id="panel-output-report">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; gap:16px; flex-wrap:wrap;">
+        <div>
+          <h3 style="font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--green); margin-bottom:4px;">Full Technical Report</h3>
+          <p style="font-size:13px; color:var(--text-muted);">Complete assessment with methodology notes. Suitable for County FA submissions, funding applications and institutional audiences.</p>
+        </div>
+        <button class="copy-btn" onclick="copySection('full-report-content')">Copy full report</button>
+      </div>
+
+      <div class="report-block" id="full-report-content">
+        <h3 style="font-family:'Cormorant Garamond',serif; font-size:28px; margin-bottom:6px;" id="rpt-heading">Social Value Assessment</h3>
+        <p style="color:var(--text-muted); font-size:13px; margin-bottom:24px;" id="rpt-subheading">Proof of Play · Powered by FMHA · <span id="rpt-date"></span></p>
+        <div class="report-text" id="fullReportText"></div>
+      </div>
+    </div>
+
+    <!-- PRESS RELEASE -->
+    <div class="output-panel" id="panel-output-press">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; gap:16px; flex-wrap:wrap;">
+        <div>
+          <h3 style="font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--green); margin-bottom:4px;">Press Release</h3>
+          <p style="font-size:13px; color:var(--text-muted);">Ready to send to local press, your County FA and any media contacts. Edit the bracketed sections before sending.</p>
+        </div>
+        <button class="copy-btn" onclick="copySection('press-content')">Copy press release</button>
+      </div>
+
+      <div class="report-block" id="press-content">
+        <div class="report-text" id="pressText"></div>
+      </div>
+    </div>
+
+    <!-- SOCIAL POSTS -->
+    <div class="output-panel" id="panel-output-social">
+      <div style="margin-bottom:24px;">
+        <h3 style="font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--green); margin-bottom:4px;">Social Post Pack</h3>
+        <p style="font-size:13px; color:var(--text-muted);">Four ready-to-post versions for different platforms. Edit to add your own club photos before posting.</p>
+      </div>
+      <div class="social-grid">
+        <div class="social-card">
+          <div class="social-platform">LinkedIn</div>
+          <div class="social-text" id="post-linkedin"></div>
+          <button class="copy-btn" onclick="copyById('post-linkedin')">Copy</button>
+        </div>
+        <div class="social-card">
+          <div class="social-platform">X / Twitter</div>
+          <div class="social-text" id="post-twitter"></div>
+          <button class="copy-btn" onclick="copyById('post-twitter')">Copy</button>
+        </div>
+        <div class="social-card">
+          <div class="social-platform">Facebook</div>
+          <div class="social-text" id="post-facebook"></div>
+          <button class="copy-btn" onclick="copyById('post-facebook')">Copy</button>
+        </div>
+        <div class="social-card">
+          <div class="social-platform">Instagram caption</div>
+          <div class="social-text" id="post-instagram"></div>
+          <button class="copy-btn" onclick="copyById('post-instagram')">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FUNDING GUIDE -->
+    <div class="output-panel" id="panel-output-funding">
+      <div style="margin-bottom:24px;">
+        <h3 style="font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--green); margin-bottom:4px;">Funding Guide</h3>
+        <p style="font-size:13px; color:var(--text-muted);">Your social value evidence strengthens every application below. Each section includes a ready-to-use paragraph for your application.</p>
+      </div>
+      <div id="fundingContent"></div>
+    </div>
+
+    <!-- METHODOLOGY -->
+    <div class="output-panel" id="panel-output-methodology">
+      <div style="margin-bottom:24px;">
+        <h3 style="font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--green); margin-bottom:4px;">Methodology & Sources</h3>
+        <p style="font-size:13px; color:var(--text-muted);">Full transparency on every proxy value used in this assessment. Attach this to any institutional submission.</p>
+      </div>
+
+      <div class="report-block">
+        <table class="method-table">
+          <thead>
+            <tr>
+              <th>Outcome measured</th>
+              <th>Proxy value applied</th>
+              <th>Primary source</th>
+              <th>Year</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Wellbeing value: child ages 7–11 (active 2+/wk: £3,100 / fairly active: £1,700)</td>
+              <td class="val-cell">Active £3,100 / Fairly active £1,700 / child / yr</td>
+              <td>Sport England Social Value Model Year 2 (November 2025) (Sheffield Hallam / MMU / State of Life)<br><a href="https://www.sportengland.org/research-and-data/research/social-value-and-return-investment-sport-and-physical-activity" target="_blank">sportengland.org</a></td>
+              <td>Year 2 (November 2025)</td>
+            </tr>
+            <tr>
+              <td>Wellbeing value: child ages 11–16 (active 2+/wk: £4,300 / fairly active: £3,300)</td>
+              <td class="val-cell">Active £4,300 / Fairly active £3,300 / child / yr</td>
+              <td>Sport England Social Value Model Year 2 (November 2025) (Sheffield Hallam / MMU / State of Life)</td>
+              <td>Year 2 (November 2025)</td>
+            </tr>
+            <tr>
+              <td>Wellbeing value: active adult (2+ sessions/week)</td>
+              <td class="val-cell">£2,600 / adult / yr</td>
+              <td>Sport England Social Value Model Year 2 (November 2025)</td>
+              <td>Year 2 (November 2025)</td>
+            </tr>
+            <tr>
+              <td>Wellbeing value: fairly active adult (1 session/week)</td>
+              <td class="val-cell">£1,200 / adult / yr</td>
+              <td>Sport England Social Value Model</td>
+              <td>Year 2 (November 2025)</td>
+            </tr>
+            <tr>
+              <td>Wellbeing value: disabled/long-term health condition adult</td>
+              <td class="val-cell">£5,300 / adult / yr</td>
+              <td>Sport England Social Value Model</td>
+              <td>Year 2 (November 2025)</td>
+            </tr>
+            <tr>
+              <td>NHS/healthcare savings per active adult</td>
+              <td class="val-cell">£478 / adult / yr</td>
+              <td>Conservative derivation from Sport England Secondary Value Model (£10.5bn total across active population). Includes GP visit reduction and mental health service savings.<br><a href="https://microsites.sportengland.org/research-and-data/research/social-value-sport-and-physical-activity" target="_blank">sportengland.org</a></td>
+              <td>Year 2 (November 2025)</td>
+            </tr>
+            <tr>
+              <td>NHS/healthcare savings per active child</td>
+              <td class="val-cell">£90 / child / yr</td>
+              <td>Conservative derivation, Sport England Secondary Value Model (youth health outcomes component)</td>
+              <td>Year 2 (November 2025)</td>
+            </tr>
+            <tr>
+              <td>Volunteer economic value (salary equivalent)</td>
+              <td class="val-cell">£17 / hour</td>
+              <td>Conservative replacement-cost proxy based on ONS earnings data. ONS ASHE 2024 median full-time hourly earnings £18.64 — reduced to £17 to reflect volunteer role mix and replacement-cost context. Not presented as the ONS median wage directly.<br><a href="https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours" target="_blank">ons.gov.uk</a></td>
+              <td>2024</td>
+            </tr>
+            <tr>
+              <td>Volunteer wellbeing value per volunteer per year</td>
+              <td class="val-cell">Weekly: £2,100 / Monthly: £1,000 / vol / yr</td>
+              <td>Sport England Social Value Model Year 2 (November 2025) primary value component (updated Nov 2025). Weekly volunteering £2,100, monthly volunteering £1,000. Applied based on sessions frequency entered by club.<br><a href="https://www.sportengland.org/research-and-data/research/social-value-and-return-investment-sport-and-physical-activity" target="_blank">sportengland.org</a></td>
+              <td>Year 2 (November 2025)</td>
+            </tr>
+            <tr>
+              <td>Community programme value per participant</td>
+              <td class="val-cell">£650 / participant / yr</td>
+              <td>Conservative custom proxy. Note: Sport England’s current Year 2 (November 2025) secondary value model is scoped to health outcomes only. The £14.2bn community cohesion figure belongs to earlier Sport England research (pre-2024). This value is a planning and communication estimate — do not attribute to the current SE Year 2 (November 2025) model.</td>
+              <td>Custom proxy (earlier SE research)</td>
+            </tr>
+            <tr>
+              <td>WELLBY monetary unit (1-point life satisfaction change)</td>
+              <td class="val-cell">£15,900 / WELLBY</td>
+              <td>HM Treasury Green Book Supplementary Guidance on Wellbeing (2021), uprated to 2024 prices. LSE / Simetrica-Jacobs methodology. Base value: £13,000 (2019 prices).<br><a href="https://www.gov.uk/government/publications/the-green-book-appraisal-and-evaluation-in-central-government" target="_blank">gov.uk</a></td>
+              <td>2024</td>
+            </tr>
+            <tr>
+              <td>Neurodivergent prevalence estimate</td>
+              <td class="val-cell">10–20% (user-selected)</td>
+              <td>ADHD: ~5–7% (NHS Digital); Autism: ~1–2% (NHS Digital); Dyslexia: ~10% (British Dyslexia Association); with significant co-occurrence. Default of 14% reflects combined conservative estimate with overlap adjustment.</td>
+              <td>2023</td>
+            </tr>
+            <tr>
+              <td>Annual mental health difficulty prevalence (children/youth)</td>
+              <td class="val-cell">~20% / year</td>
+              <td>NHS Digital Mental Health of Children and Young People in England Survey 2023. ~1 in 5 children and young people (updated from previously cited 1-in-4 figure). 20.3% of 8–16-year-olds, 23.3% of 17–19-year-olds had a probable mental disorder.</td>
+              <td>2023</td>
+            </tr>
+            <tr>
+              <td>Value at Stake — scenario model</td>
+              <td class="val-cell">12% disengagement assumption</td>
+              <td><strong>This is a scenario model, not an evidence-based projection.</strong> It applies a 12% assumed disengagement rate to the additional-need cohort (players estimated to require additional support), multiplied by average wellbeing value per player. The purpose is to illustrate the fragility of social value when hidden need goes unmet — not to claim precision. The 12% figure is a conservative planning assumption; no published study directly measures dropout rates attributable specifically to unmet neurodivergent or mental health need in football. This figure should be treated as a prompt for reflection, not a forecast.</td>
+              <td>Model assumption</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="method-caveat">
+          <strong>Important caveat:</strong> Proof of Play produces estimates, not audited valuations. All proxy values are drawn from primary published sources and applied conservatively. Figures represent the approximate social value attributable to the activities entered — they are not a claim that this value has been precisely generated or independently verified. For formal SROI assessments or academic submissions, we recommend commissioning a full Portas Consulting or Sheffield Hallam SIRC evaluation. This tool is designed to help clubs understand and communicate their social contribution with credibility. <strong>Methodology produced by FMHA. Powered by Proof of Play. fmha.academy</strong>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /output-body -->
+</div><!-- /outputs-section -->
+
+<footer class="footer">
+  <p><strong>Proof of Play</strong> is developed and maintained by the Football Mental Health Alliance (FMHA).<br>
+  Proxy values sourced from Sport England, HM Treasury, ONS and Sheffield Hallam University. Full methodology in the Methodology tab.<br>
+  <strong>fmha.academy</strong> · This tool produces estimates. Figures are not independently audited.</p>
+</footer>
+
+<script>
+// ─── STATE ───────────────────────────────────────────
+const state = {
+  clubName: '', area: '', countyFA: '', yearFounded: '', clubType: 'mixed', charterLevel: 'none',
+  quoteText: '', quoteName: '', quoteRole: '',
+  youth_5_6_m: 0, youth_5_6_f: 0,
+  youth_7_11_m: 0, youth_7_11_f: 0,
+  youth_11_16_m: 0, youth_11_16_f: 0,
+  youth_16_18_m: 0, youth_16_18_f: 0,
+  youth_sessions: '2',
+  adult_male: 0, adult_female: 0, adult_disability: 0, adult_sessions: '2', adult_sessions_unit: 'week', youth_sessions_unit: 'week',
+  num_volunteers: 0, vol_hours_per_week: '4',
+  num_coaches: 0, num_dbs: 0, num_paid_staff: 0, has_welfare: 'no',
+  num_programmes: 0, community_reach: 0,
+  facility_community: false, has_mental_health: false, school_links: false,
+  annual_income: 0, annual_expenditure: 0,
+  nd_prevalence: '14',
+  clubPostcode: '', imdDecile: null, imdArea: '',
+  participantQuotes: [{text:'',name:'',role:''},{text:'',name:'',role:''},{text:'',name:'',role:''}],
+  activeSection: 'club', activeOutput: 'summary'
+};
+
+function updateState(key, val) {
+  state[key] = val;
+  recalculate();
+}
+
+// Safe DOM helpers — never throw if element is missing
+function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+function setHTML(id, val) { const el = document.getElementById(id); if (el) el.innerHTML = val; }
+
+function updateParticipantQuote(idx) {
+  const text = document.getElementById(`pq-text-${idx}`)?.value || '';
+  const name = document.getElementById(`pq-name-${idx}`)?.value || '';
+  const role = document.getElementById(`pq-role-${idx}`)?.value || '';
+  state.participantQuotes[idx] = { text, name, role };
+  recalculate();
+}
+
+function renderImdResult(decile, admin, ward, result) {
+  state.imdDecile = decile;
+  if (decile <= 2) {
+    result.className = 'imd-result visible imd-priority';
+    result.innerHTML = `<strong>IMD Decile ${decile} — High priority area</strong>Your club is in one of the most deprived areas in England. This significantly strengthens eligibility for Sport England, National Lottery, and Peter Harrison Foundation funding. Prominently noted in your report and funding guide.`;
+  } else if (decile <= 4) {
+    result.className = 'imd-result visible imd-priority';
+    result.innerHTML = `<strong>IMD Decile ${decile} — Priority area</strong>Your area falls in the bottom 40% for deprivation. Sport England's Movement Fund and National Lottery prioritise clubs in deciles 1–4. Noted in your funding guide.`;
+  } else if (decile <= 7) {
+    result.className = 'imd-result visible imd-mid';
+    result.innerHTML = `<strong>IMD Decile ${decile} — Mid-range deprivation</strong>${ward ? ward + ', ' : ''}${admin}. Most mainstream funding programmes are available. Some targeted funds (Peter Harrison Foundation) require decile 1 — flagged in your funding guide.`;
+  } else {
+    result.className = 'imd-result visible imd-low';
+    result.innerHTML = `<strong>IMD Decile ${decile} — Lower deprivation area</strong>${ward ? ward + ', ' : ''}${admin}. Deprivation-targeted funds are less accessible, but the Football Foundation, Awards for All and mainstream Sport England funding remain open.`;
+  }
+  recalculate();
+}
+
+async function lookupPostcode() {
+  const postcode = state.clubPostcode.replace(/\s/g, '');
+  if (!postcode || postcode.length < 5) return;
+
+  const btn = document.getElementById('postcodeBtn');
+  const result = document.getElementById('imdResult');
+  btn.textContent = 'Looking up...';
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(postcode)}`);
+    const data = await res.json();
+
+    if (data.status !== 200 || !data.result) {
+      result.className = 'imd-result visible imd-low';
+      result.innerHTML = '<strong>Postcode not found</strong>Check the postcode and try again. Your report will still generate — the deprivation lookup is optional.';
+      return;
+    }
+
+    const d = data.result;
+    let decile = d.index_of_multiple_deprivation?.decile ?? null;
+    const admin = d.admin_district || '';
+    const ward  = d.admin_ward || '';
+    const lsoa  = d.lsoa || '';
+
+    state.imdArea = admin || state.area;
+    if (!state.area && admin) {
+      state.area = admin;
+      const areaInput = document.getElementById('area');
+      if (areaInput && !areaInput.value) areaInput.value = admin;
+    }
+
+    // If postcodes.io has the decile, use it directly
+    if (decile !== null) {
+      renderImdResult(decile, admin, ward, result);
+      return;
+    }
+
+    // Step 2: postcodes.io missing decile — query our Supabase district_imd table
+    // postcodes.io returns admin_district_code which maps to our district table
+    const districtCode = d.codes?.admin_district || '';
+    if (districtCode) {
+      try {
+        result.className = 'imd-result visible imd-low';
+        result.innerHTML = '<strong>Checking deprivation data...</strong>';
+        const sbRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/district_imd?district_code=eq.${encodeURIComponent(districtCode)}&select=imd_decile,district_name`,
+          { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+        );
+        const sbData = await sbRes.json();
+        if (sbData && sbData.length > 0 && sbData[0].imd_decile) {
+          decile = sbData[0].imd_decile;
+          renderImdResult(decile, admin, ward, result);
+          return;
+        }
+      } catch(e) { /* silent */ }
+    }
+
+    // All lookups exhausted — show area but no decile
+    state.imdDecile = null;
+    result.className = 'imd-result visible imd-low';
+    result.innerHTML = `<strong>Location confirmed: ${admin || postcode}</strong>Deprivation index not available for this postcode. Your report will still generate correctly — enter your area manually below if not already filled.`;
+    recalculate();
+
+  } catch (err) {
+    result.className = 'imd-result visible imd-low';
+    result.innerHTML = '<strong>Lookup unavailable</strong>Could not connect to the postcode service. Your report will still generate correctly without the deprivation data.';
+  } finally {
+    btn.textContent = 'Look up';
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+// ─── CALCULATION ENGINE ───────────────────────────────
+function calculate() {
+  const s = state;
+
+  const y56  = (s.youth_5_6_m||0)  + (s.youth_5_6_f||0);
+  const y711 = (s.youth_7_11_m||0) + (s.youth_7_11_f||0);
+  const y1116= (s.youth_11_16_m||0)+ (s.youth_11_16_f||0);
+  const y1618= (s.youth_16_18_m||0)+ (s.youth_16_18_f||0);
+  const totalYouth = y56 + y711 + y1116 + y1618;
+
+  const adultAble = (s.adult_male||0) + (s.adult_female||0);
+  const adultDis  = s.adult_disability||0;
+  const totalAdult = adultAble + adultDis;
+  const totalPlayers = totalYouth + totalAdult;
+
+  // ── WELLBEING (Sport England Social Value Model Year 2 (November 2025), published Oct 2024 / updated Nov 2025)
+  // Adult active/fairly-active threshold: 2+ sessions/week = active (£2,600), else fairly active (£1,200)
+  const adultSessRaw = parseFloat(s.adult_sessions||2);
+  const adultSessWk  = s.adult_sessions_unit === 'month' ? adultSessRaw / 4.33 : adultSessRaw;
+  const adultActive  = adultSessWk >= 2;
+  const adultRate    = adultActive ? 2600 : 1200;
+
+  // Youth active/fairly-active threshold: 2+ sessions/week = active, else fairly active
+  const youthSessRaw = parseFloat(s.youth_sessions||2);
+  const youthSessWk  = s.youth_sessions_unit === 'month' ? youthSessRaw / 4.33 : youthSessRaw;
+  const youthActive  = youthSessWk >= 2;
+
+  // Ages 5-6: custom conservative proxy (£1,500) — not directly supported by SE model (age 7+).
+  // Labelled as a custom estimate throughout.
+  const yw56   = y56   * 1500;
+  // Ages 7-11: SE Year 2 (November 2025) — active £3,100 / fairly active £1,700
+  const yw711  = y711  * (youthActive ? 3100 : 1700);
+  // Ages 11-16: SE Year 2 (November 2025) — active £4,300 / fairly active £3,300
+  const yw1116 = y1116 * (youthActive ? 4300 : 3300);
+  // Ages 16-18: treated as adult threshold (transition group)
+  const yw1618 = y1618 * adultRate;
+
+  const youthWellbeing = yw56 + yw711 + yw1116 + yw1618;
+  // Disabled/LTHC adults: SE Year 2 (November 2025) — £5,300
+  const adultWellbeing = (adultAble * adultRate) + (adultDis * 5300);
+  const totalWellbeing = youthWellbeing + adultWellbeing;
+
+  // ── NHS SAVINGS (conservative custom proxy — not directly derived from SE Year 2 (November 2025) secondary model)
+  // SE secondary model (health outcomes only, adults 16+ only) gives £478 active / £330 fairly active.
+  // We apply a deliberately conservative club-scale proxy. Youth figure is unsupported by current SE
+  // secondary model and is labelled as a planning estimate only.
+  const nhsAdult = totalAdult * (adultActive ? 175 : 120);
+  const nhsYouth = totalYouth * 90; // custom proxy — not in current SE secondary model
+  const nhsTotal = nhsAdult + nhsYouth;
+
+  // ── VOLUNTEER VALUE
+  const numVol = s.num_volunteers||0;
+  const hrsWk  = parseFloat(s.vol_hours_per_week)||4;
+  const totalVolHrs = numVol * hrsWk * 46; // 46 active weeks/year (NCVO benchmark)
+  // Economic value: conservative replacement-cost proxy based on ONS earnings data (£17/hr)
+  // ONS 2024 median full-time hourly earnings £18.64 — reduced to reflect volunteer role mix
+  const volEcon = totalVolHrs * 17;
+  // Wellbeing value: SE Year 2 (November 2025) primary value model
+  // Weekly volunteering £2,100 / monthly volunteering £1,000
+  const volSessWk = s.adult_sessions_unit === 'month'
+    ? (parseFloat(s.adult_sessions||2) / 4.33)
+    : parseFloat(s.adult_sessions||2);
+  const volWellRate = volSessWk >= 1 ? 2100 : 1000;
+  const volWell  = numVol * volWellRate;
+  const volTotal = volEcon + volWell;
+
+  // ── COMMUNITY VALUE (custom proxy — not derived from SE Year 2 (November 2025) secondary model)
+  // SE current secondary model is scoped to health outcomes only. Community cohesion figures
+  // belong to earlier SE research. This figure is a conservative custom proxy for planning
+  // and communication purposes only.
+  const cr = s.community_reach||0;
+  const facilityBonus = s.facility_community ? cr * 150 : 0;
+  const communityValue = (cr * 650) + facilityBonus;
+
+  const totalValue = totalWellbeing + nhsTotal + volTotal + communityValue;
+
+  // ── SROI (expenditure-based — only shown when annual expenditure is entered)
+  // Formula: total social value ÷ annual expenditure = £X per £1 spent
+  // Uses expenditure not income — SROI measures return on investment (what is spent)
+  const expenditure = s.annual_expenditure||0;
+  const sroi = expenditure > 0 ? (totalValue / expenditure) : null;
+  const income = s.annual_income||0;
+
+  // ── ND/MH (statistical projections — not diagnosed individuals)
+  const ndPct     = parseFloat(s.nd_prevalence||14) / 100;
+  const ndPlayers = Math.round(totalPlayers * ndPct);
+  // NHS Digital MHCYP 2023: ~1 in 5 children/young people (20%) — updated from previous 1 in 4 estimate
+  const mhPlayers = Math.round(totalPlayers * 0.20);
+  const overlap   = Math.round(ndPlayers * 0.30);
+  const addNeed   = ndPlayers + mhPlayers - overlap;
+
+  const totalReach = totalPlayers + numVol + cr;
+
+  // Value at risk — 12% assumed disengagement × avg wellbeing per player (scenario estimate only)
+  const avgWellbeing = totalPlayers > 0 ? (totalWellbeing / totalPlayers) : 2600;
+  const riskVal = Math.round(addNeed * 0.12 * avgWellbeing);
+
+  return {
+    y56, y711, y1116, y1618, totalYouth,
+    yw56, yw711, yw1116, yw1618,
+    adultAble, adultDis, totalAdult, totalPlayers,
+    youthWellbeing, adultWellbeing, totalWellbeing,
+    nhsAdult, nhsYouth, nhsTotal,
+    volEcon, volWell, volTotal, numVol, totalVolHrs,
+    communityValue, cr,
+    totalValue, sroi, income, expenditure,
+    ndPlayers, mhPlayers, overlap, addNeed,
+    totalReach, adultRate, riskVal
+  };
+}
+
+// ─── FORMAT HELPERS ───────────────────────────────────
+function fmt(n) {
+  if (n === 0) return '£0';
+  if (n >= 1000000) return '£' + (n/1000000).toFixed(2) + 'M';
+  if (n >= 1000) return '£' + Math.round(n/1000) + 'K';
+  return '£' + Math.round(n).toLocaleString();
+}
+
+function fmtFull(n) {
+  return '£' + Math.round(n).toLocaleString();
+}
+
+function fmtNum(n) {
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return n.toLocaleString();
+}
+
+// ─── RECALCULATE & UPDATE UI ──────────────────────────
+function recalculate() {
+  const r = calculate();
+  const club = state.clubName || 'Your club';
+  const area = state.area || 'your community';
+
+  // Sidebar & header
+  setText('headerTotal',  fmt(r.totalValue));
+  setText('sidebarTotal', fmt(r.totalValue));
+  setText('sidebarClubName', r.totalValue > 0 ? club : 'Enter your details to calculate');
+  setText('svWellbeing',  fmt(r.totalWellbeing));
+  setText('svNHS',        fmt(r.nhsTotal));
+  setText('svVol',        fmt(r.volTotal));
+  setText('svCommunity',  fmt(r.communityValue));
+  setText('statPlayers',  r.totalPlayers.toLocaleString());
+  setText('statVols',     r.numVol.toLocaleString());
+  setText('statReach',    fmtNum(r.totalReach));
+  setText('statVolHrs',   fmtNum(Math.round(r.totalVolHrs)));
+  setText('statND',       r.ndPlayers);
+  setText('statMH',       r.mhPlayers);
+  setText('statAdditional', r.addNeed);
+
+  // Value at risk card
+  setText('riskValue', fmt(r.riskVal));
+
+  // Reality layer
+  setText('rl-nd',   r.ndPlayers);
+  setText('rl-mh',   r.mhPlayers);
+  setText('rl-add',  r.addNeed);
+  setText('rl-risk', fmt(r.riskVal));
+
+  // Live ND hint in players section
+  const hint = document.getElementById('liveNdHint');
+  if (hint) {
+    if (r.totalPlayers > 0) {
+      hint.style.display = 'block';
+      setText('liveNdText', `Based on what you've entered, around ${r.ndPlayers} players in your squad may be neurodivergent`);
+      setText('liveMhText', r.mhPlayers);
+    } else {
+      hint.style.display = 'none';
+    }
+  }
+
+  // SROI card — only shown when expenditure is entered (not income)
+  const sroiCard = document.getElementById('sroiCard');
+  if (sroiCard) {
+    if (r.sroi && r.expenditure > 0) {
+      sroiCard.classList.add('visible');
+      setText('sroiVal', r.sroi.toFixed(2));
+    } else {
+      sroiCard.classList.remove('visible');
+    }
+  }
+
+  updateChairman(r, club, area);
+  updateFullReport(r, club, area);
+  updatePressRelease(r, club, area);
+  updateSocialPosts(r, club, area);
+  updateFunding(r, club, area);
+}
+
+// ─── CHAIRMAN'S SUMMARY ───────────────────────────────
+function updateChairman(r, club, area) {
+  setText('ch-clubName',  club);
+  setText('ch-total',     fmt(r.totalValue));
+  setText('ch-area',      area);
+  setText('ch-wellbeing', fmt(r.totalWellbeing));
+  setText('ch-nhs',       fmt(r.nhsTotal));
+  setText('ch-vol',       fmt(r.volTotal));
+  setText('ch-community', fmt(r.communityValue));
+  setText('ch-wellbeing-desc', `Across ${r.totalPlayers.toLocaleString()} players — physical health, mental wellbeing, life skills and social connection`);
+  setText('ch-nhs-desc',  `From ${r.totalPlayers.toLocaleString()} active participants — reduced GP visits, disease prevention and mental health savings`);
+  setText('ch-vol-desc',  `${r.numVol.toLocaleString()} volunteers — skills development, FA qualifications, leadership and community belonging`);
+  setText('ch-community-desc', r.cr > 0
+    ? `Across ${r.cr.toLocaleString()} community programme participants`
+    : 'Add community programme numbers to calculate');
+  const qt = state.quoteText || 'We\'ve always known this club matters to our community — but seeing the scale of it laid out like this really brings it home.';
+  const qn = state.quoteName || 'Club Representative';
+  const qr = state.quoteRole || '';
+  setText('ch-quote', `"${qt}"`);
+  setText('ch-attribution', `— ${qn}${qr ? ', ' + qr : ''}`);
+}
+
+// ─── FULL REPORT ──────────────────────────────────────
+function updateFullReport(r, club, area) {
+  const dateStr = new Date().toLocaleDateString('en-GB', {month:'long', year:'numeric'});
+  setText('rpt-heading', `The Social Value of ${club}`);
+  setHTML('rpt-subheading', `Social Value Assessment · Proof of Play · Powered by FMHA · ${dateStr}`);
+
+  const charter = {none:'', charter:'FA Charter Standard Club', development:'FA Charter Standard Development Club', community:'FA Charter Standard Community Club'}[state.charterLevel] || '';
+  const charterStr = charter ? ` ${club} holds ${charter} status.` : '';
+  const sroiStr = r.sroi ? ` For every £1 invested in the club, this represents a social return of £${r.sroi.toFixed(2)}.` : '';
+  const foundedStr = state.yearFounded ? ` Founded in ${state.yearFounded}, the` : ' The';
+  const cfa = state.countyFA ? `, affiliated with ${state.countyFA}` : '';
+
+  const imdLine = state.imdDecile ? `\n─────────────────────────────────────\n\nLOCAL CONTEXT: AREA DEPRIVATION\n\nThis club is located in IMD Decile ${state.imdDecile} (${state.imdDecile <= 2 ? 'among the most deprived areas in England' : state.imdDecile <= 4 ? 'a priority area for deprivation-targeted funding' : state.imdDecile <= 7 ? 'a mid-range deprivation area' : 'a lower deprivation area'}). The Index of Multiple Deprivation (IMD) measures relative deprivation across income, employment, health, education, housing and crime. Decile 1 = most deprived; Decile 10 = least deprived.\n\n${state.imdDecile <= 4 ? `The club's location in a priority deprivation area strengthens eligibility for Sport England's Movement Fund, National Lottery Community Fund and other targeted programmes. This data is referenced in the Funding Guide.` : `Mainstream funding programmes remain fully accessible. Highly targeted deprivation funds (e.g. Peter Harrison Foundation, which requires Decile 1) are noted in the Funding Guide with eligibility flags.`}\n\nSource: Office for Health Improvement & Disparities / Ministry of Housing, Communities & Local Government — English Indices of Multiple Deprivation (2019, updated). Postcode: ${state.clubPostcode}.` : '';
+
+  const quotesBlock = state.participantQuotes
+    .filter(q => q.text && q.text.trim())
+    .map(q => `"${q.text.trim()}"\n— ${q.name || 'Club member'}${q.role ? ', ' + q.role : ''}`)
+    .join('\n\n');
+
+  const quotesSection = quotesBlock ? `\n─────────────────────────────────────\n\nIN THEIR OWN WORDS\n\nThe following quotes are from players, parents/carers/guardians and volunteers at ${club}. These are included here for use in grant applications, press releases and stakeholder communications — alongside the quantitative evidence above.\n\n${quotesBlock}\n\n` : '';
+
+  const confNote = `\n─────────────────────────────────────\n\nDATA CONFIDENCE GUIDE\n\n[REPORTED BY CLUB] Hard data entered directly by the club — player numbers, volunteer hours, community reach, income. These figures are factual inputs and can be cited as club records.\n\n[ESTIMATED FROM MODEL] Figures derived from national proxy values applied to your club's data — wellbeing values, NHS savings, volunteer wellbeing contribution. Statistically sound estimates grounded in published sources, but not independently audited. Present as evidence-informed estimates and pair with local qualitative evidence.\n\n[CONTEXTUAL AREA DATA] Information from official area-level datasets — IMD deprivation decile, local authority profile. Sourced from government data via postcode lookup, not entered by the club.\n\n[SCENARIO ESTIMATE] Illustrative planning figures based on stated assumptions. The Value at Stake figure uses a 12% assumed disengagement rate — a planning prompt, not a forecast. Do not present as a confirmed outcome.\n`;
+
+  const text = `HOW TO READ THIS REPORT
+───────────────────────────────────────
+
+This report combines two types of information:
+
+WHAT THE CLUB REPORTED — player numbers, volunteer hours, community reach, income and infrastructure details entered directly by the club. These figures are factual inputs and can be cited as club records.
+
+WHAT THE MODEL ESTIMATED — social value figures (wellbeing, NHS savings, volunteer value, community impact) derived from national proxy values published by Sport England, HM Treasury, the ONS and NHS Digital. These are evidence-informed estimates, not audited measurements. They are statistically grounded and appropriate for grant applications, stakeholder reporting and community communication — but should be presented as estimates and paired with local qualitative evidence for strongest impact.
+
+STATISTICAL PROJECTIONS — the neurodiversity and mental health figures are statistical estimates based on national prevalence data. They are not diagnosed individuals. They should never be presented as confirmed counts.
+
+SCENARIO ESTIMATES — the Value at Stake figure is an illustrative planning prompt based on an assumed disengagement rate. It is not a forecast.
+
+This report is designed to help ${club} explain, communicate and evidence its community contribution. It is not a substitute for formal evaluation, audited accounts or clinical assessment.
+
+─────────────────────────────────────
+
+EXECUTIVE SUMMARY
+
+${club} generates an estimated ${fmt(r.totalValue)} in social value annually — supporting the physical health, mental wellbeing, personal development and community connection of ${r.totalReach.toLocaleString()} players, volunteers and community participants in ${area}.${sroiStr}
+
+This assessment was produced using Proof of Play, a social value calculator powered by the Football Mental Health Alliance (FMHA), and is grounded in HM Treasury WELLBY methodology and Sport England's Year 2 (November 2025) Social Value Model, developed with Sheffield Hallam University, Manchester Metropolitan University and State of Life.
+
+─────────────────────────────────────
+
+CLUB PROFILE
+
+${foundedStr} club is based in ${area}${cfa}.${charterStr} It currently supports ${r.totalPlayers.toLocaleString()} registered players — ${r.totalYouth.toLocaleString()} youth players across multiple age groups and ${r.totalAdult.toLocaleString()} adult players — alongside ${r.numVol.toLocaleString()} volunteers who collectively contribute approximately ${Math.round(r.totalVolHrs).toLocaleString()} hours per year to the running of the club.${r.cr > 0 ? ` The club also delivers community programmes reaching a further ${r.cr.toLocaleString()} individuals.` : ''}
+
+─────────────────────────────────────
+
+SOCIAL VALUE BREAKDOWN
+
+1. PARTICIPANT WELLBEING VALUE: ${fmt(r.totalWellbeing)}
+
+Regular participation in football and physical activity generates significant wellbeing value, assessed using the Treasury-approved WELLBY (Wellbeing-Adjusted Life Year) methodology. Values are drawn from Sport England's Social Value Model Year 2 (November 2025).
+
+WHAT THIS MEANS FOR YOUNG PLAYERS
+Youth football generates value across dimensions that funders, schools, local authorities and health commissioners increasingly want evidenced:
+• Physical health — regular activity reduces obesity risk, improves cardiovascular health and establishes lifelong healthy habits
+• Mental wellbeing — structured team sport is associated with reduced anxiety and depression risk in young people (NHS Digital, 2023)
+• Life skills — communication, resilience, accountability and pressure management; skills transferable directly into education and employment
+• Social connection — belonging to a team reduces isolation, builds peer relationships across backgrounds and supports identity development
+• For families — parents/carers/guardians benefit from social connection with other families, shared purpose and child development support beyond the school gate
+
+WHAT THIS MEANS FOR ADULT PLAYERS
+Adult football generates comparable wellbeing value alongside specific outcomes:
+• Sustained physical activity reducing long-term health risk and NHS demand
+• Mental health protection — social sport is one of the most effective interventions against adult loneliness and depression
+• Community identity — adults who play for their local club are active stakeholders in the community, not just residents
+
+Youth players (ages 7–11): ${r.y711.toLocaleString()} players × £3,100 = ${fmtFull(r.yw711||0)}
+Youth players (ages 11–16): ${r.y1116.toLocaleString()} players × £4,300 = ${fmtFull(r.yw1116||0)}
+Youth players (ages 5–6): ${r.y56.toLocaleString()} players × £1,500 = ${fmtFull(r.yw56||0)}
+Youth players (ages 16–18): ${r.y1618.toLocaleString()} players × £${r.adultRate.toLocaleString()} = ${fmtFull(r.yw1618||0)}
+Adult players: ${r.adultAble.toLocaleString()} players × £${r.adultRate.toLocaleString()} = ${fmtFull(r.adultAble * r.adultRate)}${r.adultDis > 0 ? `\nDisability participants: ${r.adultDis.toLocaleString()} players × £5,300 = ${fmtFull(r.adultDis * 5300)}` : ''}
+
+2. NHS & HEALTHCARE SAVINGS: ${fmt(r.nhsTotal)}
+
+Active participation reduces demand on NHS services through disease prevention, reduced GP visits and lower mental health service usage. This figure represents a conservative derivation from Sport England's Secondary Value Model, which calculates £10.5 billion in annual healthcare savings from physical activity nationally.
+
+Youth healthcare savings: ${r.totalYouth.toLocaleString()} players × £90 = ${fmtFull(r.nhsYouth)}
+Adult healthcare savings: ${r.totalAdult.toLocaleString()} players × £175 = ${fmtFull(r.nhsAdult)}
+
+3. VOLUNTEER CONTRIBUTION: ${fmt(r.volTotal)}
+
+${club}'s ${r.numVol.toLocaleString()} volunteers are the engine of the club. Their contribution is valued across two dimensions: the economic value of their time (using the ONS median hourly wage of £17) and the wellbeing value that volunteering generates for the volunteers themselves (Sport England's Social Value Model Year 2: £2,100 per volunteer per year).
+
+Economic value of volunteer hours: ${Math.round(r.totalVolHrs).toLocaleString()} hours × £17 = ${fmtFull(r.volEcon)}
+Wellbeing value of volunteering: ${r.numVol.toLocaleString()} volunteers × £2,100 = ${fmtFull(r.volWell)}
+
+WHAT VOLUNTEERING GENERATES BEYOND THE NUMBERS
+The economic and wellbeing figures above are conservative proxies. The full value of ${club}'s volunteer workforce includes outcomes that no proxy fully captures:
+
+• Skills development and FA qualifications — coaches hold nationally recognised FA Level 1, Level 2 and UEFA awards; welfare officers hold FA safeguarding credentials. The club is effectively a non-formal education and professional development provider at no cost to the public purse
+• Leadership and personal fulfilment — volunteers develop project management, financial governance, communication and leadership skills alongside the deep personal satisfaction of building something that matters to their community
+• Accredited pathways — FA-qualified coaches gain credentials with direct employment value in sport, education, health and community settings
+• Health and activity — many volunteers are active participants themselves, generating personal health benefit alongside their organisational contribution
+• Community anchoring — volunteers are visible local figures who model civic participation, attract further volunteers and sustain the club's relationship with its community across generations
+
+${r.cr > 0 ? `4. COMMUNITY PROGRAMME VALUE: ${fmt(r.communityValue)}
+
+The club delivers programmes reaching ${r.cr.toLocaleString()} community members beyond its registered player base. Community programmes generate value through improved social cohesion, reduced isolation, improved health outcomes and strengthened community trust. A conservative proxy of £650 per participant is applied, derived from Sport England's community cohesion component of its Secondary Value Model.
+
+The club's community offer extends the reach of football well beyond registered players. Walking football, disability programmes, holiday camps, school partnerships and open facility access serve populations with the highest unmet need — and generate social value that the participation numbers alone do not capture. This matters to the Football Foundation, Sport England and local authority commissioners who are increasingly funding community outcomes, not just participation numbers.` : '4. COMMUNITY PROGRAMME VALUE: £0\n\nNo community programme data entered. If your club runs holiday camps, walking football, disability sessions, school partnerships or opens its facilities to community groups — add those numbers to unlock this section of your social value assessment. These programmes often unlock the highest-value funding streams.'}
+
+─────────────────────────────────────
+
+THE HIDDEN PICTURE: NEURODIVERSITY & MENTAL HEALTH
+
+This section reflects FMHA's core expertise and something no standard social value calculator addresses.
+
+Based on published prevalence data, an estimated ${r.ndPlayers.toLocaleString()} players at ${club} may be neurodivergent — a figure that rises to around ${r.mhPlayers.toLocaleString()} when considering those likely to experience a mental health difficulty during the season (based on a 1-in-5 prevalence estimate, NHS Digital 2023). Accounting for overlap between the two populations, approximately ${r.addNeed.toLocaleString()} players may require additional understanding, communication adjustments or wellbeing support at any given time.
+
+This is not a welfare crisis — it is a reality that every club is already navigating, often without knowing it. Clubs that understand this picture are better positioned to retain players, support volunteers, access training funding and demonstrate duty of care.
+
+Source: NHS Digital Mental Health of Children and Young People in England 2023; British Dyslexia Association; NHS Digital Learning Disabilities and Autism Programme.
+
+─────────────────────────────────────
+
+SOCIAL RETURN ON INVESTMENT${r.sroi ? `
+
+Based on the club's stated annual income of ${fmtFull(r.income)}, the Social Return on Investment for ${club} is £${r.sroi.toFixed(2)} for every £1 spent. This means the club generates approximately ${r.sroi.toFixed(1)} times its operating cost in social value for ${area}.` : '\n\nAdd annual income in the Financials section to calculate your club\'s Social Return on Investment — the social value generated per £1 spent.'}
+
+─────────────────────────────────────
+
+ESG FRAMING — FOR SPONSORSHIP AND INVESTMENT CONVERSATIONS
+
+Environmental, Social and Governance (ESG) reporting is now standard for businesses of all sizes seeking to demonstrate community impact. ${club}'s Proof of Play assessment provides the social component of an ESG narrative in a format sponsors, local businesses and investors recognise.
+
+The figures in this report — quantified social return, NHS savings, volunteer workforce value, community reach — translate directly into the language of corporate social responsibility, community investment and stakeholder impact. For any local business considering a shirt sponsorship, ground naming or community partnership, this assessment answers the question they are increasingly required to ask: what is the measurable community benefit of our investment?
+
+This positions ${club} not just as a club seeking funding, but as a community asset generating documented public value — a fundamentally different and stronger commercial proposition for the boardroom, the AGM, and the County FA.
+
+─────────────────────────────────────
+
+METHODOLOGY SUMMARY
+
+This assessment uses proxy values from the following primary sources:
+
+• Sport England Social Value Model Year 2 (November 2025) (Sheffield Hallam University / Manchester Metropolitan University / State of Life) — for wellbeing and healthcare values
+• HM Treasury Green Book Supplementary Guidance on Wellbeing (2021, uprated to 2024) — WELLBY monetary value: £15,900 per WELLBY
+• ONS Annual Survey of Hours and Earnings 2024 — volunteer hour valuation (£17/hr conservative)
+• Sport England Year 2 (November 2025) — volunteer wellbeing value (£1,600/yr)
+• NCVO — volunteer hours data (average 8 hours/month)
+• NHS Digital Mental Health of Children and Young People Survey 2023 — mental health prevalence
+
+Full source table is included in the Methodology tab.
+
+IMPORTANT: This assessment produces estimates based on published proxy values. It is not an independently audited SROI report. For formal valuations, contact FMHA or commission a full Sheffield Hallam SIRC evaluation.
+${confNote}${imdLine}${quotesSection}
+─────────────────────────────────────
+
+Proof of Play · Powered by FMHA · fmha.academy
+${new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'})}`;
+
+  setText('fullReportText', text);
+}
+
+// ─── PRESS RELEASE ────────────────────────────────────
+function updatePressRelease(r, club, area) {
+  const qt = state.quoteText || 'We\'ve always known this club matters to our community — but seeing the scale of it laid out like this really brings it home.';
+  const qn = state.quoteName || '[Name]';
+  const qr = state.quoteRole || '[Role]';
+  const cfa = state.countyFA || '[County FA]';
+  const sroiLine = r.sroi ? ` That is equivalent to a social return of £${r.sroi.toFixed(2)} for every £1 the club invests in its own operations.` : '';
+  const ndLine = r.ndPlayers > 0 ? `\n\nThe assessment also highlights the scale of hidden need within the club environment. Based on published NHS prevalence data, an estimated ${r.ndPlayers.toLocaleString()} players at ${club} may be neurodivergent, and around ${r.mhPlayers.toLocaleString()} players are likely to experience a mental health difficulty during the current season. This underlines the wider duty of care that football clubs carry — often without recognition or resource.` : '';
+
+  const additionalQuotes = state.participantQuotes
+    .filter(q => q.text && q.text.trim())
+    .map(q => `${q.name || 'A club member'}${q.role ? ` (${q.role})` : ''} added: "${q.text.trim()}"`)
+    .join('\n\n');
+
+  const text = `FOR IMMEDIATE RELEASE
+
+${club.toUpperCase()} PUBLISHES SOCIAL VALUE ASSESSMENT SHOWING ${fmt(r.totalValue).toUpperCase()} ESTIMATED ANNUAL CONTRIBUTION TO ${area.toUpperCase()}
+
+New social value assessment shows ${area} football club delivers far more than football — generating ${fmt(r.totalValue)} in community impact every year.
+
+${club}, based in ${area} and affiliated with ${cfa}, has today published the results of an evidence-informed social value assessment estimating the club generates ${fmt(r.totalValue)} annually in social, economic and health value for the local community. The figure is an evidence-based estimate produced using published national methodology, not an independently audited valuation.${sroiLine}
+
+The assessment, produced using Proof of Play — a social value calculator developed by the Football Mental Health Alliance (FMHA) and grounded in HM Treasury's approved WELLBY methodology and Sport England's Year 2 (November 2025) Social Value Model — breaks down the club's contribution across four areas:
+
+• ${fmt(r.totalWellbeing)} in wellbeing value from ${r.totalPlayers.toLocaleString()} youth and adult players participating regularly in football
+• ${fmt(r.nhsTotal)} in NHS and healthcare savings through improved physical and mental health outcomes
+• ${fmt(r.volTotal)} from the contribution of ${r.numVol.toLocaleString()} volunteers, who collectively give approximately ${Math.round(r.totalVolHrs).toLocaleString()} hours to the club each year${r.cr > 0 ? `\n• ${fmt(r.communityValue)} from community programmes reaching ${r.cr.toLocaleString()} local residents` : ''}
+
+${qn}, ${qr} of ${club}, said: "${qt}"${ndLine}
+
+${additionalQuotes ? additionalQuotes + '\n\n' : ''}What many within the club have long felt can now be expressed in evidence-informed terms. The social value figures are calculated using the Treasury-approved WELLBY framework — the same methodology used by Sport England, NHS commissioners and local authorities to evaluate community investment. Figures are estimates grounded in published national research. A full methodology note is available on request.
+
+ENDS
+
+NOTES TO EDITORS:
+
+About Proof of Play: Proof of Play is a social value calculator for football clubs and professional academies, developed by the Football Mental Health Alliance (FMHA). It uses proxy values drawn from Sport England's Social Value Model Year 2 (November 2025) (produced with Sheffield Hallam University, Manchester Metropolitan University and State of Life), HM Treasury's Green Book WELLBY methodology, and the ONS Annual Survey of Hours and Earnings. Outputs are evidence-informed estimates and are not independently audited. All figures should be presented as estimates in any external communication. Full methodology available at fmha.academy.
+
+About FMHA: The Football Mental Health Alliance delivers mental health and neurodiversity training across all levels of football in the UK. fmha.academy
+
+Media contact: [Insert contact details]
+Date: ${new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'})}`;
+
+  setText('pressText', text);
+}
+
+// ─── SOCIAL POSTS ─────────────────────────────────────
+function updateSocialPosts(r, club, area) {
+  const sroiLine = r.sroi ? `\n\nThat's £${r.sroi.toFixed(2)} back to the community for every £1 we spend. ` : ' ';
+
+  setText('post-linkedin',
+`We've used Proof of Play to estimate the wider social value ${club} creates for ${area} each year — through participation, volunteering and community activity. Here's what the evidence-informed assessment shows.
+
+${fmt(r.totalValue)}. That's the annual social and economic value our club generates for ${area}.
+
+It comes from ${r.totalPlayers.toLocaleString()} players whose health and wellbeing improves through regular football. From ${r.numVol.toLocaleString()} volunteers who give ${Math.round(r.totalVolHrs).toLocaleString()} hours a year — without asking for anything in return.${r.cr > 0 ? ` From ${r.cr.toLocaleString()} community members our programmes reach beyond the pitch.` : ''}${sroiLine}
+We've always known this club matters. Now we can put an evidence-informed number on it.
+
+Assessment produced using Proof of Play, powered by @FMHA. Methodology grounded in HM Treasury WELLBY framework and Sport England's Year 2 (November 2025) Social Value Model.
+
+#Football #SocialValue #CommunityImpact #ProofOfPlay`);
+
+  setText('post-twitter',
+`${club} has used Proof of Play to estimate ${fmt(r.totalValue)} in annual social value for ${area}.
+
+${r.totalPlayers.toLocaleString()} players. ${r.numVol.toLocaleString()} volunteers. ${Math.round(r.totalVolHrs).toLocaleString()} hours given freely.
+
+That's what a football club actually is.
+
+Calculated using @FMHA Proof of Play. #Football #SocialValue #ProofOfPlay`);
+
+  setText('post-facebook',
+`We've just used Proof of Play to estimate the social value ${club} creates for our community each year — and we wanted to share what we found.
+
+Every week, our volunteers give up their time. Our coaches stand in the rain. Our players turn up and work hard. Our committee keeps it all running.
+
+What that adds up to is ${fmt(r.totalValue)} of social and economic value for ${area} every single year.
+
+${fmt(r.totalWellbeing)} in improved health and wellbeing.
+${fmt(r.nhsTotal)} in savings to our NHS.
+${fmt(r.volTotal)} from the incredible contribution of our ${r.numVol.toLocaleString()} volunteers.
+
+This is what football really means. Proud of every single person involved with this club. 🏆
+
+#${(club).replace(/\s/g,'')} #Football #CommunityFirst #ProofOfPlay`);
+
+  setText('post-instagram',
+`${fmt(r.totalValue)} 💚
+
+That's our evidence-informed estimate of the annual social value ${club} creates for ${area}.
+
+${r.totalPlayers.toLocaleString()} players. ${r.numVol.toLocaleString()} volunteers. Immeasurable community spirit.
+
+Now it's measured.
+
+📊 Calculated using Proof of Play by @fmha_official
+#Football #SocialValue #MoreThanAClub #CommunityFootball #ProofOfPlay #${(club).replace(/\s/g,'')}`);
+}
+
+// ─── FUNDING GUIDE ────────────────────────────────────
+function updateFunding(r, club, area) {
+  const container = document.getElementById('fundingContent');
+  const decile = state.imdDecile;
+  const hasIMD = decile !== null;
+
+  // Eligibility helpers
+  const isPriority = hasIMD && decile <= 4;
+  const isDecile1  = hasIMD && decile <= 2;
+  const imdNote    = hasIMD
+    ? `<div class="imd-note">📍 Based on your postcode lookup: IMD Decile ${decile}. ${decile <= 4 ? 'Your area strengthens eligibility for this fund.' : decile <= 7 ? 'Your area meets general eligibility criteria.' : 'This fund prioritises higher deprivation areas — review eligibility carefully.'}</div>`
+    : `<div class="imd-note">💡 Enter your club postcode in Step 1 to see personalised eligibility notes for each funder.</div>`;
+
+  const ineligiblePeterHarrison = hasIMD && decile > 2;
+
+  const sroiStr = r.sroi
+    ? `For every £1 invested, ${club} generates £${r.sroi.toFixed(2)} in social value — a Social Return on Investment that directly supports the Football Foundation's evidence requirements.`
+    : `${club} generates ${fmt(r.totalValue)} in estimated annual social value, delivered through ${r.totalPlayers.toLocaleString()} players and ${r.numVol.toLocaleString()} volunteers.`;
+
+  // Confidence badge helpers
+  const verified    = `<span class="conf-badge conf-reported">Reported by club</span>`;
+  const estimated   = `<span class="conf-badge conf-estimated">Estimated from model</span>`;
+  const contextual  = `<span class="conf-badge conf-contextual">Contextual area data</span>`;
+  const scenario    = `<span class="conf-badge conf-scenario">Scenario estimate</span>`;
+
+  container.innerHTML = `
+
+    ${!hasIMD ? `<div class="info-box" style="margin-bottom:20px;">💡 <strong>Add your postcode in Step 1</strong> to unlock personalised funding eligibility based on your area's deprivation index. Some funds are only open to clubs in priority areas — we'll flag which apply to you.</div>` : ''}
+
+    <div class="funder-card${isPriority ? '' : ''}">
+      <div class="funder-header">
+        <div>
+          <div class="funder-name">Football Foundation — Small Grants${isPriority ? '<span class="funder-priority-badge">✓ Eligible</span>' : ''}</div>
+          <div class="funder-amount">Up to £25,000 · Max 75% of project cost</div>
+        </div>
+        <span class="funder-tag tag-rolling">Rolling applications</span>
+      </div>
+      <div class="funder-body">
+        <div class="funder-criteria">
+          <div class="funder-crit">Football clubs and not-for-profit organisations</div>
+          <div class="funder-crit">Pitches, changing facilities, floodlights, 4G surfaces</div>
+          <div class="funder-crit">Priority for deprived areas (IMD Decile 1–4)</div>
+          <div class="funder-crit">Multi-sport use and participation growth evidence</div>
+        </div>
+        <div class="funder-statement">
+          <strong>Ready-to-use paragraph:</strong> "${club} generates an estimated ${fmt(r.totalValue)} ${estimated} in annual social value for ${area}, supporting ${r.totalPlayers.toLocaleString()} ${verified} players and ${r.numVol.toLocaleString()} ${verified} volunteers. ${sroiStr} Investment in our facilities directly expands this social return — enabling more participants, more volunteer hours and greater NHS savings through increased physical activity."
+        </div>
+        ${imdNote}
+        <a href="https://footballfoundation.org.uk/looking-for-funding" target="_blank" class="copy-btn">Visit Football Foundation →</a>
+      </div>
+    </div>
+
+    <div class="funder-card">
+      <div class="funder-header">
+        <div>
+          <div class="funder-name">Sport England — Movement Fund${isPriority ? '<span class="funder-priority-badge">✓ Priority eligible</span>' : ''}</div>
+          <div class="funder-amount">Grants £300–£15,000 · Crowdfunding pledges available</div>
+        </div>
+        <span class="funder-tag tag-open">Open</span>
+      </div>
+      <div class="funder-body">
+        <div class="funder-criteria">
+          <div class="funder-crit">Not-for-profit organisations</div>
+          <div class="funder-crit">Getting more people active, reducing inactivity</div>
+          <div class="funder-crit">Tackling inequality — 75%+ participants from targeted groups strengthens bid</div>
+          <div class="funder-crit">Priority: IMD Deciles 1–4, disabled people, women & girls</div>
+        </div>
+        <div class="funder-statement">
+          <strong>Ready-to-use paragraph:</strong> "This Proof of Play social value assessment demonstrates ${club}'s measurable contribution to physical activity and community wellbeing in ${area}. Our ${r.totalPlayers.toLocaleString()} ${verified} participants generate ${fmt(r.nhsTotal)} ${estimated} in annual NHS savings and ${fmt(r.totalWellbeing)} ${estimated} in wellbeing value — evidence grounded in Sport England's own Year 2 (November 2025) Social Value Model and HM Treasury WELLBY methodology."
+        </div>
+        ${hasIMD ? `<div class="imd-note">📍 IMD Decile ${decile}: ${decile <= 4 ? '✓ Your area is a priority for Movement Fund — this significantly strengthens your application.' : 'You remain eligible for Movement Fund. Emphasise participant demographics (women, disabled players, lower-income participants) to strengthen your bid.'}</div>` : imdNote}
+        <a href="https://www.sportengland.org/funding-and-campaigns/our-funding/movement-fund" target="_blank" class="copy-btn">Visit Sport England →</a>
+      </div>
+    </div>
+
+    <div class="funder-card">
+      <div class="funder-header">
+        <div>
+          <div class="funder-name">National Lottery Community Fund</div>
+          <div class="funder-amount">Awards for All: £300–£20,000 · Reaching Communities: £20,000+</div>
+        </div>
+        <span class="funder-tag tag-rolling">Rolling</span>
+      </div>
+      <div class="funder-body">
+        <div class="funder-criteria">
+          <div class="funder-crit">Community and voluntary organisations</div>
+          <div class="funder-crit">Bringing people together and building community resilience</div>
+          <div class="funder-crit">Supporting people experiencing disadvantage</div>
+          <div class="funder-crit">"It Starts with Community" 2030 strategy — human stories matter as much as data</div>
+        </div>
+        <div class="funder-statement">
+          <strong>Ready-to-use paragraph:</strong> "${club} is a community anchor organisation in ${area}, generating ${fmt(r.totalValue)} ${estimated} in annual social value through sport, volunteering and community programmes. Our ${r.numVol.toLocaleString()} ${verified} volunteers contribute ${Math.round(r.totalVolHrs).toLocaleString()} ${verified} hours per year — valued at ${fmt(r.volEcon)} ${estimated} in salary-equivalent economic terms using the ONS 2024 median hourly wage. This assessment, calculated using HM Treasury WELLBY methodology, provides the quantitative evidence base for this application."
+        </div>
+        <div class="imd-note">⚠️ <strong>Important:</strong> NLCF assessors weight qualitative evidence heavily. Pair this report with participant case studies and quotes from players, parents/carers/guardians or volunteers — these carry as much weight as the numbers.</div>
+        <a href="https://www.tnlcommunityfund.org.uk/funding/funding-programmes/national-lottery-awards-for-all-england" target="_blank" class="copy-btn">Visit NLCF →</a>
+      </div>
+    </div>
+
+    <div class="funder-card">
+      <div class="funder-header">
+        <div>
+          <div class="funder-name">Local Authority & Council Funding</div>
+          <div class="funder-amount">Planning decisions · Asset protection · Public health budgets · Section 106</div>
+        </div>
+        <span class="funder-tag tag-rolling">Ongoing</span>
+      </div>
+      <div class="funder-body">
+        <div class="funder-criteria">
+          <div class="funder-crit">Social Value Act 2012: councils must factor social value into planning and procurement</div>
+          <div class="funder-crit">Most powerful when tied to a specific decision — pitch threat, planning application, asset transfer</div>
+          <div class="funder-crit">Public health grant opportunities via Integrated Care Boards</div>
+          <div class="funder-crit">SROI evidence is strongest asset with statutory audiences</div>
+        </div>
+        <div class="funder-statement">
+          <strong>Ready-to-use paragraph:</strong> "Under the Public Services (Social Value) Act 2012, ${area.split(',')[0] || 'your'} Council is required to consider social value when making procurement and planning decisions. ${club} generates a quantified ${fmt(r.totalValue)} ${estimated} in annual social value for the local area — assessed using HM Treasury WELLBY methodology and Sport England's Year 2 (November 2025) Social Value Model. ${r.sroi ? `This represents an estimated social return of £${r.sroi.toFixed(2)} per £1 of club expenditure (calculated against annual expenditure of ${fmtFull(r.expenditure)}). ` : ''}This evidence demonstrates the club's role as a community asset that directly reduces NHS demand and supports public wellbeing."
+        </div>
+        ${hasIMD ? `<div class="imd-note">📍 IMD Decile ${decile} data for your area can be referenced directly in council submissions — it contextualises the club's role within local public health priorities. Source: OHID Fingertips / English Indices of Multiple Deprivation.</div>` : imdNote}
+      </div>
+    </div>
+
+    <div class="funder-card${ineligiblePeterHarrison ? ' ineligible' : ''}">
+      <div class="funder-header">
+        <div>
+          <div class="funder-name">Peter Harrison Foundation — Active Lives${isDecile1 ? '<span class="funder-priority-badge">✓ Eligible</span>' : ''}</div>
+          <div class="funder-amount">£5,000–£30,000 · Registered charities and CASCs only</div>
+        </div>
+        <span class="funder-tag tag-rolling">Highly competitive — 7% success rate</span>
+      </div>
+      <div class="funder-body">
+        <div class="funder-criteria">
+          <div class="funder-crit">Must operate in IMD Decile 1 (top 10% most deprived areas in England)</div>
+          <div class="funder-crit">Registered charity or CASC status required</div>
+          <div class="funder-crit">Focus on disability and disadvantage in sport</div>
+          <div class="funder-crit">78% increase in applications in 2024/25 — evidence quality is critical</div>
+        </div>
+        <div class="funder-statement">
+          <strong>Ready-to-use paragraph:</strong> "${club} operates in ${hasIMD ? `IMD Decile ${decile}` : 'a deprived area of'} ${area}, serving a community where sport is not a given. Our ${r.totalPlayers.toLocaleString()} ${verified} players include ${r.adultDis > 0 ? `${r.adultDis.toLocaleString()} disability participants and ` : ''}a youth cohort generating ${fmt(r.totalWellbeing)} ${estimated} in annual wellbeing value. This Proof of Play assessment provides the quantitative foundation for demonstrating our community impact."
+        </div>
+        ${hasIMD ? `<div class="imd-note">${isDecile1 ? '✓ Your IMD Decile 1 status makes you eligible for Peter Harrison Foundation. This is one of the most competitive funds available — ensure your application leads with local qualitative evidence alongside this data.' : `⚠️ Peter Harrison Foundation now requires IMD Decile 1 (top 10% most deprived). Your club is in Decile ${decile}. Unless your postcode boundary places you in an eligible LSOA, you are unlikely to qualify. Focus on the other programmes above.`}</div>` : `<div class="imd-note">💡 Enter your postcode in Step 1 to check whether your club is in IMD Decile 1 — a requirement for this fund.</div>`}
+        <a href="https://peterharrisonfoundation.org/about-our-grant-programmes/" target="_blank" class="copy-btn">Visit Peter Harrison Foundation →</a>
+      </div>
+    </div>
+
+    <div class="funder-card">
+      <div class="funder-header">
+        <div>
+          <div class="funder-name">County FA Club Development Grants</div>
+          <div class="funder-amount">Typically £500–£5,000 · Varies by County FA</div>
+        </div>
+        <span class="funder-tag tag-rolling">Check with your CFA</span>
+      </div>
+      <div class="funder-body">
+        <div class="funder-criteria">
+          <div class="funder-crit">Affiliated clubs in good standing</div>
+          <div class="funder-crit">FA Charter Standard accreditation often required or advantageous</div>
+          <div class="funder-crit">Safeguarding, inclusion and development criteria</div>
+          <div class="funder-crit">Social value evidence increasingly required</div>
+        </div>
+        <div class="funder-statement">
+          <strong>Ready-to-use paragraph:</strong> "${club} is an affiliated ${state.charterLevel !== 'none' ? state.charterLevel.replace(/_/g,' ') + ' club' : 'club'} generating ${fmt(r.totalValue)} ${estimated} in annual social value for ${area}. This Proof of Play assessment, grounded in Sport England's national social value methodology, evidences the club's community contribution and its role in supporting the County FA's strategic objectives around participation, inclusion and community wellbeing."
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px; padding:16px 20px; background:var(--cream-dark); border-radius:var(--r); font-size:13px; color:var(--text-muted); border:1px solid var(--border);">
+      <strong style="color:var(--text); display:block; margin-bottom:6px;">Understanding the confidence indicators</strong>
+      <span class="conf-badge conf-reported" style="margin-left:0;">Reported by club</span> Hard data you entered — player numbers, volunteer hours, community reach, income. These are factual inputs and can be cited as club records in any application or County FA submission.<br><br>
+      <span class="conf-badge conf-estimated" style="margin-left:0;">Estimated from model</span> Figures derived from national proxy values applied to your data — wellbeing values, NHS savings, volunteer wellbeing contribution. Statistically grounded in published sources but not independently audited. Present as evidence-informed estimates and pair with local qualitative evidence.<br><br>
+      <span class="conf-badge conf-contextual" style="margin-left:0;">Contextual area data</span> Information drawn from official area-level datasets — IMD deprivation decile, local authority context. Not entered by your club; sourced from government data via postcode lookup.<br><br>
+      <span class="conf-badge conf-scenario" style="margin-left:0;">Scenario estimate</span> Illustrative planning figures based on stated assumptions — the Value at Stake figure uses a 12% assumed disengagement rate. These are prompts for reflection, not forecasts. Do not present as confirmed outcomes.
+    </div>
+  `;
+}
+
+// ─── NAVIGATION ───────────────────────────────────────
+function goToSection(section) {
+  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.step-tab').forEach(t => t.classList.remove('active'));
+
+  const panel = document.getElementById(`panel-${section}`);
+  if (panel) panel.classList.add('active');
+
+  const sections = ['club','players','volunteers','community','financials','outputs'];
+  const idx = sections.indexOf(section);
+  document.querySelectorAll('.step-tab').forEach((t, i) => {
+    if (i === idx) t.classList.add('active');
+  });
+
+  state.activeSection = section;
+
+  setTimeout(() => {
+    const inputArea = document.querySelector('.input-area');
+    if (inputArea) {
+      const offset = 120;
+      const top = inputArea.getBoundingClientRect().top + window.pageYOffset - offset;
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    }
+  }, 50);
+}
+
+let _supabaseSubmitted = false;
+
+function scrollToOutputs() {
+  setTimeout(() => {
+    document.getElementById('outputs-section').scrollIntoView({behavior:'smooth', block:'start'});
+  }, 100);
+  // Fire Supabase on first view of results — only if club has entered meaningful data
+  if (!_supabaseSubmitted) {
+    const r = calculate();
+    if (r.totalPlayers > 0 || r.numVol > 0) {
+      _supabaseSubmitted = true;
+      submitToSupabase(r);
+    }
+  }
+}
+
+function setOutputTab(tab) {
+  document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.output-panel').forEach(p => p.classList.remove('active'));
+
+  const tabs = ['summary','report','press','social','funding','methodology'];
+  const idx = tabs.indexOf(tab);
+  document.querySelectorAll('.output-tab')[idx]?.classList.add('active');
+
+  const panel = document.getElementById(`panel-output-${tab}`);
+  if (panel) panel.classList.add('active');
+}
+
+// ─── COPY HELPERS ─────────────────────────────────────
+function copyById(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  copyText(el.textContent, null);
+}
+
+function copySection(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  copyText(el.innerText || el.textContent, null);
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    if (btn) {
+      const old = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = old; btn.classList.remove('copied'); }, 1500);
+    }
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+// Attach copy buttons to copy-btn elements that use data-copy
+document.querySelectorAll('.copy-btn[data-copy]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.getAttribute('data-copy');
+    const el = document.getElementById(id);
+    if (el) copyText(el.textContent, btn);
+  });
+});
+
+// ─── SUPABASE CONFIG ──────────────────────────────────
+const SUPABASE_URL = 'https://puafunzdaronevidsdve.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1YWZ1bnpkYXJvbmV2aWRzZHZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2OTI4ODIsImV4cCI6MjA5MDI2ODg4Mn0.7rmsRtzqrp-wTNWANDedjHF8Mgwxtbfzwr-eEYoM30w';
+
+async function submitToSupabase(r) {
+  try {
+    // Map admin_district to Active Partnership
+    const apMap = {
+      'Leeds':'Yorkshire Sport Foundation','Sheffield':'Yorkshire Sport Foundation','Bradford':'Yorkshire Sport Foundation',
+      'Wakefield':'Yorkshire Sport Foundation','Calderdale':'Yorkshire Sport Foundation','Kirklees':'Yorkshire Sport Foundation',
+      'Barnsley':'Yorkshire Sport Foundation','Doncaster':'Yorkshire Sport Foundation','Rotherham':'Yorkshire Sport Foundation',
+      'York':'Yorkshire Sport Foundation','Kingston upon Hull, City of':'Yorkshire Sport Foundation',
+      'East Riding of Yorkshire':'Yorkshire Sport Foundation','North Yorkshire':'Yorkshire Sport Foundation',
+      'Middlesbrough':'Active Tees Valley','Stockton-on-Tees':'Active Tees Valley','Darlington':'Active Tees Valley',
+      'Hartlepool':'Active Tees Valley','Redcar and Cleveland':'Active Tees Valley','County Durham':'Active Durham',
+      'Northumberland':'Active Northumberland','Newcastle upon Tyne':'Sport Newcastle','Gateshead':'Sport Newcastle',
+      'Sunderland':'Sport Newcastle','South Tyneside':'Sport Newcastle','North Tyneside':'Sport Newcastle',
+      'Cumberland':'Cumbria Sport','Westmorland and Furness':'Cumbria Sport',
+      'Manchester':'Greater Manchester Moving','Salford':'Greater Manchester Moving','Bolton':'Greater Manchester Moving',
+      'Bury':'Greater Manchester Moving','Oldham':'Greater Manchester Moving','Rochdale':'Greater Manchester Moving',
+      'Stockport':'Greater Manchester Moving','Tameside':'Greater Manchester Moving','Trafford':'Greater Manchester Moving',
+      'Wigan':'Greater Manchester Moving','Blackburn with Darwen':'Lancashire Sport Partnership',
+      'Blackpool':'Lancashire Sport Partnership','Burnley':'Lancashire Sport Partnership',
+      'Preston':'Lancashire Sport Partnership','Lancaster':'Lancashire Sport Partnership',
+      'Cheshire East':'Cheshire and Warrington Sport','Cheshire West and Chester':'Cheshire and Warrington Sport',
+      'Halton':'Cheshire and Warrington Sport','Warrington':'Cheshire and Warrington Sport',
+      'Liverpool':'Merseyside Sport','Knowsley':'Merseyside Sport','Sefton':'Merseyside Sport',
+      'St. Helens':'Merseyside Sport','Wirral':'Merseyside Sport',
+      'Nottingham':'Active Notts','Derby':'Active Derbyshire','Leicester':'Active Leicestershire and Rutland',
+      'Birmingham':'Birmingham Active','Wolverhampton':'Active Black Country','Dudley':'Active Black Country',
+      'Sandwell':'Active Black Country','Walsall':'Active Black Country',
+      'Coventry':'Coventry and Warwickshire Sport','Oxford':'Active Oxfordshire',
+      'Reading':'Active Berkshire','Buckinghamshire':'Active Buckinghamshire','Milton Keynes':'Active Buckinghamshire',
+      'Cambridge':'Active Cambridgeshire','Peterborough':'Active Cambridgeshire',
+      'Norwich':'Active Norfolk','Ipswich':'Active Suffolk',
+      'Bedford':'Active Bedfordshire','Central Bedfordshire':'Active Bedfordshire','Luton':'Active Bedfordshire',
+      'Southampton':'Hampshire and Isle of Wight Sport','Portsmouth':'Hampshire and Isle of Wight Sport',
+      'Brighton and Hove':'Active Sussex','Canterbury':'Active Kent','Medway':'Active Kent',
+      'Southend-on-Sea':'Active Essex','Chelmsford':'Active Essex','Colchester':'Active Essex',
+      'Bristol, City of':'Active Somerset','Plymouth':'Active Devon and Cornwall',
+      'Dorset':'Active Dorset','Wiltshire':'Active Wiltshire','Swindon':'Active Wiltshire',
+      'City of London':'London Sport','Barking and Dagenham':'London Sport','Barnet':'London Sport',
+      'Bexley':'London Sport','Brent':'London Sport','Bromley':'London Sport','Camden':'London Sport',
+      'Croydon':'London Sport','Ealing':'London Sport','Enfield':'London Sport','Greenwich':'London Sport',
+      'Hackney':'London Sport','Hammersmith and Fulham':'London Sport','Haringey':'London Sport',
+      'Harrow':'London Sport','Havering':'London Sport','Hillingdon':'London Sport','Hounslow':'London Sport',
+      'Islington':'London Sport','Kensington and Chelsea':'London Sport','Kingston upon Thames':'London Sport',
+      'Lambeth':'London Sport','Lewisham':'London Sport','Merton':'London Sport','Newham':'London Sport',
+      'Redbridge':'London Sport','Richmond upon Thames':'London Sport','Southwark':'London Sport',
+      'Sutton':'London Sport','Tower Hamlets':'London Sport','Waltham Forest':'London Sport',
+      'Wandsworth':'London Sport','Westminster':'London Sport'
+    };
+    const ap = state.imdArea ? (apMap[state.imdArea] || null) : null;
+
+    // Map admin_district to County FA
+    const cfaMap = {
+      // West Riding FA — West and South Yorkshire
+      'Leeds':'West Riding FA','Bradford':'West Riding FA','Wakefield':'West Riding FA',
+      'Calderdale':'West Riding FA','Kirklees':'West Riding FA','Barnsley':'West Riding FA',
+      'Doncaster':'West Riding FA',
+      // Sheffield & Hallamshire FA
+      'Sheffield':'Sheffield and Hallamshire FA','Rotherham':'Sheffield and Hallamshire FA',
+      // North Riding FA — York, North Yorkshire, Teesside
+      'York':'North Riding FA','North Yorkshire':'North Riding FA',
+      'Middlesbrough':'North Riding FA','Redcar and Cleveland':'North Riding FA',
+      'Stockton-on-Tees':'North Riding FA','Hartlepool':'North Riding FA',
+      // East Riding FA
+      'Kingston upon Hull, City of':'East Riding FA','East Riding of Yorkshire':'East Riding FA',
+      // Durham FA
+      'County Durham':'Durham FA','Darlington':'Durham FA',
+      'Hartlepool':'Durham FA','Stockton-on-Tees':'Durham FA',
+      'Middlesbrough':'Durham FA','Redcar and Cleveland':'Durham FA',
+      // Northumberland FA
+      'Northumberland':'Northumberland FA','Newcastle upon Tyne':'Northumberland FA',
+      'Gateshead':'Northumberland FA','Sunderland':'Northumberland FA',
+      'South Tyneside':'Northumberland FA','North Tyneside':'Northumberland FA',
+      // Cumberland FA
+      'Cumberland':'Cumberland FA','Westmorland and Furness':'Cumberland FA',
+      // Lancashire FA
+      'Blackburn with Darwen':'Lancashire FA','Blackpool':'Lancashire FA',
+      'Burnley':'Lancashire FA','Chorley':'Lancashire FA','Fylde':'Lancashire FA',
+      'Hyndburn':'Lancashire FA','Lancaster':'Lancashire FA','Pendle':'Lancashire FA',
+      'Preston':'Lancashire FA','Ribble Valley':'Lancashire FA','Rossendale':'Lancashire FA',
+      'South Ribble':'Lancashire FA','West Lancashire':'Lancashire FA','Wyre':'Lancashire FA',
+      // Manchester FA
+      'Manchester':'Manchester FA','Salford':'Manchester FA','Bolton':'Manchester FA',
+      'Bury':'Manchester FA','Oldham':'Manchester FA','Rochdale':'Manchester FA',
+      'Stockport':'Manchester FA','Tameside':'Manchester FA','Trafford':'Manchester FA',
+      'Wigan':'Manchester FA',
+      // Cheshire FA
+      'Cheshire East':'Cheshire FA','Cheshire West and Chester':'Cheshire FA',
+      'Halton':'Cheshire FA','Warrington':'Cheshire FA',
+      // Liverpool FA (Merseyside)
+      'Liverpool':'Liverpool FA','Knowsley':'Liverpool FA','Sefton':'Liverpool FA',
+      'St. Helens':'Liverpool FA','Wirral':'Liverpool FA',
+      // Lincolnshire FA
+      'Lincoln':'Lincolnshire FA','Boston':'Lincolnshire FA','East Lindsey':'Lincolnshire FA',
+      'South Holland':'Lincolnshire FA','South Kesteven':'Lincolnshire FA',
+      'West Lindsey':'Lincolnshire FA','North Kesteven':'Lincolnshire FA',
+      'North Lincolnshire':'Lincolnshire FA','North East Lincolnshire':'Lincolnshire FA',
+      // Nottinghamshire FA
+      'Nottingham':'Nottinghamshire FA','Broxtowe':'Nottinghamshire FA','Gedling':'Nottinghamshire FA',
+      'Mansfield':'Nottinghamshire FA','Newark and Sherwood':'Nottinghamshire FA',
+      'Rushcliffe':'Nottinghamshire FA','Ashfield':'Nottinghamshire FA',
+      // Derbyshire FA
+      'Derby':'Derbyshire FA','Amber Valley':'Derbyshire FA','Bolsover':'Derbyshire FA',
+      'Chesterfield':'Derbyshire FA','Derbyshire Dales':'Derbyshire FA',
+      'Erewash':'Derbyshire FA','High Peak':'Derbyshire FA',
+      'North East Derbyshire':'Derbyshire FA','South Derbyshire':'Derbyshire FA',
+      // Leicestershire & Rutland FA
+      'Leicester':'Leicestershire and Rutland FA','Blaby':'Leicestershire and Rutland FA',
+      'Charnwood':'Leicestershire and Rutland FA','Harborough':'Leicestershire and Rutland FA',
+      'Hinckley and Bosworth':'Leicestershire and Rutland FA','Melton':'Leicestershire and Rutland FA',
+      'North West Leicestershire':'Leicestershire and Rutland FA',
+      'Oadby and Wigston':'Leicestershire and Rutland FA','Rutland':'Leicestershire and Rutland FA',
+      // Northamptonshire FA
+      'West Northamptonshire':'Northamptonshire FA','North Northamptonshire':'Northamptonshire FA',
+      // Staffordshire FA
+      'Stoke-on-Trent':'Staffordshire FA','Cannock Chase':'Staffordshire FA',
+      'East Staffordshire':'Staffordshire FA','Lichfield':'Staffordshire FA',
+      'Newcastle-under-Lyme':'Staffordshire FA','South Staffordshire':'Staffordshire FA',
+      'Stafford':'Staffordshire FA','Staffordshire Moorlands':'Staffordshire FA',
+      'Tamworth':'Staffordshire FA',
+      // Birmingham & West Midlands (Birmingham County FA)
+      'Birmingham':'Birmingham County FA','Wolverhampton':'Birmingham County FA',
+      'Dudley':'Birmingham County FA','Sandwell':'Birmingham County FA',
+      'Walsall':'Birmingham County FA','Coventry':'Birmingham County FA',
+      'Warwick':'Birmingham County FA','North Warwickshire':'Birmingham County FA',
+      'Nuneaton and Bedworth':'Birmingham County FA','Rugby':'Birmingham County FA',
+      'Stratford-on-Avon':'Birmingham County FA',
+      // Herefordshire FA
+      'Herefordshire, County of':'Herefordshire FA',
+      // Worcestershire FA
+      'Worcester':'Worcestershire FA','Bromsgrove':'Worcestershire FA',
+      'Malvern Hills':'Worcestershire FA','Redditch':'Worcestershire FA',
+      'Wychavon':'Worcestershire FA','Wyre Forest':'Worcestershire FA',
+      // Shropshire FA
+      'Shropshire':'Shropshire FA','Telford and Wrekin':'Shropshire FA',
+      // Gloucestershire FA
+      'Gloucester':'Gloucestershire FA','Cheltenham':'Gloucestershire FA',
+      'Cotswold':'Gloucestershire FA','Forest of Dean':'Gloucestershire FA',
+      'Stroud':'Gloucestershire FA','Tewkesbury':'Gloucestershire FA',
+      // Oxfordshire FA
+      'Oxford':'Oxfordshire FA','Cherwell':'Oxfordshire FA','South Oxfordshire':'Oxfordshire FA',
+      'Vale of White Horse':'Oxfordshire FA','West Oxfordshire':'Oxfordshire FA',
+      // Berks & Bucks FA
+      'Buckinghamshire':'Berks and Bucks FA','Milton Keynes':'Berks and Bucks FA',
+      'Reading':'Berks and Bucks FA','Bracknell Forest':'Berks and Bucks FA',
+      'Slough':'Berks and Bucks FA','West Berkshire':'Berks and Bucks FA',
+      'Windsor and Maidenhead':'Berks and Bucks FA','Wokingham':'Berks and Bucks FA',
+      // Hampshire FA
+      'Southampton':'Hampshire FA','Portsmouth':'Hampshire FA',
+      'Basingstoke and Deane':'Hampshire FA','East Hampshire':'Hampshire FA',
+      'Eastleigh':'Hampshire FA','Fareham':'Hampshire FA','Gosport':'Hampshire FA',
+      'Hart':'Hampshire FA','Havant':'Hampshire FA','New Forest':'Hampshire FA',
+      'Rushmoor':'Hampshire FA','Test Valley':'Hampshire FA','Winchester':'Hampshire FA',
+      'Isle of Wight':'Hampshire FA',
+      // Sussex FA
+      'Brighton and Hove':'Sussex FA','Adur':'Sussex FA','Arun':'Sussex FA',
+      'Chichester':'Sussex FA','Crawley':'Sussex FA','Horsham':'Sussex FA',
+      'Mid Sussex':'Sussex FA','Worthing':'Sussex FA','Eastbourne':'Sussex FA',
+      'Hastings':'Sussex FA','Lewes':'Sussex FA','Rother':'Sussex FA','Wealden':'Sussex FA',
+      // Kent FA
+      'Canterbury':'Kent FA','Ashford':'Kent FA','Dartford':'Kent FA',
+      'Dover':'Kent FA','Folkestone and Hythe':'Kent FA','Gravesham':'Kent FA',
+      'Maidstone':'Kent FA','Medway':'Kent FA','Sevenoaks':'Kent FA',
+      'Swale':'Kent FA','Thanet':'Kent FA','Tonbridge and Malling':'Kent FA',
+      'Tunbridge Wells':'Kent FA',
+      // Essex FA
+      'Southend-on-Sea':'Essex FA','Thurrock':'Essex FA','Basildon':'Essex FA',
+      'Braintree':'Essex FA','Brentwood':'Essex FA','Castle Point':'Essex FA',
+      'Chelmsford':'Essex FA','Colchester':'Essex FA','Epping Forest':'Essex FA',
+      'Harlow':'Essex FA','Maldon':'Essex FA','Rochford':'Essex FA',
+      'Tendring':'Essex FA','Uttlesford':'Essex FA',
+      // Hertfordshire FA
+      'Broxbourne':'Hertfordshire FA','Dacorum':'Hertfordshire FA',
+      'East Hertfordshire':'Hertfordshire FA','Hertsmere':'Hertfordshire FA',
+      'North Hertfordshire':'Hertfordshire FA','St Albans':'Hertfordshire FA',
+      'Stevenage':'Hertfordshire FA','Three Rivers':'Hertfordshire FA',
+      'Watford':'Hertfordshire FA','Welwyn Hatfield':'Hertfordshire FA',
+      // Bedfordshire FA
+      'Bedford':'Bedfordshire FA','Central Bedfordshire':'Bedfordshire FA','Luton':'Bedfordshire FA',
+      // Cambridgeshire FA
+      'Cambridge':'Cambridgeshire FA','East Cambridgeshire':'Cambridgeshire FA',
+      'Fenland':'Cambridgeshire FA','Huntingdonshire':'Cambridgeshire FA',
+      'South Cambridgeshire':'Cambridgeshire FA','Peterborough':'Cambridgeshire FA',
+      // Norfolk FA
+      'Norwich':'Norfolk FA','Breckland':'Norfolk FA','Broadland':'Norfolk FA',
+      'Great Yarmouth':'Norfolk FA','North Norfolk':'Norfolk FA','South Norfolk':'Norfolk FA',
+      // Suffolk FA
+      'Ipswich':'Suffolk FA','Babergh':'Suffolk FA','East Suffolk':'Suffolk FA',
+      'Mid Suffolk':'Suffolk FA','West Suffolk':'Suffolk FA',
+      // Surrey FA
+      'Guildford':'Surrey FA','Elmbridge':'Surrey FA','Epsom and Ewell':'Surrey FA',
+      'Mole Valley':'Surrey FA','Reigate and Banstead':'Surrey FA','Runnymede':'Surrey FA',
+      'Spelthorne':'Surrey FA','Surrey Heath':'Surrey FA','Tandridge':'Surrey FA',
+      'Waverley':'Surrey FA','Woking':'Surrey FA',
+      // London FA (all boroughs)
+      'City of London':'London FA','Barking and Dagenham':'London FA','Barnet':'London FA',
+      'Bexley':'London FA','Brent':'London FA','Bromley':'London FA','Camden':'London FA',
+      'Croydon':'London FA','Ealing':'London FA','Enfield':'London FA','Greenwich':'London FA',
+      'Hackney':'London FA','Hammersmith and Fulham':'London FA','Haringey':'London FA',
+      'Harrow':'London FA','Havering':'London FA','Hillingdon':'London FA','Hounslow':'London FA',
+      'Islington':'London FA','Kensington and Chelsea':'London FA','Kingston upon Thames':'London FA',
+      'Lambeth':'London FA','Lewisham':'London FA','Merton':'London FA','Newham':'London FA',
+      'Redbridge':'London FA','Richmond upon Thames':'London FA','Southwark':'London FA',
+      'Sutton':'London FA','Tower Hamlets':'London FA','Waltham Forest':'London FA',
+      'Wandsworth':'London FA','Westminster':'London FA',
+      // Wiltshire FA
+      'Wiltshire':'Wiltshire FA','Swindon':'Wiltshire FA',
+      // Somerset FA
+      'Somerset':'Somerset FA','Bath and North East Somerset':'Somerset FA',
+      'North Somerset':'Somerset FA','Bristol, City of':'Somerset FA',
+      // Devon FA
+      'Devon':'Devon FA','Plymouth':'Devon FA','Torbay':'Devon FA',
+      // Cornwall FA
+      'Cornwall':'Cornwall FA',
+      // Dorset FA
+      'Dorset':'Dorset FA','Bournemouth, Christchurch and Poole':'Dorset FA'
+    };
+    const cfa = state.imdArea ? (cfaMap[state.imdArea] || state.countyFA || null) : (state.countyFA || null);
+
+    const payload = {
+      tool_version: 'football',
+      sport: 'football',
+      club_name: state.clubName || null,
+      active_partnership: ap,
+      county_fa: cfa,
+      region: state.imdArea || null,
+      postcode_district: state.clubPostcode ? state.clubPostcode.split(' ')[0] : null,
+      imd_decile: state.imdDecile || null,
+      charter_level: state.charterLevel || null,
+      year_founded: state.yearFounded ? parseInt(state.yearFounded) : null,
+      total_players: r.totalPlayers,
+      total_youth: r.totalYouth,
+      total_adult: r.totalAdult,
+      adult_disability: r.adultDis,
+      num_volunteers: r.numVol,
+      total_vol_hrs: Math.round(r.totalVolHrs),
+      community_reach: r.cr,
+      num_programmes: state.num_programmes || 0,
+      annual_income: r.income || 0,
+      total_value: Math.round(r.totalValue),
+      wellbeing_value: Math.round(r.totalWellbeing),
+      nhs_value: Math.round(r.nhsTotal),
+      vol_value: Math.round(r.volTotal),
+      community_value: Math.round(r.communityValue),
+      sroi: r.sroi ? parseFloat(r.sroi.toFixed(2)) : null,
+      nd_players: r.ndPlayers,
+      mh_players: r.mhPlayers,
+      add_need: r.addNeed,
+      risk_val: Math.round(r.riskVal),
+      has_welfare: state.has_welfare === 'yes',
+      facility_community: state.facility_community || false,
+      has_mental_health: state.has_mental_health || false,
+      school_links: state.school_links || false,
+      sessions_per_week: state.adult_sessions || '2',
+      nd_prevalence: parseFloat(state.nd_prevalence || 14),
+      consent_given: true
+    };
+
+    await fetch(`${SUPABASE_URL}/rest/v1/club_submissions`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) {
+    // Silent fail — never block the user flow for a data submission
+  }
+}
+
+// ─── EMAIL CAPTURE ────────────────────────────────────
+// Apps Script deployment URL
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwgXs4xGn6KvDBUR6x7glMyf0SoqSl09esh1dqQ5L7fKLAV3Cm0_UGTQbBxtujclStucw/exec';
+
+window.submitEmailCapture = async function() {
+  const email = document.getElementById('captureEmail')?.value?.trim();
+  const name  = document.getElementById('captureName')?.value?.trim();
+  if (!email || !email.includes('@')) {
+    const el = document.getElementById('captureEmail');
+    if (el) { el.style.borderColor = '#EA580C'; setTimeout(() => el.style.borderColor = '', 1500); }
+    return;
+  }
+
+  const btn = document.querySelector('#emailForm button');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+  const r = calculate();
+  // Supabase already fired when they viewed results — don't double-submit
+  // submitToSupabase(r); 
+
+  const club    = state.clubName || 'Club not named';
+  const area    = state.area     || 'your community';
+  const charter = {none:'',charter:'FA Charter Standard',development:'FA Charter Standard Development',community:'FA Charter Standard Community'}[state.charterLevel] || '';
+
+  const reportEl = document.getElementById('panel-output-report');
+  const reportText = reportEl ? (reportEl.innerText || reportEl.textContent) : '';
+
+  const params = new URLSearchParams();
+  params.append('recipientEmail', email);
+  params.append('recipientName',  name  || '');
+  params.append('clubName',       club);
+  params.append('area',           area);
+  params.append('sport',          'Football');
+  params.append('charter',        charter);
+  params.append('totalValue',     fmt(r.totalValue));
+  params.append('wellbeing',      fmt(r.totalWellbeing));
+  params.append('nhs',            fmt(r.nhsTotal));
+  params.append('volunteers',     fmt(r.volTotal));
+  params.append('community',      fmt(r.communityValue));
+  params.append('totalPlayers',   r.totalPlayers);
+  params.append('numVol',         r.numVol);
+  params.append('ndPlayers',      r.ndPlayers);
+  params.append('mhPlayers',      r.mhPlayers);
+  params.append('imdDecile',      state.imdDecile || '');
+  params.append('sroi',           r.sroi ? r.sroi.toFixed(2) : '');
+  params.append('reportText',     reportText.substring(0, 8000));
+
+  try {
+    await fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
+  } catch(e) {}
+
+  const form = document.getElementById('emailForm');
+  const sent = document.getElementById('emailSent');
+  if (form) form.style.display = 'none';
+  if (sent) sent.style.display = 'block';
+};
+
+
+// ─── MODAL SYSTEM ─────────────────────────────────────
+const MODAL_CONTENT = {
+  wellbeing: {
+    title: 'Participant Wellbeing Value',
+    badge: '<span class="conf-badge conf-estimated">Estimated from model</span>',
+    desc: 'This figure estimates the wellbeing value generated when people participate regularly in sport and physical activity. It uses the Treasury-approved WELLBY methodology — each year of regular participation is assigned a monetary value based on the measurable improvement in life satisfaction it produces.',
+    formula: 'Youth 7–11 (active 2+/wk): × £3,100/yr\nYouth 7–11 (fairly active): × £1,700/yr\nYouth 11–16 (active 2+/wk): × £4,300/yr\nYouth 11–16 (fairly active): × £3,300/yr\nAdult (active 2+/wk): × £2,600/yr\nAdult (fairly active): × £1,200/yr\nDisability participants: × £5,300/yr\nAges 5–6: × £1,500/yr (custom conservative proxy — SE model covers age 7+)\n\nWELLBY unit value: £15,900 per 1-point life satisfaction gain\n(HM Treasury Green Book, uprated to 2024 per SE Year 2 (November 2025) model)',
+    sources: '<strong>Primary sources:</strong> Sport England Social Value Model Year 2 (November 2025) (Sheffield Hallam University / Manchester Metropolitan University / State of Life) · HM Treasury Green Book Supplementary Guidance on Wellbeing (2021, uprated 2024) · <strong>Confidence:</strong> High where participation figures are directly entered; Medium where age-band assumptions apply'
+  },
+  nhs: {
+    title: 'NHS & Healthcare Savings',
+    badge: '<span class="conf-badge conf-estimated">Estimated from model</span>',
+    desc: 'Regular physical activity reduces demand on NHS services — through disease prevention, fewer GP visits, reduced obesity-related conditions and lower mental health service usage. This figure is a conservative per-player derivation from Sport England’s Secondary Value Model, which calculates £10.5 billion in annual NHS savings from physical activity nationally.',
+    formula: 'Youth players: number × £90/yr\nAdult players: number × £175/yr\n\nDerived proportionally from Sport England’s national\nNHS saving estimate across the active population.',
+    sources: '<strong>Source basis:</strong> Conservative custom proxy — not directly derived from Sport England’s Year 2 (November 2025) secondary model · SE current secondary model gives £478 (active) / £330 (fairly active) for adults 16+ across full health-value stack; our figures are a deliberately conservative club-scale derivation · Youth NHS figure is not supported by current SE secondary model (adults only) — labelled as a planning estimate · <strong>Confidence:</strong> Medium for adults — Low for youth (unsupported by current SE model)'
+  },
+  volunteer: {
+    title: 'Volunteer Contribution',
+    badge: '<span class="conf-badge conf-estimated">Estimated from model</span>',
+    desc: 'Volunteer value is calculated across two dimensions: the economic replacement value of their time (what it would cost to hire someone to do the same work), and the personal wellbeing value that volunteering generates for the volunteer themselves. Both are recognised components in formal social value assessment.',
+    formula: 'Economic value: volunteer hours × £17/hr (conservative replacement-cost proxy\nbased on ONS earnings data — ONS 2024 median £18.64, reduced for volunteer role mix)\n\nWellbeing value (SE Year 2 (November 2025) primary value model):\nWeekly volunteers: × £2,100/yr\nMonthly volunteers: × £1,000/yr\n\nTotal = economic value + wellbeing value\n\nVolunteer hours = number of volunteers × selected\nhours/week × 46 active weeks/yr (NCVO benchmark)',
+    sources: '<strong>Primary sources:</strong> ONS Annual Survey of Hours and Earnings 2024 (median hourly wage) · Sport England Year 2 (November 2025) (volunteering wellbeing value, median estimate) · NCVO (average volunteer hours benchmark) · <strong>Confidence:</strong> High for economic value where hours are entered; Medium for wellbeing value (population estimate)'
+  },
+  community: {
+    title: 'Community Programme Value',
+    badge: '<span class="conf-badge conf-estimated">Estimated from model</span>',
+    desc: 'Community programmes — holiday camps, walking sports, disability sessions, facility access for non-sport groups, school partnerships — generate value through improved social cohesion, reduced isolation, improved health outcomes and stronger community trust. A conservative custom proxy is applied. Note: Sport England’s current Year 2 (November 2025) secondary model is scoped to health outcomes only and does not include a community cohesion component. This figure draws on earlier Sport England community research and should be treated as a planning estimate, not a current model output.',
+    formula: 'Community reach × £650/participant/yr\n\nApplied only to participants beyond the registered\nplayer base — entered in the Community section.',
+    sources: '<strong>Source basis:</strong> Earlier Sport England community cohesion research (pre-2024 model) · The current Sport England Social Value Model Year 2 (November 2025) secondary component is explicitly scoped to health outcomes only · The £14.2bn community cohesion figure belongs to Sport England’s previous research, not the current model · This value is a conservative custom proxy — do not attribute it to Sport England’s current Year 2 (November 2025) methodology · <strong>Confidence:</strong> Low-Medium — custom proxy for planning and communication purposes'
+  },
+  nd: {
+    title: 'Hidden Need Estimate — ND & Mental Health',
+    badge: '<span class="conf-badge conf-estimated">Estimated from model</span>',
+    desc: 'These figures are statistical projections — not identified individuals or confirmed diagnoses. They estimate the likely number of players within your club who may be neurodivergent or experiencing a mental health difficulty, based on published national prevalence data applied to your player numbers. They are planning estimates, not welfare assessments. The mental health figure uses a 1-in-5 prevalence rate (NHS Digital MHCYP 2023), updated from the previously cited 1-in-4 figure.',
+    formula: 'Neurodivergent estimate: total players × selected prevalence %\n(Default 14% — ADHD ~6%, Autism ~1.5%, Dyslexia ~10%,\nadjusted for co-occurrence overlap)\n\nMH difficulty estimate: total players × 20%\n(~1 in 5 children/young people, NHS Digital MHCYP 2023\n— updated from previously cited 1 in 4 estimate)\n\nAdditional support: ND + MH − 30% overlap',
+    sources: '<strong>Primary sources:</strong> NHS Digital Mental Health of Children and Young People in England 2023 · British Dyslexia Association (dyslexia prevalence) · NHS Digital Learning Disabilities and Autism Programme · <strong>Confidence:</strong> Medium — statistical estimate only. These figures should never be presented as confirmed diagnoses or identified individuals'
+  },
+  sroi: {
+    title: 'Social Return on Investment',
+    badge: '<span class="conf-badge conf-estimated">Estimated from model</span>',
+    desc: 'SROI expresses the total estimated social value as a ratio of the club’s annual expenditure — how much social value is generated for every £1 the club spends. It only appears when annual expenditure has been entered in the Financials section. This is a simplified SROI calculation using estimated social value figures, not a formal audited SROI report.',
+    formula: 'SROI = Total estimated social value ÷ Annual club expenditure\n\nExample: £500,000 social value ÷ £40,000 expenditure = £12.50\nSROI — meaning £12.50 of social value returned for every £1 spent.\n\nNote: expenditure is used, not income. SROI measures\nreturn on investment — what was spent, not what came in.',
+    sources: '<strong>Methodology:</strong> Social Return on Investment Network (SROI Network) — standard ratio approach · HM Treasury WELLBY values used for social value numerator · <strong>Note:</strong> For a formal, independently verified SROI report suitable for academic or major institutional submission, commission a full evaluation through Sheffield Hallam SIRC or Portas Consulting · <strong>Confidence:</strong> Medium — ratio is mathematically sound but based on estimated social value figures'
+  },
+  imd: {
+    title: 'Area Deprivation — IMD Decile',
+    badge: '<span class="conf-badge conf-contextual">Contextual area data</span>',
+    desc: 'The IMD decile is looked up automatically from your club postcode. It tells you where your club’s local area sits on the Index of Multiple Deprivation — a government measure of relative deprivation across income, employment, health, education, housing and crime. Decile 1 = most deprived 10% of areas in England; Decile 10 = least deprived.',
+    formula: 'Postcode → admin district lookup (postcodes.io)\nAdmin district → IMD decile (OHID / MHCLG dataset)\n\nThis figure is not entered by the club — it is\nderived automatically from official government data.',
+    sources: '<strong>Primary sources:</strong> Office for Health Improvement & Disparities (OHID) · Ministry of Housing, Communities & Local Government (MHCLG) — English Indices of Multiple Deprivation 2019 (updated) · postcodes.io API for postcode resolution · <strong>Confidence:</strong> High — official government dataset'
+  },
+  risk: {
+    title: 'Value at Stake — Scenario Estimate',
+    badge: '<span class="conf-badge conf-scenario">Scenario estimate</span>',
+    desc: 'This is an illustrative planning figure — not a forecast or a claim that this value will be lost. It estimates what portion of your club’s social value becomes fragile if players with unmet neurodivergent or mental health needs disengage from the club. It is intended as a conversation prompt, not a precise prediction.',
+    formula: 'Additional-need players × 12% assumed disengagement rate\n× average wellbeing value per player\n\nThe 12% rate is a conservative planning assumption.\nNo published study directly measures disengagement\nrates attributable specifically to unmet ND/MH need\nin football.',
+    sources: '<strong>Methodology note:</strong> Scenario modelling approach — planning assumption, not an evidence-based projection · <strong>Confidence:</strong> Low as a predictive figure; High as a conversation prompt about the importance of inclusive practice · This figure should never be presented as a confirmed outcome or a verified risk'
+  }
+};
+
+function openModal(key) {
+  const m = MODAL_CONTENT[key];
+  if (!m) return;
+  document.getElementById('modal-title').textContent   = m.title;
+  document.getElementById('modal-badge').innerHTML     = m.badge;
+  document.getElementById('modal-desc').textContent    = m.desc;
+  document.getElementById('modal-formula').textContent = m.formula;
+  document.getElementById('modal-sources').innerHTML   = m.sources;
+  document.getElementById('modal-overlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ─── CLUB TYPE ────────────────────────────────────────
+window.setClubType = function(type) {
+  state.clubType = type;
+  ['mixed','youth','adult'].forEach(t => {
+    const btn = document.getElementById('ctype-' + t);
+    if (btn) btn.classList.toggle('active', t === type);
+  });
+  const youthSection  = document.getElementById('youth-players-section');
+  const adultSection  = document.getElementById('adult-players-section');
+  const youthFreq     = document.getElementById('youth-frequency-section');
+  if (youthSection) youthSection.style.display  = type === 'adult' ? 'none' : '';
+  if (adultSection) adultSection.style.display  = type === 'youth' ? 'none' : '';
+  if (youthFreq)    youthFreq.style.display     = type === 'adult' ? 'none' : '';
+  // Zero out hidden sections so they don't affect calculation
+  if (type === 'adult') {
+    ['youth_5_6_m','youth_5_6_f','youth_7_11_m','youth_7_11_f',
+     'youth_11_16_m','youth_11_16_f','youth_16_18_m','youth_16_18_f'].forEach(k => state[k] = 0);
+  }
+  if (type === 'youth') {
+    state.adult_male = 0; state.adult_female = 0; state.adult_disability = 0;
+  }
+  recalculate();
+};
+
+// ─── SESSIONS UNIT ─────────────────────────────────────
+window.setSessionUnit = function(type, unit) {
+  if (type === 'adult') {
+    state.adult_sessions_unit = unit;
+    document.getElementById('adult-unit-week').classList.toggle('active', unit === 'week');
+    document.getElementById('adult-unit-month').classList.toggle('active', unit === 'month');
+  } else {
+    state.youth_sessions_unit = unit;
+    document.getElementById('youth-unit-week').classList.toggle('active', unit === 'week');
+    document.getElementById('youth-unit-month').classList.toggle('active', unit === 'month');
+  }
+  recalculate();
+};
+
+// ─── INIT ─────────────────────────────────────────────
+recalculate();
+</script>
+<!-- ─── HOW THIS IS CALCULATED MODALS ─────────────────── -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">How this is calculated</div>
+        <div class="modal-badge-wrap" id="modal-badge"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <p id="modal-desc"></p>
+      <div class="modal-formula" id="modal-formula"></div>
+      <div class="modal-sources" id="modal-sources"></div>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-methodology-link" onclick="closeModal(); setOutputTab('methodology')">View full methodology →</span>
+      <button class="modal-dismiss" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
