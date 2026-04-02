@@ -2150,9 +2150,9 @@ input[type="range"]::-webkit-slider-thumb {
           <label>FA accreditation level</label>
           <select id="charterLevel" onchange="updateState('charterLevel', this.value)">
             <option value="none">None / not accredited</option>
-            <option value="charter">FA Charter Standard Club</option>
-            <option value="development">FA Charter Standard Development Club</option>
-            <option value="community">FA Charter Standard Community Club</option>
+            <option value="star1">England Football Accredited — 1 Star</option>
+            <option value="star2">England Football Accredited — 2 Star</option>
+            <option value="star3">England Football Accredited — 3 Star</option>
           </select>
         </div>
       </div>
@@ -3284,7 +3284,7 @@ function updateFullReport(r, club, area) {
   setText('rpt-heading', `The Social Value of ${club}`);
   setHTML('rpt-subheading', `Social Value Assessment · Proof of Play · Powered by FMHA · ${dateStr}`);
 
-  const charter = {none:'', charter:'FA Charter Standard Club', development:'FA Charter Standard Development Club', community:'FA Charter Standard Community Club'}[state.charterLevel] || '';
+  const charter = {none:'', star1:'England Football Accredited — 1 Star', star2:'England Football Accredited — 2 Star', star3:'England Football Accredited — 3 Star'}[state.charterLevel] || '';
   const charterStr = charter ? ` ${club} holds ${charter} status.` : '';
   const sroiStr = r.sroi ? ` For every £1 invested in the club, this represents a social return of £${r.sroi.toFixed(2)}.` : '';
   const foundedStr = state.yearFounded ? ` Founded in ${state.yearFounded}, the` : ' The';
@@ -3693,7 +3693,7 @@ function updateFunding(r, club, area) {
       <div class="funder-body">
         <div class="funder-criteria">
           <div class="funder-crit">Affiliated clubs in good standing</div>
-          <div class="funder-crit">FA Charter Standard accreditation often required or advantageous</div>
+          <div class="funder-crit">England Football Accredited status often required or advantageous</div>
           <div class="funder-crit">Safeguarding, inclusion and development criteria</div>
           <div class="funder-crit">Social value evidence increasingly required</div>
         </div>
@@ -4105,10 +4105,17 @@ window.submitEmailCapture = async function() {
 
   const club    = state.clubName || 'Club not named';
   const area    = state.area     || 'your community';
-  const charter = {none:'',charter:'FA Charter Standard',development:'FA Charter Standard Development',community:'FA Charter Standard Community'}[state.charterLevel] || '';
+  const charter = {none:'',star1:'England Football Accredited — 1 Star',star2:'England Football Accredited — 2 Star',star3:'England Football Accredited — 3 Star'}[state.charterLevel] || '';
 
-  const reportEl = document.getElementById('panel-output-report');
-  const reportText = reportEl ? (reportEl.innerText || reportEl.textContent) : '';
+  const reportEl   = document.getElementById('panel-output-report');
+  const pressEl    = document.getElementById('panel-output-press');
+  const socialEl   = document.getElementById('panel-output-social');
+  const fundingEl  = document.getElementById('panel-output-funding');
+
+  const reportText  = reportEl  ? (reportEl.innerText  || reportEl.textContent)  : '';
+  const pressText   = pressEl   ? (pressEl.innerText   || pressEl.textContent)   : '';
+  const socialText  = socialEl  ? (socialEl.innerText  || socialEl.textContent)  : '';
+  const fundingText = fundingEl ? (fundingEl.innerText || fundingEl.textContent) : '';
 
   const params = new URLSearchParams();
   params.append('recipientEmail', email);
@@ -4129,6 +4136,9 @@ window.submitEmailCapture = async function() {
   params.append('imdDecile',      state.imdDecile || '');
   params.append('sroi',           r.sroi ? r.sroi.toFixed(2) : '');
   params.append('reportText',     reportText.substring(0, 8000));
+  params.append('pressText',      pressText.substring(0, 4000));
+  params.append('socialText',     socialText.substring(0, 3000));
+  params.append('fundingText',    fundingText.substring(0, 4000));
 
   try {
     await fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
