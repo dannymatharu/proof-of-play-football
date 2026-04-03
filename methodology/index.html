@@ -358,7 +358,21 @@ body {
   white-space: nowrap;
 }
 .source-table td.confidence {
-  white-space: nowrap;
+  white-space: normal;
+  min-width: 120px;
+}
+.conf-label {
+  display: block;
+  font-weight: 700;
+  font-size: 13px;
+}
+.conf-detail {
+  display: block;
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 3px;
+  line-height: 1.45;
 }
 .source-table a {
   color: var(--teal);
@@ -366,9 +380,9 @@ body {
   text-decoration: none;
 }
 .source-table a:hover { text-decoration: underline; }
-.conf-high   { color: #1A6B32; font-weight: 600; }
-.conf-medium { color: #856404; font-weight: 600; }
-.conf-low    { color: #7D3700; font-weight: 600; }
+.conf-high   { color: #1A6B32; }
+.conf-medium { color: #856404; }
+.conf-low    { color: #7D3700; }
 
 /* ─── CALLOUT BOXES ───────────────────────────────── */
 .callout {
@@ -696,7 +710,7 @@ body {
             <td class="value">£1,500 / yr</td>
             <td>Internal interpolation — Sport England Year 2 does not publish a monetised value for this age band. The youngest published band is 7–11 (£1,700 fairly active, £3,100 active). £1,500 is a conservative internal estimate applied to the youngest players and should be treated as a proxy, not a source-backed figure.</td>
             <td>Internal estimate — derived by interpolation below the Sport England Year 2 (November 2025) published range · <a href="https://www.sportengland.org/research-and-data/research/social-value-and-return-investment-sport-and-physical-activity" target="_blank">sportengland.org</a></td>
-            <td class="confidence conf-low">Low — internal interpolation</td>
+            <td class="confidence conf-low"><span class="conf-label conf-low">Low</span><span class="conf-detail">internal interpolation, not a source-backed figure</span></td>
           </tr>
           <tr>
             <td class="category">Wellbeing — child 7–11</td>
@@ -731,7 +745,7 @@ body {
             <td class="value">£5,300 / yr</td>
             <td>Highest published WELLBY rate — reflects disproportionate wellbeing return of sport for disabled adults and adults with long-term health conditions. Note: Sport England's £5,300 applies to adults only. Disabled children 11–16 are published at £2,800 in the same model — applying £5,300 to all ages would overstate value for younger players.</td>
             <td>Sport England Social Value Model Year 2 (November 2025)</td>
-            <td class="confidence conf-high">High for adults · Medium if applied to mixed-age disability groups</td>
+            <td class="confidence conf-high"><span class="conf-label conf-high">High for adults</span><span class="conf-detail">Medium if applied to mixed-age disability groups</span></td>
           </tr>
           <tr>
             <td class="category">WELLBY monetary unit</td>
@@ -745,14 +759,14 @@ body {
             <td class="value">£478 / yr</td>
             <td>Sport England's published secondary wider health value per active adult. This figure includes healthcare savings and productivity benefits — it is not a healthcare-only figure (healthcare alone is approximately £301). Where a more conservative healthcare-only estimate is needed, £301 should be substituted. The £330 figure applies to fairly active adults in the same model.</td>
             <td>Sport England Social Value Model Year 2 (November 2025) — Secondary Value (wider health, including productivity)</td>
-            <td class="confidence conf-medium">Medium — upper-bound active adult figure; includes productivity</td>
+            <td class="confidence conf-medium"><span class="conf-label conf-medium">Medium</span><span class="conf-detail">upper-bound active adult figure; includes productivity</span></td>
           </tr>
           <tr>
             <td class="category">Wider health value — child/youth</td>
             <td class="value">£90 / yr</td>
             <td>Internal conservative estimate. Sport England Year 2 explicitly applies wider health values to adults only — for children and young people the model includes wellbeing value only, noting that evidence for wider health savings in younger age groups is limited. The £90 figure is a cautious internal proxy and is not attributable to the current Sport England model.</td>
             <td>Internal estimate — Sport England Year 2 (November 2025) does not publish a child/youth wider health value. Figure is a conservative internal proxy retained for planning purposes.</td>
-            <td class="confidence conf-low">Low — internal estimate only</td>
+            <td class="confidence conf-low"><span class="conf-label conf-low">Low</span><span class="conf-detail">internal estimate only; not in Sport England Year 2</span></td>
           </tr>
           <tr>
             <td class="category">Volunteer economic value</td>
@@ -773,28 +787,28 @@ body {
             <td class="value">£650 / participant / yr</td>
             <td>Internal proxy derived from Sheffield Hallam University's 2020 Sport England community cohesion research, which estimated a £14.22bn national value from social trust, belonging and community engagement. The Sport England Year 2 model (2025) does not publish a directly equivalent community cohesion secondary value. This figure is a conservative internal derivation from the 2020 model and should be treated as an indicative proxy, not a Year 2 source-backed figure.</td>
             <td>Internal estimate — derived from Sheffield Hallam University / Sport England community cohesion research (2020 model). Not directly published in Sport England Social Value Model Year 2 (November 2025).</td>
-            <td class="confidence conf-low">Low — internal derivation from older model</td>
+            <td class="confidence conf-low"><span class="conf-label conf-low">Low</span><span class="conf-detail">internal derivation from older 2020 model</span></td>
           </tr>
           <tr>
             <td class="category">Neurodivergent prevalence</td>
             <td class="value">10–20% (default 14%)</td>
             <td>Internal composite estimate. Individual source figures: ADHD ~5% in children (NICE via NHS England), Autism ~1.2% in 5–19 year olds (NHS England), Dyslexia ~10% of population (British Dyslexia Association). The combined 14% default applies an internal overlap adjustment — this composite rate is not directly published by any of the named sources and should be presented as an internal planning estimate.</td>
             <td>Internal composite — individual components from NHS England · British Dyslexia Association · NICE. The 14% combined figure is an internal estimate, not a directly published rate.</td>
-            <td class="confidence conf-medium">Medium — individual components sourced; composite rate is internal estimate</td>
+            <td class="confidence conf-medium"><span class="conf-label conf-medium">Medium</span><span class="conf-detail">individual components sourced; composite rate is internal estimate</span></td>
           </tr>
           <tr>
             <td class="category">Mental health difficulty prevalence</td>
             <td class="value">25% / season</td>
             <td>1 in 4 people experience a mental health problem each year in England. Applied to total player population as a planning estimate across youth and adult participants. The 16–24 age group specifically shows 25.8% prevalence. For children under 16 specifically, the NHS Children and Young People Survey 2023 reports approximately 20%; the 1 in 4 figure is most accurate when applied to a mixed-age player base including adults.</td>
             <td>Mind — Mental Health Facts and Statistics · NHS Adult Psychiatric Morbidity Survey 2023/24 (22.6% of adults 16–64) · <a href="https://www.mind.org.uk/information-support/types-of-mental-health-problems/statistics-and-facts-about-mental-health/how-common-are-mental-health-problems/" target="_blank">mind.org.uk</a></td>
-            <td class="confidence conf-medium">Medium — population-level estimate</td>
+            <td class="confidence conf-medium"><span class="conf-label conf-medium">Medium</span><span class="conf-detail">population-level estimate</span></td>
           </tr>
           <tr>
             <td class="category">Value at Stake — scenario</td>
             <td class="value">12% disengagement rate</td>
             <td>Planning assumption only: additional-need players × 12% assumed disengagement × average wellbeing per player. No published evidence directly measures this rate for ND/MH need in grassroots sport</td>
             <td>Model assumption — planning prompt, not evidence-based projection</td>
-            <td class="confidence conf-low">Low as prediction · High as prompt</td>
+            <td class="confidence conf-low"><span class="conf-label conf-low">Low as prediction</span><span class="conf-detail">High as planning prompt</span></td>
           </tr>
         </tbody>
       </table>
