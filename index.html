@@ -29,7 +29,10 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
 
 body {
   font-family: 'Outfit', system-ui, sans-serif;
@@ -37,6 +40,7 @@ body {
   color: var(--text);
   line-height: 1.6;
   font-size: 15px;
+  overflow-x: hidden;
 }
 
 /* ─── HEADER ─────────────────────────────── */
@@ -1736,6 +1740,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 @media (max-width: 768px) {
   .header { padding: 0 20px; }
+  .header-total { display: none; }
   .hero { padding: 40px 20px 36px; }
   .input-area { padding: 28px 20px 60px; }
   .output-body { padding: 24px 20px; }
@@ -1743,6 +1748,8 @@ input[type="range"]::-webkit-slider-thumb {
   .social-grid, .funder-criteria, .chairman-grid { grid-template-columns: 1fr; }
   .sv-stats { grid-template-columns: 1fr 1fr; }
   .running-total { display: none; }
+  .report-block, .source-table-wrap { overflow-x: auto; }
+  img, table { max-width: 100%; }
 }
 
 @media print {
