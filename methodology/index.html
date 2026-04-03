@@ -374,6 +374,20 @@ body {
   margin-top: 3px;
   line-height: 1.45;
 }
+.cat-label {
+  display: block;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--green);
+}
+.cat-detail {
+  display: block;
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 3px;
+  line-height: 1.45;
+}
 .source-table a {
   color: var(--teal);
   font-size: 11px;
@@ -564,6 +578,7 @@ body {
 /* ─── RESPONSIVE ──────────────────────────────────── */
 @media (max-width: 680px) {
   .header { padding: 0 20px; }
+  .header-nav { display: none; }
   .hero { padding: 40px 20px 36px; }
   .section-nav { padding: 0 20px; }
   .page-body { padding: 40px 20px 60px; }
@@ -706,42 +721,42 @@ body {
         </thead>
         <tbody>
           <tr>
-            <td class="category">Wellbeing — child 5–6</td>
+            <td class="category"><span class="cat-label">Wellbeing</span><span class="cat-detail">child 5–6</span></td>
             <td class="value">£1,500 / yr</td>
             <td>Internal interpolation — Sport England Year 2 does not publish a monetised value for this age band. The youngest published band is 7–11 (£1,700 fairly active, £3,100 active). £1,500 is a conservative internal estimate applied to the youngest players and should be treated as a proxy, not a source-backed figure.</td>
             <td>Internal estimate — derived by interpolation below the Sport England Year 2 (November 2025) published range · <a href="https://www.sportengland.org/research-and-data/research/social-value-and-return-investment-sport-and-physical-activity" target="_blank">sportengland.org</a></td>
             <td class="confidence conf-low"><span class="conf-label conf-low">Low</span><span class="conf-detail">internal interpolation, not a source-backed figure</span></td>
           </tr>
           <tr>
-            <td class="category">Wellbeing — child 7–11</td>
+            <td class="category"><span class="cat-label">Wellbeing</span><span class="cat-detail">child 7–11</span></td>
             <td class="value">£3,100 / yr</td>
             <td>WELLBY unit value × published life satisfaction gain for active children in this age band. Sport England defines "active" by activity volume threshold, not session count — the session-frequency labels used in this tool are our own mapping to that threshold.</td>
             <td>Sport England Social Value Model Year 2 (November 2025) (Sheffield Hallam University / MMU / State of Life)</td>
             <td class="confidence conf-high">High</td>
           </tr>
           <tr>
-            <td class="category">Wellbeing — child 11–16</td>
+            <td class="category"><span class="cat-label">Wellbeing</span><span class="cat-detail">child 11–16</span></td>
             <td class="value">£4,300 / yr</td>
             <td>As above — higher value reflects greater wellbeing return in this age band per Sport England Year 2 research. Session-frequency labels in the tool are our own mapping to Sport England's activity thresholds.</td>
             <td>Sport England Social Value Model Year 2 (November 2025)</td>
             <td class="confidence conf-high">High</td>
           </tr>
           <tr>
-            <td class="category">Wellbeing — active adult</td>
+            <td class="category"><span class="cat-label">Wellbeing</span><span class="cat-detail">active adult</span></td>
             <td class="value">£2,600 / yr</td>
             <td>WELLBY unit value × published life satisfaction gain for adults meeting Sport England's "active" threshold. Note: Sport England defines this by activity volume, not by sessions per week. The session-frequency label used in this tool is our own translation of that threshold.</td>
             <td>Sport England Social Value Model Year 2 (November 2025)</td>
             <td class="confidence conf-high">High</td>
           </tr>
           <tr>
-            <td class="category">Wellbeing — fairly active adult</td>
+            <td class="category"><span class="cat-label">Wellbeing</span><span class="cat-detail">fairly active adult</span></td>
             <td class="value">£1,200 / yr</td>
             <td>Reduced WELLBY value applied for adults meeting Sport England's "fairly active" threshold. As above, session-frequency labels in the tool are our own mapping to Sport England's activity definitions.</td>
             <td>Sport England Social Value Model Year 2 (November 2025)</td>
             <td class="confidence conf-high">High</td>
           </tr>
           <tr>
-            <td class="category">Wellbeing — disabled adult / adult with long-term health condition</td>
+            <td class="category"><span class="cat-label">Wellbeing</span><span class="cat-detail">disabled adult / adult with long-term health condition</span></td>
             <td class="value">£5,300 / yr</td>
             <td>Highest published WELLBY rate — reflects disproportionate wellbeing return of sport for disabled adults and adults with long-term health conditions. Note: Sport England's £5,300 applies to adults only. Disabled children 11–16 are published at £2,800 in the same model — applying £5,300 to all ages would overstate value for younger players.</td>
             <td>Sport England Social Value Model Year 2 (November 2025)</td>
@@ -755,14 +770,14 @@ body {
             <td class="confidence conf-high">High</td>
           </tr>
           <tr>
-            <td class="category">Wider health value — active adult</td>
+            <td class="category"><span class="cat-label">Wider health value</span><span class="cat-detail">active adult</span></td>
             <td class="value">£478 / yr</td>
             <td>Sport England's published secondary wider health value per active adult. This figure includes healthcare savings and productivity benefits — it is not a healthcare-only figure (healthcare alone is approximately £301). Where a more conservative healthcare-only estimate is needed, £301 should be substituted. The £330 figure applies to fairly active adults in the same model.</td>
             <td>Sport England Social Value Model Year 2 (November 2025) — Secondary Value (wider health, including productivity)</td>
             <td class="confidence conf-medium"><span class="conf-label conf-medium">Medium</span><span class="conf-detail">upper-bound active adult figure; includes productivity</span></td>
           </tr>
           <tr>
-            <td class="category">Wider health value — child/youth</td>
+            <td class="category"><span class="cat-label">Wider health value</span><span class="cat-detail">child / youth</span></td>
             <td class="value">£90 / yr</td>
             <td>Internal conservative estimate. Sport England Year 2 explicitly applies wider health values to adults only — for children and young people the model includes wellbeing value only, noting that evidence for wider health savings in younger age groups is limited. The £90 figure is a cautious internal proxy and is not attributable to the current Sport England model.</td>
             <td>Internal estimate — Sport England Year 2 (November 2025) does not publish a child/youth wider health value. Figure is a conservative internal proxy retained for planning purposes.</td>
@@ -804,7 +819,7 @@ body {
             <td class="confidence conf-medium"><span class="conf-label conf-medium">Medium</span><span class="conf-detail">population-level estimate</span></td>
           </tr>
           <tr>
-            <td class="category">Value at Stake — scenario</td>
+            <td class="category"><span class="cat-label">Value at Stake</span><span class="cat-detail">scenario</span></td>
             <td class="value">12% disengagement rate</td>
             <td>Planning assumption only: additional-need players × 12% assumed disengagement × average wellbeing per player. No published evidence directly measures this rate for ND/MH need in grassroots sport</td>
             <td>Model assumption — planning prompt, not evidence-based projection</td>
