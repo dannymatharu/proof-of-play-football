@@ -4156,7 +4156,7 @@ window.submitEmailCapture = async function() {
   params.append('mhPlayers',      r.mhPlayers);
   params.append('imdDecile',      state.imdDecile || '');
   params.append('sroi',           r.sroi ? r.sroi.toFixed(2) : '');
-  params.append('reportText',     reportText.substring(0, 8000));
+  params.append('reportText',     reportText.substring(0, 20000));
   params.append('pressText',      pressText.substring(0, 4000));
   params.append('socialText',     socialText.substring(0, 3000));
   params.append('fundingText',    fundingText.substring(0, 4000));
