@@ -730,14 +730,9 @@ input[type="range"]::-webkit-slider-thumb {
   position: sticky;
   top: 112px;
   height: fit-content;
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
   align-self: start;
   padding-bottom: 48px;
 }
-
-.sidebar::-webkit-scrollbar { width: 4px; }
-.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
 .sv-total-card {
   background: var(--green);
@@ -4156,7 +4151,7 @@ window.submitEmailCapture = async function() {
   params.append('mhPlayers',      r.mhPlayers);
   params.append('imdDecile',      state.imdDecile || '');
   params.append('sroi',           r.sroi ? r.sroi.toFixed(2) : '');
-  params.append('reportText',     reportText.substring(0, 20000));
+  params.append('reportText',     reportText.substring(0, 8000));
   params.append('pressText',      pressText.substring(0, 4000));
   params.append('socialText',     socialText.substring(0, 3000));
   params.append('fundingText',    fundingText.substring(0, 4000));
