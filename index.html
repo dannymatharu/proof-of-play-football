@@ -2024,9 +2024,10 @@ input[type="range"]::-webkit-slider-thumb {
   <div class="hero-inner">
     <div class="hero-content">
     <div class="hero-eyebrow">Football Social Value Calculator</div>
-    <h1>Find out what your<br><em>club is really worth.</em></h1>
-    <p class="hero-explainer">Social value is the measurable impact your club has on people's health, wellbeing and community — beyond the football itself. Every club generates it every week. Most have never seen the number.</p>
-    <p class="hero-sub">This tool calculates that number. It produces a full report, a press release, ready-to-post social content and a funding guide — everything your club needs to tell its story properly.</p>
+    <h1>Win the funding. Make the case.<br><em>Get the recognition.</em></h1>
+    <p class="hero-explainer">Grant panels want evidence. Councils want numbers. Your community wants to know you matter.</p>
+    <p class="hero-sub">Most clubs lose grants not because they don't deliver impact — but because they can't prove it. Proof of Play gives you a social value figure backed by government methodology, plus the report, press release and funding guide to actually use it.</p>
+    <p class="hero-sub" style="margin-top:14px; font-style:italic;">Social value is the measurable impact your club has on people's health, wellbeing and community — beyond the football itself. Every club generates it every week. Most have never seen the number, or understood why it matters so much.</p>
     <div class="hero-meta">
       <div class="hero-pill"><span class="dot"></span> Takes about 10 minutes to complete</div>
       <div class="hero-pill"><span class="dot"></span> Built on HM Treasury & Sport England methodology</div>
@@ -2156,70 +2157,6 @@ input[type="range"]::-webkit-slider-thumb {
             <option value="star2">England Football Accredited — 2 Star</option>
             <option value="star3">England Football Accredited — 3 Star</option>
           </select>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <div class="field-group-title">Quote for your report & press release</div>
-        <div class="field" style="margin-bottom: 14px;">
-          <label>Quote text <span class="hint">Optional — used in press release and chairman's report. Keep it short and genuine.</span></label>
-          <textarea id="quoteText" placeholder="e.g. We've always known this club matters to our community, but seeing the scale of it laid out like this really brings it home." oninput="updateState('quoteText', this.value)"></textarea>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Name</label>
-            <input type="text" id="quoteName" placeholder="e.g. Martin Walker" oninput="updateState('quoteName', this.value)">
-          </div>
-          <div class="field">
-            <label>Role</label>
-            <input type="text" id="quoteRole" placeholder="e.g. Chairman" oninput="updateState('quoteRole', this.value)">
-          </div>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <div class="field-group-title">Participant voices <span class="hint" style="font-weight:400; text-transform:none; letter-spacing:0;">Optional — quotes from players, parents/carers/guardians appear in your full report and press release</span></div>
-        <div class="info-box" style="margin-bottom:16px;">Grant assessors respond to human stories, not just numbers. Adding one or two genuine quotes from players or parents/carers/guardians significantly strengthens any application — and makes your press release worth reading. Keep them short and real.</div>
-
-        <div id="participantQuotes">
-          <div class="participant-quote-entry" id="pq-0">
-            <div class="field-row">
-              <div class="field full">
-                <label>Quote <span class="hint">In their own words — don't tidy it up too much</span></label>
-                <textarea id="pq-text-0" placeholder='e.g. "My son was really struggling before he joined. Being part of the team gave him somewhere to belong."' oninput="updateParticipantQuote(0)" rows="2"></textarea>
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field"><label>Name</label><input type="text" id="pq-name-0" placeholder="e.g. Sarah T." oninput="updateParticipantQuote(0)"></div>
-              <div class="field"><label>Role / relationship</label><input type="text" id="pq-role-0" placeholder="e.g. Parent of U12 player" oninput="updateParticipantQuote(0)"></div>
-            </div>
-          </div>
-
-          <div class="participant-quote-entry" id="pq-1" style="margin-top:24px; padding-top:24px; border-top: 2px solid var(--border);">
-            <div class="field-row">
-              <div class="field full">
-                <label>Second quote <span class="hint">Optional</span></label>
-                <textarea id="pq-text-1" placeholder='e.g. "I've been volunteering here for fifteen years. It's the best thing I do with my time."' oninput="updateParticipantQuote(1)" rows="2"></textarea>
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field"><label>Name</label><input type="text" id="pq-name-1" placeholder="e.g. Dave W." oninput="updateParticipantQuote(1)"></div>
-              <div class="field"><label>Role / relationship</label><input type="text" id="pq-role-1" placeholder="e.g. Volunteer coach, 15 years" oninput="updateParticipantQuote(1)"></div>
-            </div>
-          </div>
-
-          <div class="participant-quote-entry" id="pq-2" style="margin-top:24px; padding-top:24px; border-top: 2px solid var(--border);">
-            <div class="field-row">
-              <div class="field full">
-                <label>Third quote <span class="hint">Optional</span></label>
-                <textarea id="pq-text-2" placeholder='e.g. "Football gave me confidence. I was really shy when I started — now I'm captain."' oninput="updateParticipantQuote(2)" rows="2"></textarea>
-              </div>
-            </div>
-            <div class="field-row">
-              <div class="field"><label>Name</label><input type="text" id="pq-name-2" placeholder="e.g. Jamie, age 14" oninput="updateParticipantQuote(2)"></div>
-              <div class="field"><label>Role / relationship</label><input type="text" id="pq-role-2" placeholder="e.g. Player" oninput="updateParticipantQuote(2)"></div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -2539,6 +2476,25 @@ input[type="range"]::-webkit-slider-thumb {
           <div class="field">
             <label>ND/MH overlap <span class="hint">Research shows ~30% of ND individuals also experience MH difficulties</span></label>
             <input type="text" value="30% overlap — fixed (ADHD Foundation; NAS)" disabled style="background: var(--cream-dark); color: var(--text-muted);">
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group" style="margin-top:32px;">
+        <div class="field-group-title">Quote for your report & press release</div>
+        <div class="info-box" style="margin-bottom:14px;">Now you've seen the figures, add a short quote from someone at the club. This appears in your chairman's summary report and press release. Keep it genuine — a sentence or two is plenty.</div>
+        <div class="field" style="margin-bottom: 14px;">
+          <label>Quote text <span class="hint">Optional</span></label>
+          <textarea id="quoteText" placeholder="e.g. We've always known this club matters to our community, but seeing the scale of it laid out like this really brings it home." oninput="updateState('quoteText', this.value)"></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Name</label>
+            <input type="text" id="quoteName" placeholder="e.g. Martin Walker" oninput="updateState('quoteName', this.value)">
+          </div>
+          <div class="field">
+            <label>Role</label>
+            <input type="text" id="quoteRole" placeholder="e.g. Chairman" oninput="updateState('quoteRole', this.value)">
           </div>
         </div>
       </div>
@@ -3308,12 +3264,7 @@ function updateFullReport(r, club, area) {
 
   const imdLine = state.imdDecile ? `\n─────────────────────────────────────\n\nLOCAL CONTEXT: AREA DEPRIVATION\n\nThis club is located in IMD Decile ${state.imdDecile} (${state.imdDecile <= 2 ? 'among the most deprived areas in England' : state.imdDecile <= 4 ? 'a priority area for deprivation-targeted funding' : state.imdDecile <= 7 ? 'a mid-range deprivation area' : 'a lower deprivation area'}). The Index of Multiple Deprivation (IMD) measures relative deprivation across income, employment, health, education, housing and crime. Decile 1 = most deprived; Decile 10 = least deprived.\n\n${state.imdDecile <= 4 ? `The club's location in a priority deprivation area strengthens eligibility for Sport England's Movement Fund, National Lottery Community Fund and other targeted programmes. This data is referenced in the Funding Guide.` : `Mainstream funding programmes remain fully accessible. Highly targeted deprivation funds (e.g. Peter Harrison Foundation, which requires Decile 1) are noted in the Funding Guide with eligibility flags.`}\n\nSource: Office for Health Improvement & Disparities / Ministry of Housing, Communities & Local Government — English Indices of Multiple Deprivation (2019, updated). Postcode: ${state.clubPostcode}.` : '';
 
-  const quotesBlock = state.participantQuotes
-    .filter(q => q.text && q.text.trim())
-    .map(q => `"${q.text.trim()}"\n— ${q.name || 'Club member'}${q.role ? ', ' + q.role : ''}`)
-    .join('\n\n');
-
-  const quotesSection = quotesBlock ? `\n─────────────────────────────────────\n\nIN THEIR OWN WORDS\n\nThe following quotes are from players, parents/carers/guardians and volunteers at ${club}. These are included here for use in grant applications, press releases and stakeholder communications — alongside the quantitative evidence above.\n\n${quotesBlock}\n\n` : '';
+  const quotesSection = `\n─────────────────────────────────────\n\nIN THEIR OWN WORDS\n\nGrant assessors weight qualitative evidence heavily — a short, genuine quote from a player, parent/carer or volunteer carries as much impact as the numbers. Add 1–2 here before submitting any application or press release.\n\n"[Insert quote from player, parent/carer or volunteer]"\n— [Name, role]\n\n"[Second quote — optional]"\n— [Name, role]\n\n`;
 
   const confNote = `\n─────────────────────────────────────\n\nDATA CONFIDENCE GUIDE\n\n[REPORTED BY CLUB] Hard data entered directly by the club — player numbers, volunteer hours, community reach, income. These figures are factual inputs and can be cited as club records.\n\n[ESTIMATED FROM MODEL] Figures derived from national proxy values applied to your club's data — wellbeing values, NHS savings, volunteer wellbeing contribution. Statistically sound estimates grounded in published sources, but not independently audited. Present as evidence-informed estimates and pair with local qualitative evidence.\n\n[CONTEXTUAL AREA DATA] Information from official area-level datasets — IMD deprivation decile, local authority profile. Sourced from government data via postcode lookup, not entered by the club.\n\n[SCENARIO ESTIMATE] Illustrative planning figures based on stated assumptions. The Value at Stake figure uses a 12% assumed disengagement rate — a planning prompt, not a forecast. Do not present as a confirmed outcome.\n`;
 
@@ -3465,10 +3416,6 @@ function updatePressRelease(r, club, area) {
   const sroiLine = r.sroi ? ` That is equivalent to a social return of £${r.sroi.toFixed(2)} for every £1 the club invests in its own operations.` : '';
   const ndLine = r.ndPlayers > 0 ? `\n\nThe assessment also highlights the scale of hidden need within the club environment. Based on published NHS prevalence data, an estimated ${r.ndPlayers.toLocaleString()} players at ${club} may be neurodivergent, and around ${r.mhPlayers.toLocaleString()} players are likely to experience a mental health difficulty during the current season. This underlines the wider duty of care that football clubs carry — often without recognition or resource.` : '';
 
-  const additionalQuotes = state.participantQuotes
-    .filter(q => q.text && q.text.trim())
-    .map(q => `${q.name || 'A club member'}${q.role ? ` (${q.role})` : ''} added: "${q.text.trim()}"`)
-    .join('\n\n');
 
   const text = `FOR IMMEDIATE RELEASE
 
@@ -3486,7 +3433,7 @@ The assessment, produced using Proof of Play — a social value calculator devel
 
 ${qn}, ${qr} of ${club}, said: "${qt}"${ndLine}
 
-${additionalQuotes ? additionalQuotes + '\n\n' : ''}What many within the club have long felt can now be expressed in evidence-informed terms. The social value figures are calculated using the Treasury-approved WELLBY framework — the same methodology used by Sport England, NHS commissioners and local authorities to evaluate community investment. Figures are estimates grounded in published national research. A full methodology note is available on request.
+What many within the club have long felt can now be expressed in evidence-informed terms. The social value figures are calculated using the Treasury-approved WELLBY framework — the same methodology used by Sport England, NHS commissioners and local authorities to evaluate community investment. Figures are estimates grounded in published national research. A full methodology note is available on request.
 
 ENDS
 
