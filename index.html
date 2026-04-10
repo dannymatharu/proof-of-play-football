@@ -2172,7 +2172,7 @@ input[type="range"]::-webkit-slider-thumb {
       </div>
 
       <div class="info-box">
-        <strong>Where do these values come from?</strong> Wellbeing figures are drawn from Sport England's Social Value Model Year 2 (November 2025), produced with Sheffield Hallam University, Manchester Metropolitan University and State of Life using HM Treasury WELLBY methodology. Active children aged 11–16 generate £4,300 per year in wellbeing value. Adults generate £2,600.
+        <strong>Where do these values come from?</strong> Wellbeing figures are drawn from Sport England's Social Value Model Year 2 (November 2025), produced with Sheffield Hallam University, Manchester Metropolitan University and State of Life using HM Treasury WELLBY methodology. Active adults generate £4,300 per year in wellbeing value; fairly active adults £3,300. Active children aged 11–16 generate £4,100; fairly active £2,600. Children 7–11: £3,100 active / £1,700 fairly active.
       </div>
 
       <div class="field-group">
@@ -2427,6 +2427,8 @@ input[type="range"]::-webkit-slider-thumb {
         <h2>Financials & support needs</h2>
         <p>Optional but powerful. Income figures allow us to calculate your Social Return on Investment — the pound value generated per pound spent. The ND/MH section adds the FMHA dimension no other tool provides.</p>
       </div>
+
+      <div id="data-sharing-notice" style="font-size:13px; color:var(--text-muted); background:var(--cream-dark); border:1px solid var(--border); border-radius:var(--r-sm); padding:12px 16px; margin-bottom:20px; line-height:1.6;"></div>
 
       <div class="field-group">
         <div class="field-group-title">Club financials (optional)</div>
@@ -3055,11 +3057,11 @@ function calculate() {
   const totalPlayers = totalYouth + totalAdult;
 
   // ── WELLBEING (Sport England Social Value Model Year 2 (November 2025), published Oct 2024 / updated Nov 2025)
-  // Adult active/fairly-active threshold: 2+ sessions/week = active (£2,600), else fairly active (£1,200)
+  // Adult active/fairly-active threshold: 2+ sessions/week = active (£4,300), else fairly active (£3,300)
   const adultSessRaw = parseFloat(s.adult_sessions||2);
   const adultSessWk  = s.adult_sessions_unit === 'month' ? adultSessRaw / 4.33 : adultSessRaw;
   const adultActive  = adultSessWk >= 2;
-  const adultRate    = adultActive ? 2600 : 1200;
+  const adultRate    = adultActive ? 4300 : 3300;
 
   // Youth active/fairly-active threshold: 2+ sessions/week = active, else fairly active
   const youthSessRaw = parseFloat(s.youth_sessions||2);
@@ -3071,8 +3073,8 @@ function calculate() {
   const yw56   = y56   * 1500;
   // Ages 7-11: SE Year 2 (November 2025) — active £3,100 / fairly active £1,700
   const yw711  = y711  * (youthActive ? 3100 : 1700);
-  // Ages 11-16: SE Year 2 (November 2025) — active £4,300 / fairly active £3,300
-  const yw1116 = y1116 * (youthActive ? 4300 : 3300);
+  // Ages 11-16: SE Year 2 (November 2025) — active £4,100 / fairly active £2,600
+  const yw1116 = y1116 * (youthActive ? 4100 : 2600);
   // Ages 16-18: treated as adult threshold (transition group)
   const yw1618 = y1618 * adultRate;
 
@@ -3133,7 +3135,7 @@ function calculate() {
   const totalReach = totalPlayers + numVol + cr;
 
   // Value at risk — 12% assumed disengagement × avg wellbeing per player (scenario estimate only)
-  const avgWellbeing = totalPlayers > 0 ? (totalWellbeing / totalPlayers) : 2600;
+  const avgWellbeing = totalPlayers > 0 ? (totalWellbeing / totalPlayers) : 4300;
   const riskVal = Math.round(addNeed * 0.12 * avgWellbeing);
 
   return {
@@ -3146,7 +3148,7 @@ function calculate() {
     communityValue, cr,
     totalValue, sroi, income, expenditure,
     ndPlayers, mhPlayers, overlap, addNeed,
-    totalReach, adultRate, riskVal
+    totalReach, adultRate, youthActive, riskVal
   };
 }
 
@@ -3167,11 +3169,23 @@ function fmtNum(n) {
   return n.toLocaleString();
 }
 
+// ─── DATA SHARING NOTICE ──────────────────────────────
+function updateDataSharingNotice() {
+  const el = document.getElementById('data-sharing-notice');
+  if (!el) return;
+  const isAP = !!(state.active_partnership);
+  el.innerHTML = isAP
+    ? `<strong style="color:var(--text);">About your data</strong> — When you generate your results, they're shared with your Active Partnership — not your finances, just the social value numbers: players, volunteers, community reach. Your Active Partnership is the regional organisation that coordinates sport and physical activity funding in your area. It helps them see where clubs like yours are and where to direct support.`
+    : `<strong style="color:var(--text);">About your data</strong> — When you generate your results, they're shared with your County FA — not your finances, just the social value numbers: players, volunteers, community reach. Your County FA uses this to see where clubs in your area are and where to direct support.`;
+}
+
 // ─── RECALCULATE & UPDATE UI ──────────────────────────
 function recalculate() {
   const r = calculate();
   const club = state.clubName || 'Your club';
   const area = state.area || 'your community';
+
+  updateDataSharingNotice();
 
   // Sidebar & header
   setText('headerTotal',  fmt(r.totalValue));
@@ -3320,7 +3334,7 @@ Adult football generates comparable wellbeing value alongside specific outcomes:
 • Community identity — adults who play for their local club are active stakeholders in the community, not just residents
 
 Youth players (ages 7–11): ${r.y711.toLocaleString()} players × £3,100 = ${fmtFull(r.yw711||0)}
-Youth players (ages 11–16): ${r.y1116.toLocaleString()} players × £4,300 = ${fmtFull(r.yw1116||0)}
+Youth players (ages 11–16): ${r.y1116.toLocaleString()} players × £${r.youthActive ? '4,100' : '2,600'} = ${fmtFull(r.yw1116||0)}
 Youth players (ages 5–6): ${r.y56.toLocaleString()} players × £1,500 = ${fmtFull(r.yw56||0)}
 Youth players (ages 16–18): ${r.y1618.toLocaleString()} players × £${r.adultRate.toLocaleString()} = ${fmtFull(r.yw1618||0)}
 Adult players: ${r.adultAble.toLocaleString()} players × £${r.adultRate.toLocaleString()} = ${fmtFull(r.adultAble * r.adultRate)}${r.adultDis > 0 ? `\nDisability participants: ${r.adultDis.toLocaleString()} players × £5,300 = ${fmtFull(r.adultDis * 5300)}` : ''}
@@ -4011,7 +4025,6 @@ async function submitToSupabase(r) {
       total_vol_hrs: Math.round(r.totalVolHrs),
       community_reach: r.cr,
       num_programmes: state.num_programmes || 0,
-      annual_income: r.income || 0,
       total_value: Math.round(r.totalValue),
       wellbeing_value: Math.round(r.totalWellbeing),
       nhs_value: Math.round(r.nhsTotal),
