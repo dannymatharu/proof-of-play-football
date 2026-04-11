@@ -2001,6 +2001,11 @@ input[type="range"]::-webkit-slider-thumb {
 </head>
 <body>
 
+<!-- Edit-mode banner: shown only when ?token= is in URL -->
+<div id="edit-mode-banner" style="display:none; background:#0B3D20; color:#fff; text-align:center; padding:12px 20px; font-size:14px; font-weight:500; letter-spacing:0.01em;">
+  ✏️ You're editing a previous submission — update your figures and click <strong>Generate My Results</strong> to save changes.
+</div>
+
 <!-- HEADER -->
 <header class="header">
   <div class="header-brand">
@@ -2912,6 +2917,7 @@ input[type="range"]::-webkit-slider-thumb {
 <script>
 // ─── STATE ───────────────────────────────────────────
 const state = {
+  token: '',
   clubName: '', area: '', countyFA: '', yearFounded: '', clubType: 'mixed', charterLevel: 'none',
   quoteText: '', quoteName: '', quoteRole: '',
   youth_5_6_m: 0, youth_5_6_f: 0,
@@ -2930,6 +2936,9 @@ const state = {
   participantQuotes: [{text:'',name:'',role:''},{text:'',name:'',role:''},{text:'',name:'',role:''}],
   activeSection: 'club', activeOutput: 'summary'
 };
+
+// Generate a fresh token on every new session
+state.token = crypto.randomUUID();
 
 function updateState(key, val) {
   state[key] = val;
@@ -4041,16 +4050,18 @@ async function submitToSupabase(r) {
       school_links: state.school_links || false,
       sessions_per_week: state.adult_sessions || '2',
       nd_prevalence: parseFloat(state.nd_prevalence || 14),
-      consent_given: true
+      consent_given: true,
+      token: state.token,
+      form_state: state
     };
 
-    await fetch(`${SUPABASE_URL}/rest/v1/club_submissions`, {
+    await fetch(`${SUPABASE_URL}/rest/v1/club_submissions?on_conflict=token`, {
       method: 'POST',
       headers: {
         'apikey': SUPABASE_KEY,
         'Authorization': `Bearer ${SUPABASE_KEY}`,
         'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
+        'Prefer': 'resolution=merge-duplicates,return=minimal'
       },
       body: JSON.stringify(payload)
     });
@@ -4058,6 +4069,64 @@ async function submitToSupabase(r) {
     // Silent fail — never block the user flow for a data submission
   }
 }
+
+// ─── TOKEN RESTORE ────────────────────────────────────
+// If ?token= is in the URL, fetch the saved form_state from Supabase and
+// restore the form so the club can amend their submission.
+function restoreFormDOM() {
+  // Restore all inputs that use updateState via oninput/onchange
+  document.querySelectorAll('[oninput], [onchange]').forEach(el => {
+    const handler = el.getAttribute('oninput') || el.getAttribute('onchange');
+    const match = handler && handler.match(/updateState\('([^']+)'/);
+    if (!match) return;
+    const key = match[1];
+    if (state[key] === undefined || state[key] === null) return;
+    if (el.type === 'checkbox') {
+      el.checked = !!state[key];
+    } else {
+      el.value = state[key];
+    }
+  });
+  // Restore club type buttons
+  if (state.clubType) window.setClubType(state.clubType);
+  // Restore session unit buttons
+  if (state.adult_sessions_unit) window.setSessionUnit('adult', state.adult_sessions_unit);
+  if (state.youth_sessions_unit) window.setSessionUnit('youth', state.youth_sessions_unit);
+  // Restore participant quotes
+  if (Array.isArray(state.participantQuotes)) {
+    state.participantQuotes.forEach((q, i) => {
+      const t = document.getElementById(`pq-text-${i}`);
+      const n = document.getElementById(`pq-name-${i}`);
+      const r = document.getElementById(`pq-role-${i}`);
+      if (t) t.value = q.text || '';
+      if (n) n.value = q.name || '';
+      if (r) r.value = q.role || '';
+    });
+  }
+  // Restore ND prevalence display
+  const ndDisplay = document.getElementById('ndPctDisplay');
+  if (ndDisplay) ndDisplay.textContent = (state.nd_prevalence || '14') + '%';
+  recalculate();
+}
+
+(async function initTokenRestore() {
+  const urlToken = new URLSearchParams(window.location.search).get('token');
+  if (!urlToken) return;
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/club_form_state?token=eq.${encodeURIComponent(urlToken)}&select=form_state`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    if (!res.ok) return;
+    const rows = await res.json();
+    if (!rows || !rows[0] || !rows[0].form_state) return;
+    Object.assign(state, rows[0].form_state);
+    state.token = urlToken; // always use the URL token, not any stored one
+    restoreFormDOM();
+    const banner = document.getElementById('edit-mode-banner');
+    if (banner) banner.style.display = 'block';
+  } catch(e) {}
+})();
 
 // ─── EMAIL CAPTURE ────────────────────────────────────
 // Apps Script deployment URL
@@ -4115,6 +4184,7 @@ window.submitEmailCapture = async function() {
   params.append('pressText',      pressText.substring(0, 4000));
   params.append('socialText',     socialText.substring(0, 3000));
   params.append('fundingText',    fundingText.substring(0, 4000));
+  params.append('formToken',      state.token);
 
   try {
     await fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
