@@ -4190,6 +4190,22 @@ window.submitEmailCapture = async function() {
     await fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
   } catch(e) {}
 
+  // Write report_text directly to club_submissions — bypasses Apps Script size limits
+  if (state.token && reportText) {
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/club_submissions?token=eq.${encodeURIComponent(state.token)}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ report_text: reportText })
+      });
+    } catch(e) {}
+  }
+
   const form = document.getElementById('emailForm');
   const sent = document.getElementById('emailSent');
   if (form) form.style.display = 'none';
