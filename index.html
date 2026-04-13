@@ -2366,15 +2366,42 @@ input[type="range"]::-webkit-slider-thumb {
 
       <div class="field-group">
         <div class="field-group-title">Community programmes</div>
-        <div class="field-row">
+        <p style="margin:0 0 14px;font-size:13px;color:var(--text-muted);line-height:1.5;">These are people your club reaches <strong>beyond registered players</strong> — don't include your playing members here, they're already counted in step 2. Fill in whichever apply to your club and we'll calculate the total.</p>
+
+        <div class="field-row" style="margin-bottom:12px;">
           <div class="field">
-            <label>Number of community programmes <span class="hint">Walking football, holiday camps, disability programmes, mental health sessions, etc.</span></label>
-            <input type="number" min="0" placeholder="0" oninput="updateState('num_programmes', +this.value||0)">
+            <label>Holiday camps <span class="hint">Average participants per camp × number of weeks run per year</span></label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="number" min="0" placeholder="Kids per camp" id="cr_camp_size" style="flex:1;" oninput="recalcCommunityReach()">
+              <span style="font-size:13px;color:var(--text-muted);white-space:nowrap;">×</span>
+              <input type="number" min="0" placeholder="Weeks/year" id="cr_camp_weeks" style="flex:1;" oninput="recalcCommunityReach()">
+            </div>
           </div>
           <div class="field">
-            <label>Total annual community reach <span class="hint">Total individuals reached across all programmes</span></label>
-            <input type="number" min="0" placeholder="0" oninput="updateState('community_reach', +this.value||0)">
+            <label>School visits / curriculum sessions <span class="hint">Average pupils per session × number of sessions per year</span></label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="number" min="0" placeholder="Pupils per session" id="cr_school_pupils" style="flex:1;" oninput="recalcCommunityReach()">
+              <span style="font-size:13px;color:var(--text-muted);white-space:nowrap;">×</span>
+              <input type="number" min="0" placeholder="Sessions/year" id="cr_school_sessions" style="flex:1;" oninput="recalcCommunityReach()">
+            </div>
           </div>
+        </div>
+
+        <div class="field-row" style="margin-bottom:16px;">
+          <div class="field">
+            <label>Community events / open days <span class="hint">Total attendees across all events in the year — not your regular players</span></label>
+            <input type="number" min="0" placeholder="0" id="cr_events" oninput="recalcCommunityReach()">
+          </div>
+          <div class="field">
+            <label>Other community programmes <span class="hint">Any other non-player participants not covered above — mental health sessions, parent groups, etc.</span></label>
+            <input type="number" min="0" placeholder="0" id="cr_other" oninput="recalcCommunityReach()">
+          </div>
+        </div>
+
+        <div id="community-reach-total" style="display:none;background:var(--bg-section,#f4f1eb);border-radius:8px;padding:14px 16px;margin-bottom:4px;">
+          <span style="font-size:13px;color:var(--text-muted);">Calculated community reach:</span>
+          <span id="community-reach-total-val" style="font-size:20px;font-weight:700;color:var(--green-dark,#0B3D20);margin-left:10px;">0</span>
+          <span style="font-size:13px;color:var(--text-muted);margin-left:4px;">people</span>
         </div>
       </div>
 
@@ -2942,6 +2969,30 @@ state.token = crypto.randomUUID();
 
 function updateState(key, val) {
   state[key] = val;
+  recalculate();
+}
+
+function recalcCommunityReach() {
+  const campSize    = parseInt(document.getElementById('cr_camp_size')?.value)    || 0;
+  const campWeeks   = parseInt(document.getElementById('cr_camp_weeks')?.value)   || 0;
+  const schoolPupils= parseInt(document.getElementById('cr_school_pupils')?.value)|| 0;
+  const schoolSess  = parseInt(document.getElementById('cr_school_sessions')?.value)|| 0;
+  const events      = parseInt(document.getElementById('cr_events')?.value)       || 0;
+  const other       = parseInt(document.getElementById('cr_other')?.value)        || 0;
+
+  const total = (campSize * campWeeks) + (schoolPupils * schoolSess) + events + other;
+
+  // Work out num_programmes from non-zero categories
+  const numProgs = [campSize * campWeeks > 0, schoolPupils * schoolSess > 0, events > 0, other > 0].filter(Boolean).length;
+
+  state.community_reach = total;
+  state.num_programmes  = numProgs;
+
+  const totalEl = document.getElementById('community-reach-total');
+  const valEl   = document.getElementById('community-reach-total-val');
+  if (totalEl) totalEl.style.display = total > 0 ? 'block' : 'none';
+  if (valEl)   valEl.textContent = total.toLocaleString();
+
   recalculate();
 }
 
