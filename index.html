@@ -4130,7 +4130,7 @@ function restoreFormDOM() {
 
 // ─── EMAIL CAPTURE ────────────────────────────────────
 // Apps Script deployment URL
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz0MtTVf_KGEHEWoUwpIfvGh8n1fnnDtfcJ9_Hezra6vvJgPYjo6-RYZL7QvzGPA7KuZw/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9wo9uspfI6z6UNVRtmD9e088eWI6Z9oUo1kEBmkIm4aZgq9tOYSVOTJ52VpVlDt_mpQ/exec';
 
 window.submitEmailCapture = async function() {
   const email = document.getElementById('captureEmail')?.value?.trim();
@@ -4204,6 +4204,7 @@ window.submitEmailCapture = async function() {
         body: JSON.stringify({ report_text: reportText })
       });
     } catch(e) {}
+
   }
 
   const form = document.getElementById('emailForm');
