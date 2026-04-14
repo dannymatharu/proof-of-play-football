@@ -1483,6 +1483,9 @@ input[type="range"]::-webkit-slider-thumb {
   margin-left: 8px;
   vertical-align: middle;
 }
+/* Give pills breathing room from the £ value on their right in the sidebar breakdown. */
+.sv-line .conf-badge { margin-right: 12px; }
+.sv-line-label { padding-right: 4px; }
 /* Reported by club — green */
 .conf-reported {
   background: #D4EDDA;
@@ -1784,7 +1787,7 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: pointer;
   border-bottom: 1px dotted var(--border);
   display: inline-block;
-  margin-top: 4px;
+  margin-top: 10px;
   transition: color 0.15s;
 }
 .calc-link:hover { color: var(--green); }
@@ -2296,7 +2299,7 @@ input[type="range"]::-webkit-slider-thumb {
       <div class="section-header">
         <div class="section-number">Step 3 of 5</div>
         <h2>Volunteers & workforce</h2>
-        <p>Volunteer contribution is typically the single largest number in your whole assessment. Most clubs are shocked by what they find here. Enter everyone — coaches, committee, kit washers, the person who sets up the cones.</p>
+        <p>Volunteer contribution is typically the single largest number in your whole assessment. Most clubs are shocked by what they find here. Enter everyone: coaches, committee, kit washers, the person who sets up the cones, those who sell the teas, coffees and sandwiches.</p>
       </div>
 
       <div class="info-box">
@@ -2484,7 +2487,7 @@ input[type="range"]::-webkit-slider-thumb {
         <div class="info-box">
           This section adds FMHA's signature layer. Using established prevalence data, it estimates how many players may be neurodivergent or experiencing a mental health difficulty — and what that means for your club's support responsibilities. This appears as a dedicated section in your full report and press release.
           <br><br>
-          <strong>Important if using this in a funding application:</strong> these are statistical projections based on national averages — not diagnosed beneficiaries. Grant assessors will challenge any club that presents these figures as confirmed fact. To use them credibly in a bid, pair them with evidence of your club's inclusive coaching practices — for example, FA-qualified coaches, a welfare officer in post, or completion of FMHA neurodiversity training. The numbers show likelihood; your policies show readiness.
+          <strong>Important if using this in a funding application:</strong> these are statistical projections based on national averages — not diagnosed beneficiaries. Grant assessors will challenge any club that presents these figures as confirmed fact. To use them credibly in a bid, pair them with evidence of your club's inclusive coaching practices — for example, FA-qualified coaches, a welfare officer in post, or completion of FMHA neurodiversity / mental health first aid training. The numbers show likelihood; your policies show readiness.
         </div>
 
         <div class="field" style="margin-bottom: 20px;">
@@ -2555,28 +2558,28 @@ input[type="range"]::-webkit-slider-thumb {
     </div>
 
     <div class="sv-breakdown">
-      <div class="sv-line" style="flex-direction:column; align-items:flex-start; gap:4px;">
+      <div class="sv-line" style="flex-direction:column; align-items:flex-start; gap:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
           <span class="sv-line-label"><span class="sv-dot" style="background:#10B981"></span>Participant wellbeing <span class="conf-badge conf-estimated" style="margin-left:4px;font-size:9px;padding:1px 5px;">Sport England</span></span>
           <span class="sv-line-val" id="svWellbeing">£0</span>
         </div>
         <span class="calc-link" onclick="openModal('wellbeing')">How this is calculated →</span>
       </div>
-      <div class="sv-line" style="flex-direction:column; align-items:flex-start; gap:4px;">
+      <div class="sv-line" style="flex-direction:column; align-items:flex-start; gap:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
           <span class="sv-line-label"><span class="sv-dot" style="background:#3B82F6"></span>NHS savings <span class="conf-badge conf-estimated" style="margin-left:4px;font-size:9px;padding:1px 5px;">Sport England</span></span>
           <span class="sv-line-val" id="svNHS">£0</span>
         </div>
         <span class="calc-link" onclick="openModal('nhs')">How this is calculated →</span>
       </div>
-      <div class="sv-line" style="flex-direction:column; align-items:flex-start; gap:4px;">
+      <div class="sv-line" style="flex-direction:column; align-items:flex-start; gap:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
           <span class="sv-line-label"><span class="sv-dot" style="background:#F59E0B"></span>Volunteer contribution <span class="conf-badge conf-estimated" style="margin-left:4px;font-size:9px;padding:1px 5px;">ONS · Sport England</span></span>
           <span class="sv-line-val" id="svVol">£0</span>
         </div>
         <span class="calc-link" onclick="openModal('volunteer')">How this is calculated →</span>
       </div>
-      <div class="sv-line" style="flex-direction:column; align-items:flex-start; gap:4px;">
+      <div class="sv-line" style="flex-direction:column; align-items:flex-start; gap:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
           <span class="sv-line-label"><span class="sv-dot" style="background:#8B5CF6"></span>Community impact <span class="conf-badge conf-estimated" style="margin-left:4px;font-size:9px;padding:1px 5px;">Sport England</span></span>
           <span class="sv-line-val" id="svCommunity">£0</span>
@@ -2735,25 +2738,6 @@ input[type="range"]::-webkit-slider-thumb {
           <span>Sources: Sport England Social Value Model Year 2 (November 2025) · HM Treasury WELLBY · ONS 2024</span>
         </div>
       </div><!-- /chairman-card -->
-
-      <!-- EMAIL CAPTURE -->
-      <div class="email-capture" id="emailCapture">
-        <div class="email-capture-inner">
-          <div class="email-capture-text">
-            <strong>Your club has been worth this the whole time. Keep the proof.</strong>
-            <span>Send your report to your inbox.</span>
-          </div>
-          <div class="email-capture-form" id="emailForm">
-            <input type="email" id="captureEmail" placeholder="your@email.com">
-            <input type="text" id="captureName" placeholder="Your name">
-            <button class="btn btn-primary" onclick="submitEmailCapture()">Send my report</button>
-            <p style="font-size:11px; color:var(--text-muted); margin-top:10px; line-height:1.6;">Your County FA will see your results so they can help you find the funding your club can now evidence. All data is kept secure and used only for football development purposes.</p>
-          </div>
-          <div class="email-capture-sent" id="emailSent" style="display:none;">
-            <span>✓ Done — check your inbox. FMHA will be in touch.</span>
-          </div>
-        </div>
-      </div>
 
     </div><!-- /panel-output-summary -->
     <div class="output-panel" id="panel-output-report">
@@ -2937,6 +2921,26 @@ input[type="range"]::-webkit-slider-thumb {
     </div>
 
   </div><!-- /output-body -->
+
+  <!-- EMAIL CAPTURE — persistent below every tab so it's always reachable -->
+  <div class="email-capture" id="emailCapture" style="margin:0 24px 24px; border-top:1px solid var(--border);">
+    <div class="email-capture-inner">
+      <div class="email-capture-text">
+        <strong>Your club has been worth this the whole time. Keep the proof.</strong>
+        <span>Send your report to your inbox.</span>
+      </div>
+      <div class="email-capture-form" id="emailForm">
+        <input type="email" id="captureEmail" placeholder="your@email.com">
+        <input type="text" id="captureName" placeholder="Your name">
+        <button class="btn btn-primary" onclick="submitEmailCapture()">Send my report</button>
+        <p style="font-size:11px; color:var(--text-muted); margin-top:10px; line-height:1.6;">Your County FA will see your results so they can help you find the funding your club can now evidence. All data is kept secure and used only for football development purposes.</p>
+      </div>
+      <div class="email-capture-sent" id="emailSent" style="display:none;">
+        <span>✓ Done — check your inbox. FMHA will be in touch.</span>
+      </div>
+    </div>
+  </div>
+
 </div><!-- /outputs-section -->
 
 <footer class="footer">
