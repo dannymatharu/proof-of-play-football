@@ -4290,7 +4290,12 @@ window.submitEmailCapture = async function() {
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal'
         },
-        body: JSON.stringify({ report_text: reportText })
+        body: JSON.stringify({
+          report_text:  reportText,
+          press_text:   pressText,
+          social_text:  socialText,
+          funding_text: fundingText
+        })
       });
     } catch(e) {}
 
