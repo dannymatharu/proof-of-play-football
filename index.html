@@ -2939,6 +2939,14 @@ input[type="range"]::-webkit-slider-thumb {
         <span>✓ Done — check your inbox. FMHA will be in touch.</span>
       </div>
     </div>
+
+    <!-- DASHBOARD LINK — constructed client-side from state.token, guaranteed to match club_submissions -->
+    <div id="dashboardLinkBlock" style="display:none; margin-top:24px; padding-top:24px; border-top:1px solid var(--border);">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:18px; color:var(--green); margin-bottom:6px; font-weight:600;">Your full dashboard is ready.</div>
+      <p style="font-size:13px; color:var(--text-mid); margin-bottom:14px; line-height:1.55;">A permanent, shareable version of your report — with the funding guide, press release, and editable figures — saved online under a link unique to your club. Bookmark it for your AGM, grant applications, and committee presentations.</p>
+      <a id="dashboardUrl" href="#" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-block; text-decoration:none;">View your full dashboard →</a>
+      <p style="font-size:11px; color:var(--text-muted); margin-top:10px;">This link is unique to your club. Share it with your committee. You can also return here later to update your figures.</p>
+    </div>
   </div>
 
 </div><!-- /outputs-section -->
@@ -3798,6 +3806,27 @@ function scrollToOutputs() {
       submitToSupabase(r);
     }
   }
+  // Hydrate the dashboard link client-side using state.token — the same UUID
+  // we write to club_submissions. This guarantees the link matches, regardless
+  // of what the apps-script email layer does with its own token.
+  hydrateDashboardLink();
+}
+
+const PORTAL_BASE_URL = 'https://dannymatharu.github.io/proof-of-play-club-portal/';
+
+function buildDashboardUrl() {
+  return state.token
+    ? PORTAL_BASE_URL + '?token=' + encodeURIComponent(state.token)
+    : '';
+}
+
+function hydrateDashboardLink() {
+  const url = buildDashboardUrl();
+  const a   = document.getElementById('dashboardUrl');
+  const box = document.getElementById('dashboardLinkBlock');
+  if (!url || !a || !box) return;
+  a.href = url;
+  box.style.display = 'block';
 }
 
 function setOutputTab(tab) {
@@ -4244,6 +4273,7 @@ window.submitEmailCapture = async function() {
   params.append('socialText',     socialText.substring(0, 3000));
   params.append('fundingText',    fundingText.substring(0, 4000));
   params.append('formToken',      state.token);
+  params.append('dashboardUrl',   buildDashboardUrl());
 
   try {
     await fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
