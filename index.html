@@ -2147,8 +2147,14 @@ input[type="range"]::-webkit-slider-thumb {
           <input type="text" id="area" placeholder="e.g. Ampthill, Bedfordshire" oninput="updateState('area', this.value)">
         </div>
         <div class="field">
-          <label>County FA affiliation</label>
-          <input type="text" id="countyFA" placeholder="e.g. Bedfordshire FA" oninput="updateState('countyFA', this.value)">
+          <label>County FA affiliation <span class="hint" style="color:var(--text-muted);">Pick yours from the list — we use this to share your numbers with your County FA</span></label>
+          <select id="countyFA" onchange="onCountyFAChange(this.value)">
+            <option value="">Loading County FAs…</option>
+          </select>
+          <div id="countyFAOtherWrap" style="display:none; margin-top:8px;">
+            <input type="text" id="countyFAOther" placeholder="Which County FA are you with? (or 'None' if not affiliated)" oninput="updateState('countyFAOther', this.value)">
+          </div>
+          <div id="countyFAAutofillHint" style="display:none; margin-top:6px; font-size:11px; color:var(--text-muted);">Auto-detected from your postcode — change above if you need to.</div>
         </div>
       </div>
 
@@ -2961,7 +2967,7 @@ input[type="range"]::-webkit-slider-thumb {
 // ─── STATE ───────────────────────────────────────────
 const state = {
   token: '',
-  clubName: '', area: '', countyFA: '', yearFounded: '', clubType: 'mixed', charterLevel: 'none',
+  clubName: '', area: '', countyFA: '', countyFAOther: '', yearFounded: '', clubType: 'mixed', charterLevel: 'none',
   quoteText: '', quoteName: '', quoteRole: '',
   youth_5_6_m: 0, youth_5_6_f: 0,
   youth_7_11_m: 0, youth_7_11_f: 0,
@@ -3885,6 +3891,63 @@ document.querySelectorAll('.copy-btn[data-copy]').forEach(btn => {
 const SUPABASE_URL = 'https://puafunzdaronevidsdve.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1YWZ1bnpkYXJvbmV2aWRzZHZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2OTI4ODIsImV4cCI6MjA5MDI2ODg4Mn0.7rmsRtzqrp-wTNWANDedjHF8Mgwxtbfzwr-eEYoM30w';
 
+// ─── COUNTY FA DROPDOWN ──────────────────────────────
+// Load active County FAs from Supabase and populate the dropdown.
+// Uses the public county_fas_public view (filtered to active=true) so we never leak inactive rows.
+// If the fetch fails we fall back to a free-text input so clubs are never blocked from submitting.
+let _countyFAList = [];
+async function loadCountyFAs() {
+  const sel = document.getElementById('countyFA');
+  if (!sel) return;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/county_fas_public?select=name,region&order=name.asc`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    _countyFAList = await res.json();
+    const opts = ['<option value="">Select your County FA…</option>']
+      .concat(_countyFAList.map(r => `<option value="${r.name}">${r.name}</option>`))
+      .concat(['<option value="OTHER">Other / Not sure</option>']);
+    sel.innerHTML = opts.join('');
+    // If the form was restored from a saved submission, reapply the value now the options are populated.
+    if (state.countyFA) {
+      sel.value = state.countyFA;
+      if (state.countyFA === 'OTHER') {
+        const wrap = document.getElementById('countyFAOtherWrap');
+        if (wrap) wrap.style.display = 'block';
+        const otherInput = document.getElementById('countyFAOther');
+        if (otherInput && state.countyFAOther) otherInput.value = state.countyFAOther;
+      }
+    }
+  } catch(err) {
+    console.error('Failed to load County FA list:', err);
+    // Graceful degrade: revert to a free-text input so the form still works.
+    const wrap = sel.parentElement;
+    sel.outerHTML = `<input type="text" id="countyFA" placeholder="e.g. Bedfordshire FA" oninput="updateState('countyFA', this.value)">`;
+  }
+}
+
+// Called from the select's onchange. Reveals the "Other" free-text input if they picked Other.
+function onCountyFAChange(val) {
+  updateState('countyFA', val);
+  const wrap = document.getElementById('countyFAOtherWrap');
+  if (wrap) wrap.style.display = (val === 'OTHER') ? 'block' : 'none';
+  if (val !== 'OTHER') {
+    updateState('countyFAOther', '');
+    const otherInput = document.getElementById('countyFAOther');
+    if (otherInput) otherInput.value = '';
+  }
+  // Hide the auto-detected hint once the user has changed the selection.
+  const hint = document.getElementById('countyFAAutofillHint');
+  if (hint) hint.style.display = 'none';
+}
+
+// Kick off the dropdown load as soon as the script runs.
+// NOTE: Postcode-based preselect of the dropdown is a deliberate next-phase feature.
+// The server-side fallback (cfaMap inside submitToSupabase) still auto-assigns the CFA
+// at submission time if the user leaves the dropdown blank, so data correctness is preserved.
+loadCountyFAs();
+
 async function submitToSupabase(r) {
   try {
     // Map admin_district to Active Partnership
@@ -4005,12 +4068,12 @@ async function submitToSupabase(r) {
       'Stafford':'Staffordshire FA','Staffordshire Moorlands':'Staffordshire FA',
       'Tamworth':'Staffordshire FA',
       // Birmingham & West Midlands (Birmingham County FA)
-      'Birmingham':'Birmingham County FA','Wolverhampton':'Birmingham County FA',
-      'Dudley':'Birmingham County FA','Sandwell':'Birmingham County FA',
-      'Walsall':'Birmingham County FA','Coventry':'Birmingham County FA',
-      'Warwick':'Birmingham County FA','North Warwickshire':'Birmingham County FA',
-      'Nuneaton and Bedworth':'Birmingham County FA','Rugby':'Birmingham County FA',
-      'Stratford-on-Avon':'Birmingham County FA',
+      'Birmingham':'Birmingham FA','Wolverhampton':'Birmingham FA',
+      'Dudley':'Birmingham FA','Sandwell':'Birmingham FA',
+      'Walsall':'Birmingham FA','Coventry':'Birmingham FA',
+      'Warwick':'Birmingham FA','North Warwickshire':'Birmingham FA',
+      'Nuneaton and Bedworth':'Birmingham FA','Rugby':'Birmingham FA',
+      'Stratford-on-Avon':'Birmingham FA',
       // Herefordshire FA
       'Herefordshire, County of':'Herefordshire FA',
       // Worcestershire FA
@@ -4101,7 +4164,20 @@ async function submitToSupabase(r) {
       // Dorset FA
       'Dorset':'Dorset FA','Bournemouth, Christchurch and Poole':'Dorset FA'
     };
-    const cfa = state.imdArea ? (cfaMap[state.imdArea] || state.countyFA || null) : (state.countyFA || null);
+    // CFA resolution order:
+    // 1. If user picked a specific CFA from the dropdown (not OTHER/blank) — use that (they know best).
+    // 2. Else if postcode lookup gave us an imdArea with a known mapping — use the mapped CFA.
+    // 3. Else null (admin will see it and can backfill).
+    // county_fa_other is only populated when the user explicitly picked "Other / Not sure".
+    let cfa = null;
+    let cfaOther = null;
+    if (state.countyFA && state.countyFA !== 'OTHER') {
+      cfa = state.countyFA;
+    } else if (state.countyFA === 'OTHER') {
+      cfaOther = state.countyFAOther || null;
+    } else if (state.imdArea && cfaMap[state.imdArea]) {
+      cfa = cfaMap[state.imdArea];
+    }
 
     const payload = {
       tool_version: 'football',
@@ -4109,6 +4185,7 @@ async function submitToSupabase(r) {
       club_name: state.clubName || null,
       active_partnership: ap,
       county_fa: cfa,
+      county_fa_other: cfaOther,
       region: state.imdArea || null,
       postcode_district: state.clubPostcode ? state.clubPostcode.split(' ')[0] : null,
       imd_decile: state.imdDecile || null,
@@ -4143,7 +4220,7 @@ async function submitToSupabase(r) {
       form_state: state
     };
 
-    await fetch(`${SUPABASE_URL}/rest/v1/club_submissions?on_conflict=token`, {
+    const resp = await fetch(`${SUPABASE_URL}/rest/v1/club_submissions?on_conflict=token`, {
       method: 'POST',
       headers: {
         'apikey': SUPABASE_KEY,
@@ -4153,9 +4230,35 @@ async function submitToSupabase(r) {
       },
       body: JSON.stringify(payload)
     });
+    if (!resp.ok) {
+      const errText = await resp.text().catch(() => '');
+      console.error('Supabase write failed:', resp.status, errText);
+      showSubmitError(`We couldn't save your submission (error ${resp.status}). Your results are still shown, but please try the email capture below — we'll catch it that way.`);
+      // Reset the guard so the next trigger can retry.
+      _supabaseSubmitted = false;
+    }
   } catch(e) {
-    // Silent fail — never block the user flow for a data submission
+    console.error('Supabase write error:', e);
+    showSubmitError("We couldn't save your submission — the connection failed. Your results are still shown, but please try the email capture below.");
+    _supabaseSubmitted = false;
   }
+}
+
+// Surface a non-blocking banner near the results when a save fails.
+// Staying non-blocking because the user still sees their calculated results —
+// we just want them to know the server didn't get the write so they can retry
+// via the email capture (which triggers a retry via the Apps Script path).
+function showSubmitError(msg) {
+  let banner = document.getElementById('submit-error-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'submit-error-banner';
+    banner.style.cssText = 'background:#FEF2F2;border:1px solid #EA580C;color:#7C2D12;padding:12px 16px;border-radius:8px;margin:16px 0;font-size:14px;line-height:1.5;';
+    const outputs = document.getElementById('outputs-section');
+    if (outputs) outputs.prepend(banner); else document.body.prepend(banner);
+  }
+  banner.innerHTML = `<strong>Heads up —</strong> ${msg}`;
+  banner.scrollIntoView({behavior:'smooth', block:'center'});
 }
 
 // ─── TOKEN RESTORE ────────────────────────────────────
