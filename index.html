@@ -3891,6 +3891,20 @@ document.querySelectorAll('.copy-btn[data-copy]').forEach(btn => {
 const SUPABASE_URL = 'https://puafunzdaronevidsdve.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1YWZ1bnpkYXJvbmV2aWRzZHZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2OTI4ODIsImV4cCI6MjA5MDI2ODg4Mn0.7rmsRtzqrp-wTNWANDedjHF8Mgwxtbfzwr-eEYoM30w';
 
+// ─── TEST MODE ─────────────────────────────────────────
+// Add ?test=1 to the URL to flag this submission as test data.
+// It writes is_test=true to Supabase so the admin dashboard can exclude these from headline figures.
+// A visible banner also drops in at the top of the page so you can't submit test data by accident.
+const IS_TEST_MODE = new URLSearchParams(window.location.search).get('test') === '1';
+if (IS_TEST_MODE) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:#FBBF24;color:#7C2D12;padding:10px 16px;text-align:center;font-size:13px;font-weight:600;position:sticky;top:0;z-index:1000;border-bottom:2px solid #B45309;font-family:Outfit,sans-serif;letter-spacing:0.02em;';
+    banner.textContent = '⚠ TEST MODE — this submission will be flagged and excluded from headline figures.';
+    document.body.prepend(banner);
+  });
+}
+
 // ─── COUNTY FA DROPDOWN ──────────────────────────────
 // Load active County FAs from Supabase and populate the dropdown.
 // Uses the public county_fas_public view (filtered to active=true) so we never leak inactive rows.
@@ -4182,6 +4196,7 @@ async function submitToSupabase(r) {
     const payload = {
       tool_version: 'football',
       sport: 'football',
+      is_test: IS_TEST_MODE,
       club_name: state.clubName || null,
       active_partnership: ap,
       county_fa: cfa,
