@@ -3804,6 +3804,10 @@ function scrollToOutputs() {
   setTimeout(() => {
     document.getElementById('outputs-section').scrollIntoView({behavior:'smooth', block:'start'});
   }, 100);
+  // Non-blocking reminder if the club hasn't picked a CFA yet.
+  // We surface a banner at the top of the outputs but don't block the submission —
+  // that's a deliberate soft-required pattern (blocking would frustrate edge cases).
+  showCountyFAReminderIfNeeded();
   // Fire Supabase on first view of results — only if club has entered meaningful data
   if (!_supabaseSubmitted) {
     const r = calculate();
@@ -3961,6 +3965,31 @@ function onCountyFAChange(val) {
 // The server-side fallback (cfaMap inside submitToSupabase) still auto-assigns the CFA
 // at submission time if the user leaves the dropdown blank, so data correctness is preserved.
 loadCountyFAs();
+
+// Shows a non-blocking "please pick your CFA" reminder at the top of the results section.
+// Triggered from scrollToOutputs(). Safe to call repeatedly — renders once, stays hidden if CFA is set.
+function showCountyFAReminderIfNeeded() {
+  const picked = state.countyFA && state.countyFA !== '' && state.countyFA !== 'OTHER';
+  const pickedOther = state.countyFA === 'OTHER' && state.countyFAOther && state.countyFAOther.trim();
+  const existing = document.getElementById('cfa-reminder-banner');
+  if (picked || pickedOther) { if (existing) existing.remove(); return; }
+  if (existing) return; // don't stack duplicates
+  const banner = document.createElement('div');
+  banner.id = 'cfa-reminder-banner';
+  banner.style.cssText = 'background:#FDF3E3;border:1px solid #B8750E;color:#7C4A0E;padding:14px 18px;border-radius:8px;margin:0 0 16px;font-size:14px;line-height:1.5;display:flex;align-items:center;gap:12px;flex-wrap:wrap;';
+  banner.innerHTML = `
+    <span style="flex:1;min-width:240px;"><strong>Pick your County FA?</strong> Your report will still generate, but picking your CFA means your social value shows up on their dashboard — and they can support your club directly.</span>
+    <button type="button" style="background:#0B3D20;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;" id="cfa-reminder-jump">Pick now</button>
+    <button type="button" style="background:none;border:none;color:#7C4A0E;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:underline;" id="cfa-reminder-dismiss">Skip</button>
+  `;
+  const outputs = document.getElementById('outputs-section');
+  if (outputs) outputs.prepend(banner);
+  document.getElementById('cfa-reminder-jump').addEventListener('click', () => {
+    const sel = document.getElementById('countyFA');
+    if (sel) { sel.focus(); sel.scrollIntoView({behavior:'smooth', block:'center'}); }
+  });
+  document.getElementById('cfa-reminder-dismiss').addEventListener('click', () => banner.remove());
+}
 
 async function submitToSupabase(r) {
   try {
