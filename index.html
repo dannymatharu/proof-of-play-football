@@ -542,6 +542,41 @@ textarea { resize: vertical; min-height: 80px; }
   margin-top: 2px;
 }
 
+/* ── FA age-group table ───────────────────────────────── */
+.ag-table {
+  display: grid;
+  grid-template-columns: 52px 1fr 1fr;
+  gap: 6px 10px;
+  align-items: center;
+  margin-top: 12px;
+}
+.ag-lbl {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-mid);
+  letter-spacing: 0.2px;
+}
+.ag-gh {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding-bottom: 2px;
+}
+.ag-table input[type="number"] {
+  padding: 7px 10px;
+  font-size: 13px;
+  text-align: center;
+}
+.ag-sep {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: var(--cream-dark);
+  margin: 3px 0;
+}
+
 .band-value {
   font-size: 11px;
   font-weight: 600;
@@ -2182,7 +2217,7 @@ input[type="range"]::-webkit-slider-thumb {
       <div class="section-header">
         <div class="section-number">Step 2 of 5</div>
         <h2>Players</h2>
-        <p>Enter registered player numbers by age band and gender. Wellbeing values are higher for younger participants — so the breakdown matters. Use your most recent season's figures.</p>
+        <p>Enter registered player numbers per FA age group. The calculator maps each group to the correct Sport England WELLBY value automatically. Use your most recent season's figures.</p>
       </div>
 
       <div class="info-box">
@@ -2208,28 +2243,66 @@ input[type="range"]::-webkit-slider-thumb {
       <div class="field-group" id="youth-players-section">
         <div class="field-group-title">Youth Players</div>
 
-        <div class="band-row">
-          <div class="band-label">Ages 5–6 <small>Mini soccer</small></div>
-          <div class="field"><label>Boys / Male</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_5_6_m', +this.value||0)"></div>
-          <div class="field"><label>Girls / Female</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_5_6_f', +this.value||0)"></div>
-        </div>
+        <div class="ag-table">
+          <!-- column headers -->
+          <div></div>
+          <div class="ag-gh">Boys / M</div>
+          <div class="ag-gh">Girls / F</div>
 
-        <div class="band-row">
-          <div class="band-label">Ages 7–11 <small>£3,100 / child / year</small></div>
-          <div class="field"><label>Boys / Male</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_7_11_m', +this.value||0)"></div>
-          <div class="field"><label>Girls / Female</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_7_11_f', +this.value||0)"></div>
-        </div>
+          <!-- U7–U11 → Sport England 7–11 WELLBY band -->
+          <div class="ag-lbl">U7s</div>
+          <input type="number" min="0" placeholder="0" oninput="updateState('u7_m', +this.value||0)">
+          <input type="number" min="0" placeholder="0" oninput="updateState('u7_f', +this.value||0)">
 
-        <div class="band-row">
-          <div class="band-label">Ages 11–16 <small>£4,300 / child / year</small></div>
-          <div class="field"><label>Boys / Male</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_11_16_m', +this.value||0)"></div>
-          <div class="field"><label>Girls / Female</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_11_16_f', +this.value||0)"></div>
-        </div>
+          <div class="ag-lbl">U8s</div>
+          <input type="number" min="0" placeholder="0" oninput="updateState('u8_m', +this.value||0)">
+          <input type="number" min="0" placeholder="0" oninput="updateState('u8_f', +this.value||0)">
 
-        <div class="band-row">
-          <div class="band-label">Ages 16–18 <small>Youth/adult transition</small></div>
-          <div class="field"><label>Boys / Male</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_16_18_m', +this.value||0)"></div>
-          <div class="field"><label>Girls / Female</label><input type="number" min="0" placeholder="0" oninput="updateState('youth_16_18_f', +this.value||0)"></div>
+          <div class="ag-lbl">U9s</div>
+          <input type="number" min="0" placeholder="0" oninput="updateState('u9_m', +this.value||0)">
+          <input type="number" min="0" placeholder="0" oninput="updateState('u9_f', +this.value||0)">
+
+          <div class="ag-lbl">U10s</div>
+          <input type="number" min="0" placeholder="0" oninput="updateState('u10_m', +this.value||0)">
+          <input type="number" min="0" placeholder="0" oninput="updateState('u10_f', +this.value||0)">
+
+          <div class="ag-lbl">U11s</div>
+          <input type="number" min="0" placeholder="0" oninput="updateState('u11_m', +this.value||0)">
+          <input type="number" min="0" placeholder="0" oninput="updateState('u11_f', +this.value||0)">
+
+          <div class="ag-sep"></div>
+
+          <!-- U12–U16 → Sport England 11–16 WELLBY band -->
+          <div class="ag-lbl">U12s</div>
+          <input type="number" min="0" placeholder="0" oninput="updateState('u12_m', +this.value||0)">
+          <input type="number" min="0" placeholder="0" oninput="updateState('u12_f', +this.value||0)">
+
+          <div class="ag-lbl">U13s</div>
+          <input type="number" min="0" placeholder="0" oninput="updateState('u13_m', +this.value||0)">
+          <input type="number" min="0" placeholder="0" oninput="updateState('u13_f', +this.value||0)">
+
+          <div class="ag-lbl">U14s</div>
+          <input type="number" min="0" placeholder="0" oninput="updateState('u14_m', +this.value||0)">
+          <input type="number" min="0" placeholder="0" oninput="updateState('u14_f', +this.value||0)">
+
+          <div class="ag-lbl">U15s</div>
+          <input type="number" min="0" placeholder="0" oninput="updateState('u15_m', +this.value||0)">
+          <input type="number" min="0" placeholder="0" oninput="updateState('u15_f', +this.value||0)">
+
+          <div class="ag-lbl">U16s</div>
+          <input type="number" min="0" placeholder="0" oninput="updateState('u16_m', +this.value||0)">
+          <input type="number" min="0" placeholder="0" oninput="updateState('u16_f', +this.value||0)">
+
+          <div class="ag-sep"></div>
+
+          <!-- U17–U18 → adult-rate WELLBY band (transition group) -->
+          <div class="ag-lbl">U17s</div>
+          <input type="number" min="0" placeholder="0" oninput="updateState('u17_m', +this.value||0)">
+          <input type="number" min="0" placeholder="0" oninput="updateState('u17_f', +this.value||0)">
+
+          <div class="ag-lbl">U18s</div>
+          <input type="number" min="0" placeholder="0" oninput="updateState('u18_m', +this.value||0)">
+          <input type="number" min="0" placeholder="0" oninput="updateState('u18_f', +this.value||0)">
         </div>
       </div><!-- /youth-players-section -->
 
@@ -2835,13 +2908,13 @@ input[type="range"]::-webkit-slider-thumb {
           </thead>
           <tbody>
             <tr>
-              <td>Wellbeing value: child ages 7–11 (active 2+/wk: £3,100 / fairly active: £1,700)</td>
+              <td>Wellbeing value: Under 11s / ages 7–11 (active 2+/wk: £3,100 / fairly active: £1,700)</td>
               <td class="val-cell">Active £3,100 / Fairly active £1,700 / child / yr</td>
               <td>Sport England Social Value Model Year 2 (November 2025) (Sheffield Hallam / MMU / State of Life)<br><a href="https://www.sportengland.org/research-and-data/research/social-value-and-return-investment-sport-and-physical-activity" target="_blank">sportengland.org</a></td>
               <td>Year 2 (November 2025)</td>
             </tr>
             <tr>
-              <td>Wellbeing value: child ages 11–16 (active 2+/wk: £4,300 / fairly active: £3,300)</td>
+              <td>Wellbeing value: Under 16s / ages 11–16 (active 2+/wk: £4,300 / fairly active: £3,300)</td>
               <td class="val-cell">Active £4,300 / Fairly active £3,300 / child / yr</td>
               <td>Sport England Social Value Model Year 2 (November 2025) (Sheffield Hallam / MMU / State of Life)</td>
               <td>Year 2 (November 2025)</td>
@@ -3127,11 +3200,17 @@ async function lookupPostcode() {
 function calculate() {
   const s = state;
 
-  const y56  = (s.youth_5_6_m||0)  + (s.youth_5_6_f||0);
-  const y711 = (s.youth_7_11_m||0) + (s.youth_7_11_f||0);
-  const y1116= (s.youth_11_16_m||0)+ (s.youth_11_16_f||0);
-  const y1618= (s.youth_16_18_m||0)+ (s.youth_16_18_f||0);
-  const totalYouth = y56 + y711 + y1116 + y1618;
+  // Mini soccer band removed — form now uses individual FA age groups (U7–U18) with M/F split
+  const y56   = 0;
+  // U7–U11 → Sport England 7–11 WELLBY band
+  const y711  = (s.u7_m||0)+(s.u7_f||0)+(s.u8_m||0)+(s.u8_f||0)+(s.u9_m||0)+(s.u9_f||0)
+              + (s.u10_m||0)+(s.u10_f||0)+(s.u11_m||0)+(s.u11_f||0);
+  // U12–U16 → Sport England 11–16 WELLBY band
+  const y1116 = (s.u12_m||0)+(s.u12_f||0)+(s.u13_m||0)+(s.u13_f||0)+(s.u14_m||0)+(s.u14_f||0)
+              + (s.u15_m||0)+(s.u15_f||0)+(s.u16_m||0)+(s.u16_f||0);
+  // U17–U18 → adult-rate WELLBY band (transition group)
+  const y1618 = (s.u17_m||0)+(s.u17_f||0)+(s.u18_m||0)+(s.u18_f||0);
+  const totalYouth = y711 + y1116 + y1618;
 
   const adultAble = (s.adult_male||0) + (s.adult_female||0);
   const adultDis  = s.adult_disability||0;
@@ -3435,10 +3514,10 @@ Adult football generates comparable wellbeing value alongside specific outcomes:
 • Mental health protection — social sport is one of the most effective interventions against adult loneliness and depression
 • Community identity — adults who play for their local club are active stakeholders in the community, not just residents
 
-Youth players (ages 7–11): ${r.y711.toLocaleString()} players × £3,100 = ${fmtFull(r.yw711||0)}
-Youth players (ages 11–16): ${r.y1116.toLocaleString()} players × £${r.youthActive ? '4,100' : '2,600'} = ${fmtFull(r.yw1116||0)}
+Under 11s (ages 7–11): ${r.y711.toLocaleString()} players × £3,100 = ${fmtFull(r.yw711||0)}
+Under 16s (ages 11–16): ${r.y1116.toLocaleString()} players × £${r.youthActive ? '4,100' : '2,600'} = ${fmtFull(r.yw1116||0)}
 Youth players (ages 5–6): ${r.y56.toLocaleString()} players × £1,500 = ${fmtFull(r.yw56||0)}
-Youth players (ages 16–18): ${r.y1618.toLocaleString()} players × £${r.adultRate.toLocaleString()} = ${fmtFull(r.yw1618||0)}
+Under 18s (ages 16–18): ${r.y1618.toLocaleString()} players × £${r.adultRate.toLocaleString()} = ${fmtFull(r.yw1618||0)}
 Adult players: ${r.adultAble.toLocaleString()} players × £${r.adultRate.toLocaleString()} = ${fmtFull(r.adultAble * r.adultRate)}${r.adultDis > 0 ? `\nDisability participants: ${r.adultDis.toLocaleString()} players × £5,100 = ${fmtFull(r.adultDis * 5100)}` : ''}
 
 2. HEALTH & PRODUCTIVITY SAVINGS: ${fmt(r.nhsTotal)}
@@ -4487,7 +4566,7 @@ const MODAL_CONTENT = {
     title: 'Participant Wellbeing Value',
     badge: '<span class="conf-badge conf-estimated">Estimated from model</span>',
     desc: 'This figure estimates the wellbeing value generated when people participate regularly in sport and physical activity. It uses the Treasury-approved WELLBY methodology — each year of regular participation is assigned a monetary value based on the measurable improvement in life satisfaction it produces.',
-    formula: 'Youth 7–11 (active 2+/wk): × £3,100/yr\nYouth 7–11 (fairly active): × £1,700/yr\nYouth 11–16 (active 2+/wk): × £4,300/yr\nYouth 11–16 (fairly active): × £3,300/yr\nAdult (active 2+/wk): × £2,600/yr\nAdult (fairly active): × £1,200/yr\nDisability participants: × £5,100/yr\nAges 5–6: × £1,500/yr (custom conservative proxy — SE model covers age 7+)\n\nWELLBY unit value: £15,900 per 1-point life satisfaction gain\n(HM Treasury Green Book, uprated to 2024 per SE Year 2 (November 2025) model)',
+    formula: 'Under 11s / ages 7–11 (active 2+/wk): × £3,100/yr\nUnder 11s / ages 7–11 (fairly active): × £1,700/yr\nUnder 16s / ages 11–16 (active 2+/wk): × £4,300/yr\nUnder 16s / ages 11–16 (fairly active): × £3,300/yr\nAdult (active 2+/wk): × £2,600/yr\nAdult (fairly active): × £1,200/yr\nDisability participants: × £5,100/yr\nAges 5–6: × £1,500/yr (custom conservative proxy — SE model covers age 7+)\n\nWELLBY unit value: £15,900 per 1-point life satisfaction gain\n(HM Treasury Green Book, uprated to 2024 per SE Year 2 (November 2025) model)',
     sources: '<strong>Primary sources:</strong> Sport England Social Value Model Year 2 (November 2025) (Sheffield Hallam University / Manchester Metropolitan University / State of Life) · HM Treasury Green Book Supplementary Guidance on Wellbeing (2021, uprated 2024) · <strong>Confidence:</strong> High where participation figures are directly entered; Medium where age-band assumptions apply'
   },
   nhs: {
