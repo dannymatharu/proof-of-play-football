@@ -1,10 +1,12 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Audio,
   Easing,
   Sequence,
   interpolate,
   spring,
+  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
@@ -760,10 +762,26 @@ const CTAScene: React.FC = () => {
 // 330  – 390  Scene 5: ND/MH layer    (2s)
 // 390  – 450  Scene 6: CTA            (2s)
 
+// Swap track name here to audition a different one:
+//   Sunday_Promenade.mp3   — relaxed, warm weekend feel
+//   Mental_Architecture.mp3 — more atmospheric, suits the ND/MH layer
+//   Midnight_Motion.mp3    — moodier, modern
+const AUDIO_TRACK = "Sunday_Promenade.mp3";
+
 export const VolunteerImpact: React.FC<{ format?: "square" | "story" }> = () => {
+  const frame = useCurrentFrame();
+
+  // Fade audio out over the last 30 frames (1 second)
+  const volume = interpolate(frame, [420, 450], [1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
   return (
     <AbsoluteFill>
       <style>{FONTS}</style>
+
+      <Audio src={staticFile(AUDIO_TRACK)} volume={volume} />
 
       <Sequence from={0} durationInFrames={90} name="Hook">
         <HookScene />
