@@ -2094,7 +2094,7 @@ input[type="range"]::-webkit-slider-thumb {
     </div>
     <div style="margin-top:24px; background:rgba(110,232,154,0.06); border:1px solid rgba(110,232,154,0.15); border-radius:10px; padding:16px 20px; max-width:600px;">
       <p style="font-size:13px; color:rgba(255,255,255,0.75); line-height:1.65; margin:0;">
-        <strong style="color:#6EE89A;">Every figure in your report traces back to a named government source.</strong> The same methodology Sport England uses. The same framework NHS commissioners rely on. Your number isn't an estimate pulled from thin air — it's a modelled figure built from the published evidence on what clubs like yours are worth. <span style="color:rgba(255,255,255,0.5);">See the Methodology tab in your results.</span>
+        <strong style="color:#6EE89A;">Your report combines club-entered figures with modelled proxy values from named public and academic sources.</strong> It uses UK social value and wellbeing methodology and applies those proxy values to your club's data. Some outputs also include clearly labelled modelling assumptions. <span style="color:rgba(255,255,255,0.5);">See the Methodology tab in your results.</span>
       </p>
     </div>
     </div><!-- /hero-meta -->
@@ -2585,14 +2585,14 @@ input[type="range"]::-webkit-slider-thumb {
               oninput="updateState('nd_prevalence', this.value); document.getElementById('ndPctDisplay').textContent = this.value + '%'">
           </div>
           <span style="font-size: 12px; color: var(--text-muted); margin-top: 8px; display: block;">
-            The 14% figure reflects published estimates of neurodivergent prevalence in youth populations (ADHD: ~5–7%, autism: ~1–2%, dyslexia: ~10%, with significant overlap). Source: NHS Digital; British Dyslexia Association.
+            The 14% figure reflects published estimates of neurodivergent prevalence in youth populations (ADHD: ~5–7%, autism: ~1–2%, dyslexia: ~10%, with significant overlap). Source: NHS England; British Dyslexia Association.
           </span>
         </div>
 
         <div class="field-row">
           <div class="field">
-            <label>Mental health: annual prevalence <span class="hint">Fixed at 20% — NHS Digital MHCYP Survey 2023</span></label>
-            <input type="text" value="20% of players — fixed estimate (NHS Digital MHCYP 2023)" disabled style="background: var(--cream-dark); color: var(--text-muted);">
+            <label>Mental health: planning estimate <span class="hint">20% proxy based on NHS England MHCYP 2023 (ages 8–25, England)</span></label>
+            <input type="text" value="20% planning proxy — based on NHS England MHCYP 2023 (ages 8–25)" disabled style="background: var(--cream-dark); color: var(--text-muted);">
           </div>
           <div class="field">
             <label>ND/MH overlap <span class="hint">Research shows ~30% of ND individuals also experience MH difficulties</span></label>
@@ -2693,7 +2693,7 @@ input[type="range"]::-webkit-slider-thumb {
     <div class="sroi-card" id="sroiCard">
       <div class="sroi-label">Social Value to Cost Ratio</div>
       <div class="sroi-value">£<span id="sroiVal">0</span> per £1 invested</div>
-      <div class="sroi-desc">For every pound invested in the club (including expenditure, player costs and volunteer time), this is the estimated social value returned to your community. A 40% deadweight adjustment is applied to account for activity that would occur without the club. Enter your annual expenditure in the Financials section to unlock this figure.</div>
+      <div class="sroi-desc">For every pound invested in the club (including club expenditure and the replacement-cost value of volunteer time), this is the estimated social value returned to your community. A 40% deadweight assumption is currently applied as a modelling choice to account for activity that would occur without the club. Enter your annual expenditure in the Financials section to unlock this figure.</div>
       <span class="calc-link" onclick="openModal('sroi')" style="margin-top:6px;">How this is calculated →</span>
     </div>
 
@@ -2767,7 +2767,7 @@ input[type="range"]::-webkit-slider-thumb {
             <div class="reality-desc">of social value at stake if those needs go unmet</div>
           </div>
         </div>
-        <div class="reality-note">Estimates based on published NHS Digital and British Dyslexia Association prevalence data. This is not a diagnostic tool — it is a planning reality.</div>
+        <div class="reality-note">Estimates based on published NHS England and British Dyslexia Association prevalence data. This is not a diagnostic tool — it is a planning reality.</div>
       </div>
 
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; gap:16px; flex-wrap:wrap; margin-top:32px;">
@@ -2961,8 +2961,8 @@ input[type="range"]::-webkit-slider-thumb {
             </tr>
             <tr>
               <td>Volunteer wellbeing value per volunteer per year</td>
-              <td class="val-cell">Weekly: £2,100 / Monthly: £1,000 / vol / yr</td>
-              <td>Sport England Social Value Model Year 2 (November 2025) primary value component (updated Nov 2025). Weekly volunteering £2,100, monthly volunteering £1,000. Applied based on sessions frequency entered by club.<br><a href="https://www.sportengland.org/research-and-data/research/social-value-and-return-investment-sport-and-physical-activity" target="_blank">sportengland.org</a></td>
+              <td class="val-cell">£2,100 / vol / yr</td>
+              <td>UK Social Value Model Year 2 (November 2025) primary value component. Current build uses a single regular-volunteer wellbeing rate (£2,100/yr). Primary sources: DCMS/London Economics 2025 replacement cost methodology (England) · UK Social Value Model Year 2 (November 2025).<br><a href="https://www.sportengland.org/research-and-data/research/social-value-and-return-investment-sport-and-physical-activity" target="_blank">sportengland.org</a></td>
               <td>Year 2 (November 2025)</td>
             </tr>
             <tr>
@@ -2980,13 +2980,13 @@ input[type="range"]::-webkit-slider-thumb {
             <tr>
               <td>Neurodivergent prevalence estimate</td>
               <td class="val-cell">10–20% (user-selected)</td>
-              <td>ADHD: ~5–7% (NHS Digital); Autism: ~1–2% (NHS Digital); Dyslexia: ~10% (British Dyslexia Association); with significant co-occurrence. Default of 14% reflects combined conservative estimate with overlap adjustment.</td>
+              <td>ADHD: ~5–7% (NHS England); Autism: ~1–2% (NHS England); Dyslexia: ~10% (British Dyslexia Association); with significant co-occurrence. Default of 14% reflects combined conservative estimate with overlap adjustment.</td>
               <td>2023</td>
             </tr>
             <tr>
               <td>Annual mental health difficulty prevalence (children/youth)</td>
               <td class="val-cell">~20% / year</td>
-              <td>NHS Digital Mental Health of Children and Young People in England Survey 2023. ~1 in 5 children and young people (updated from previously cited 1-in-4 figure). 20.3% of 8–16-year-olds, 23.3% of 17–19-year-olds had a probable mental disorder.</td>
+              <td>NHS England Mental Health of Children and Young People in England Survey 2023. ~1 in 5 children and young people (updated from previously cited 1-in-4 figure). 20.3% of 8–16-year-olds, 23.3% of 17–19-year-olds had a probable mental disorder.</td>
               <td>2023</td>
             </tr>
             <tr>
@@ -3111,7 +3111,7 @@ function renderImdResult(decile, admin, ward, result) {
   state.imdDecile = decile;
   if (decile <= 2) {
     result.className = 'imd-result visible imd-priority';
-    result.innerHTML = `<strong>IMD Decile ${decile} — High priority area</strong>Your club is in one of the most deprived areas in England. This significantly strengthens eligibility for Sport England, National Lottery, and Peter Harrison Foundation funding. Prominently noted in your report and funding guide.`;
+    result.innerHTML = `<strong>IMD Decile ${decile} — High priority area</strong>Your club is in one of the most deprived areas in England. This may strengthen the case in programmes that target deprivation, inequality or place-based need. Check each fund's eligibility rules separately. Prominently noted in your report and funding guide.`;
   } else if (decile <= 4) {
     result.className = 'imd-result visible imd-priority';
     result.innerHTML = `<strong>IMD Decile ${decile} — Priority area</strong>Your area falls in the bottom 40% for deprivation. Sport England's Movement Fund and National Lottery prioritise clubs in deciles 1–4. Noted in your funding guide.`;
@@ -3222,27 +3222,26 @@ function calculate() {
   const totalPlayers = totalYouth + totalAdult;
 
   // ── WELLBEING (Sport England Social Value Model Year 2 (November 2025), published Oct 2024 / updated Nov 2025)
-  // Adult active/fairly-active threshold: 2+ sessions/week = active (£4,300), else fairly active (£3,300)
-  // Source: Sport England Social Value Model Year 2 (November 2025) — Active Adult = £4,300; Fairly Active Adult = £3,300
+  // Adult active/fairly-active threshold: 2+ sessions/week = active (£2,600), else fairly active (£1,200)
+  // Source: UK Social Value Model Year 2 (November 2025) — Active Adult = £2,600; Fairly Active Adult = £1,200
   const adultSessRaw = parseFloat(s.adult_sessions||2);
   const adultSessWk  = s.adult_sessions_unit === 'month' ? adultSessRaw / 4.33 : adultSessRaw;
   const adultActive  = adultSessWk >= 2;
-  const adultRate    = adultActive ? 4300 : 3300;
+  const adultRate    = adultActive ? 2600 : 1200;
 
   // Youth active/fairly-active threshold: 2+ sessions/week = active, else fairly active
   const youthSessRaw = parseFloat(s.youth_sessions||2);
   const youthSessWk  = s.youth_sessions_unit === 'month' ? youthSessRaw / 4.33 : youthSessRaw;
   const youthActive  = youthSessWk >= 2;
 
-  // Ages 5-6: custom conservative proxy (£1,500) — not directly supported by SE model (age 7+).
-  // Labelled as a custom estimate throughout.
-  const yw56   = y56   * 1500;
-  // Ages 7-11: SE Year 2 (November 2025) — active £3,100 / fairly active £1,700
+  // Ages 5-6: removed until a sourced value is documented
+  const yw56   = 0; // removed until a sourced U5/U6 value is documented
+  // Ages 7-11: UK Social Value Model Year 2 (November 2025) — active £3,100 / fairly active £1,700
   const yw711  = y711  * (youthActive ? 3100 : 1700);
-  // Ages 11-16: SE Year 2 (November 2025) — active £4,100 / fairly active £2,600
-  const yw1116 = y1116 * (youthActive ? 4100 : 2600);
-  // Ages 16-18: treated as adult threshold (transition group)
-  const yw1618 = y1618 * adultRate;
+  // Ages 11-16: UK Social Value Model Year 2 (November 2025) — active £4,300 / fairly active £3,300
+  const yw1116 = y1116 * (youthActive ? 4300 : 3300);
+  // Ages 16-18: use youth rate (not adult) — conservative approach
+  const yw1618 = y1618 * (youthActive ? 4300 : 3300);
 
   const youthWellbeing = yw56 + yw711 + yw1116 + yw1618;
   // Disabled/LTHC adults: SE Year 2 (November 2025) — £5,100
@@ -3254,7 +3253,8 @@ function calculate() {
   // Includes reduced NHS demand (GP visits, disease prevention, mental health services)
   // plus productivity gains (reduced absenteeism). Youth figure is internal proxy —
   // SE secondary model does not publish child/youth health savings.
-  const nhsAdult = totalAdult * (adultActive ? 478 : 330);
+  const adultHealthRate = adultActive ? 478 : 330;
+  const nhsAdult = totalAdult * adultHealthRate;
   const nhsYouth = totalYouth * 90; // internal proxy — not in current SE secondary model
   const nhsTotal = nhsAdult + nhsYouth;
 
@@ -3266,10 +3266,9 @@ function calculate() {
   // Based on Standard Occupational Classification (SOC) mapping of volunteer roles.
   // Source: DCMS Community Life Survey / London Economics volunteer valuation 2024.
   const volEcon = totalVolHrs * 13.20;
-  // Wellbeing value: SE Year 2 (November 2025) primary value model
-  // Weekly volunteering £2,100 / monthly volunteering £1,000
-  // Determined by volunteer hours: 1+ hr/week = weekly volunteer, else monthly
-  const volWellRate = hrsWk >= 1 ? 2100 : 1000;
+  // Wellbeing value: UK Social Value Model Year 2 (November 2025)
+  // Single regular-volunteer rate; monthly branch removed (input is hours/wk, not frequency)
+  const volWellRate = 2100;
   const volWell  = numVol * volWellRate;
   const volTotal = volEcon + volWell;
 
@@ -3284,29 +3283,25 @@ function calculate() {
 
   const grossValue = totalWellbeing + nhsTotal + volTotal + communityValue;
 
-  // ── DEADWEIGHT ADJUSTMENT ──────────────────────────────────────────────
-  // HM Treasury Green Book requires deduction for outcomes that would have occurred
-  // without the intervention. 40% deadweight is a standard conservative assumption
-  // used by Sport England and State of Life (Value FC) for grassroots sport.
-  // This acknowledges that some participants would find other ways to stay active.
+  // ── DEADWEIGHT ASSUMPTION ──────────────────────────────────────────────
+  // 40% deadweight applied as a modelling choice — a reasonable mid-range figure
+  // used in multiple social value frameworks. Acknowledges that some participants
+  // would find other ways to stay active without the club.
   const DEADWEIGHT = 0.40;
   const totalValue = Math.round(grossValue * (1 - DEADWEIGHT));
 
   // ── SOCIAL VALUE TO COST RATIO (full cost accounting) ─────────────────
-  // Denominator includes: club expenditure + estimated player costs + volunteer time value
-  // This follows the full cost accounting approach recommended by Green Book guidance.
-  // Player cost per player: £122/yr (FA 2019 analysis uprated to 2023 prices, excluding
-  // membership and match fees, 50% of travel/kit/social — same method as Value FC)
+  // Denominator: club expenditure + volunteer economic value
+  // Previous £122/player cost removed — no defensible published source
   const expenditure = s.annual_expenditure||0;
-  const playerCosts = totalPlayers * 122;
-  const fullInvestment = expenditure + playerCosts + volEcon;
+  const fullInvestment = expenditure + volEcon;
   const sroi = fullInvestment > 0 ? (totalValue / fullInvestment) : null;
   const income = s.annual_income||0;
 
   // ── ND/MH (statistical projections — not diagnosed individuals)
   const ndPct     = parseFloat(s.nd_prevalence||14) / 100;
   const ndPlayers = Math.round(totalPlayers * ndPct);
-  // NHS Digital MHCYP 2023: ~1 in 5 children/young people (20%) — updated from previous 1 in 4 estimate
+  // NHS England MHCYP 2023: ~1 in 5 children/young people (20%) — updated from previous 1 in 4 estimate
   const mhPlayers = Math.round(totalPlayers * 0.20);
   const overlap   = Math.round(ndPlayers * 0.30);
   const addNeed   = ndPlayers + mhPlayers - overlap;
@@ -3325,9 +3320,9 @@ function calculate() {
     nhsAdult, nhsYouth, nhsTotal,
     volEcon, volWell, volTotal, numVol, totalVolHrs,
     communityValue, cr,
-    totalValue, sroi, income, expenditure,
+    totalValue, sroi, income, expenditure, fullInvestment,
     ndPlayers, mhPlayers, overlap, addNeed,
-    totalReach, adultRate, youthActive, riskVal
+    totalReach, adultRate, adultHealthRate, adultActive, youthActive, riskVal
   };
 }
 
@@ -3451,7 +3446,7 @@ function updateFullReport(r, club, area) {
 
   const charter = {none:'', star1:'England Football Accredited — 1 Star', star2:'England Football Accredited — 2 Star', star3:'England Football Accredited — 3 Star'}[state.charterLevel] || '';
   const charterStr = charter ? ` ${club} holds ${charter} status.` : '';
-  const sroiStr = r.sroi ? ` For every £1 invested in the club (including expenditure, player costs and volunteer time), this represents an estimated social value to cost ratio of £${r.sroi.toFixed(2)}, after applying a 40% deadweight adjustment.` : '';
+  const sroiStr = r.sroi ? ` For every £1 invested in the club (including club expenditure and the replacement-cost value of volunteer time), this represents an estimated social value to cost ratio of £${r.sroi.toFixed(2)}, after applying a 40% deadweight assumption as a modelling choice.` : '';
   const foundedStr = state.yearFounded ? ` Founded in ${state.yearFounded}, the` : ' The';
   const cfa = state.countyFA ? `, affiliated with ${state.countyFA}` : '';
 
@@ -3474,7 +3469,7 @@ This report combines two types of information:
 
 WHAT THE CLUB REPORTED — player numbers, volunteer hours, community reach, income and infrastructure details entered directly by the club. These figures are factual inputs and can be cited as club records.
 
-WHAT THE MODEL ESTIMATED — social value figures (wellbeing, health and productivity savings, volunteer value, community impact) derived from national proxy values published by Sport England, HM Treasury, the ONS and NHS Digital. These are evidence-informed estimates, not audited measurements. They are statistically grounded and appropriate for grant applications, stakeholder reporting and community communication — but should be presented as estimates and paired with local qualitative evidence for strongest impact.
+WHAT THE MODEL ESTIMATED — social value figures (wellbeing, health and productivity savings, volunteer value, community impact) derived from national proxy values published by Sport England, HM Treasury, the ONS and NHS England. These are evidence-informed estimates, not audited measurements. They are statistically grounded and appropriate for grant applications, stakeholder reporting and community communication — but should be presented as estimates and paired with local qualitative evidence for strongest impact.
 
 STATISTICAL PROJECTIONS — the neurodiversity and mental health figures are statistical estimates based on national prevalence data. They are not diagnosed individuals. They should never be presented as confirmed counts.
 
@@ -3507,7 +3502,7 @@ Regular participation in football and physical activity generates significant we
 WHAT THIS MEANS FOR YOUNG PLAYERS
 Youth football generates value across dimensions that funders, schools, local authorities and health commissioners increasingly want evidenced:
 • Physical health — regular activity reduces obesity risk, improves cardiovascular health and establishes lifelong healthy habits
-• Mental wellbeing — structured team sport is associated with reduced anxiety and depression risk in young people (NHS Digital, 2023)
+• Mental wellbeing — structured team sport is associated with reduced anxiety and depression risk in young people (NHS England, 2023)
 • Life skills — communication, resilience, accountability and pressure management; skills transferable directly into education and employment
 • Social connection — belonging to a team reduces isolation, builds peer relationships across backgrounds and supports identity development
 • For families — parents/carers/guardians benefit from social connection with other families, shared purpose and child development support beyond the school gate
@@ -3519,9 +3514,8 @@ Adult football generates comparable wellbeing value alongside specific outcomes:
 • Community identity — adults who play for their local club are active stakeholders in the community, not just residents
 
 Under 11s (ages 7–11): ${r.y711.toLocaleString()} players × £3,100 = ${fmtFull(r.yw711||0)}
-Under 16s (ages 11–16): ${r.y1116.toLocaleString()} players × £${r.youthActive ? '4,100' : '2,600'} = ${fmtFull(r.yw1116||0)}
-Youth players (ages 5–6): ${r.y56.toLocaleString()} players × £1,500 = ${fmtFull(r.yw56||0)}
-Under 18s (ages 16–18): ${r.y1618.toLocaleString()} players × £${r.adultRate.toLocaleString()} = ${fmtFull(r.yw1618||0)}
+Under 16s (ages 11–16): ${r.y1116.toLocaleString()} players × £${r.youthActive ? '4,300' : '3,300'} = ${fmtFull(r.yw1116||0)}
+Under 18s (ages 16–18): ${r.y1618.toLocaleString()} players × £${r.youthActive ? '4,300' : '3,300'} = ${fmtFull(r.yw1618||0)}
 Adult players: ${r.adultAble.toLocaleString()} players × £${r.adultRate.toLocaleString()} = ${fmtFull(r.adultAble * r.adultRate)}${r.adultDis > 0 ? `\nDisability participants: ${r.adultDis.toLocaleString()} players × £5,100 = ${fmtFull(r.adultDis * 5100)}` : ''}
 
 2. HEALTH & PRODUCTIVITY SAVINGS: ${fmt(r.nhsTotal)}
@@ -3529,7 +3523,7 @@ Adult players: ${r.adultAble.toLocaleString()} players × £${r.adultRate.toLoca
 Active participation reduces demand on NHS services and boosts workplace productivity — through disease prevention, reduced GP visits, lower mental health service usage and reduced absenteeism. Adult figures use Sport England\'s Secondary Value Model, which calculates £10.5 billion in annual healthcare savings from physical activity nationally.
 
 Youth healthcare savings: ${r.totalYouth.toLocaleString()} players × £90 = ${fmtFull(r.nhsYouth)}
-Adult health & productivity savings: ${r.totalAdult.toLocaleString()} players × £478 = ${fmtFull(r.nhsAdult)}
+Adult health & productivity savings: ${r.totalAdult.toLocaleString()} players × £${r.adultHealthRate} = ${fmtFull(r.nhsAdult)}
 
 3. VOLUNTEER CONTRIBUTION: ${fmt(r.volTotal)}
 
@@ -3559,11 +3553,11 @@ THE HIDDEN PICTURE: NEURODIVERSITY & MENTAL HEALTH
 
 This section reflects FMHA's core expertise and something no standard social value calculator addresses.
 
-Based on published prevalence data, an estimated ${r.ndPlayers.toLocaleString()} players at ${club} may be neurodivergent — a figure that rises to around ${r.mhPlayers.toLocaleString()} when considering those likely to experience a mental health difficulty during the season (based on a 1-in-5 prevalence estimate, NHS Digital 2023). Accounting for overlap between the two populations, approximately ${r.addNeed.toLocaleString()} players may require additional understanding, communication adjustments or wellbeing support at any given time.
+Based on published prevalence data, an estimated ${r.ndPlayers.toLocaleString()} players at ${club} may be neurodivergent — a figure that rises to around ${r.mhPlayers.toLocaleString()} when considering those likely to experience a mental health difficulty during the season (based on a 1-in-5 prevalence estimate, NHS England MHCYP 2023). Accounting for overlap between the two populations, approximately ${r.addNeed.toLocaleString()} players may require additional understanding, communication adjustments or wellbeing support at any given time.
 
 This is not a welfare crisis — it is a reality that every club is already navigating, often without knowing it. Clubs that understand this picture are better positioned to retain players, support volunteers, access training funding and demonstrate duty of care.
 
-Source: NHS Digital Mental Health of Children and Young People in England 2023; British Dyslexia Association; NHS Digital Learning Disabilities and Autism Programme.
+Source: NHS England Mental Health of Children and Young People in England 2023; British Dyslexia Association; NHS England Learning Disabilities and Autism Programme.
 
 ─────────────────────────────────────
 
@@ -3571,9 +3565,9 @@ SOCIAL VALUE TO COST RATIO${r.sroi ? `
 
 The social value to cost ratio for ${club} is £${r.sroi.toFixed(2)} per £1 invested.
 
-This ratio uses full cost accounting: the denominator includes club expenditure (${fmtFull(r.expenditure)}), estimated player costs (${r.totalPlayers.toLocaleString()} players × £122/yr = ${fmtFull(r.totalPlayers * 122)}), and volunteer time value (${Math.round(r.totalVolHrs).toLocaleString()} hours × £13.20/hr = ${fmtFull(r.volEcon)}). Total investment: ${fmtFull(r.expenditure + (r.totalPlayers * 122) + r.volEcon)}.
+This ratio includes club expenditure (${fmtFull(r.expenditure)}) and the replacement-cost value of volunteer time (${Math.round(r.totalVolHrs).toLocaleString()} hours × £13.20/hr = ${fmtFull(r.volEcon)}). Total investment: ${fmtFull(r.fullInvestment)}.
 
-A 40% deadweight adjustment has been applied to all benefit values, acknowledging that some participants would find other ways to stay active without the club. This is a standard conservative assumption used in Sport England and HM Treasury social value analysis.
+A 40% deadweight assumption has been applied to all benefit values as a modelling choice — a reasonable mid-range figure used in multiple social value frameworks, acknowledging that some participants would find other ways to stay active without the club.
 
 Note: This is a social value to cost ratio, not a formal Social Return on Investment (SROI). True SROI analysis requires additional deductions for displacement and attribution which are beyond the scope of this tool.` : '\n\nAdd annual expenditure in the Financials section to calculate your club\'s social value to cost ratio.'}
 
@@ -3596,9 +3590,9 @@ This assessment uses proxy values from the following primary sources:
 • Sport England Social Value Model Year 2 (November 2025) (Sheffield Hallam University / Manchester Metropolitan University / State of Life) — for wellbeing and healthcare values
 • HM Treasury Green Book Supplementary Guidance on Wellbeing (2021, uprated to 2024) — WELLBY monetary value: £15,900 per WELLBY
 • DCMS / London Economics 2024 — volunteer replacement cost valuation (£13.20/hr based on SOC mapping)
-• Sport England Year 2 (November 2025) — volunteer wellbeing value (£2,100/yr weekly / £1,000/yr monthly)
+• Sport England Year 2 (November 2025) — volunteer wellbeing value (£2,100/yr for regular volunteers)
 • NCVO — volunteer hours data (average 8 hours/month)
-• NHS Digital Mental Health of Children and Young People Survey 2023 — mental health prevalence
+• NHS England Mental Health of Children and Young People Survey 2023 — mental health prevalence
 
 Full source table is included in the Methodology tab.
 
@@ -3618,7 +3612,7 @@ function updatePressRelease(r, club, area) {
   const qn = state.quoteName || '';
   const qr = state.quoteRole || '';
   const cfa = state.countyFA || '[County FA]';
-  const sroiLine = r.sroi ? ` That is equivalent to an estimated £${r.sroi.toFixed(2)} in social value for every £1 invested in the club (after a 40% deadweight adjustment).` : '';
+  const sroiLine = r.sroi ? ` That is equivalent to an estimated £${r.sroi.toFixed(2)} in social value for every £1 invested in the club (after a 40% deadweight assumption).` : '';
   const ndLine = r.ndPlayers > 0 ? `\n\nThe assessment also highlights the scale of hidden need within the club environment. Based on published NHS prevalence data, an estimated ${r.ndPlayers.toLocaleString()} players at ${club} may be neurodivergent, and around ${r.mhPlayers.toLocaleString()} players are likely to experience a mental health difficulty during the current season. This underlines the wider duty of care that football clubs carry — often without recognition or resource.` : '';
 
 
@@ -3638,7 +3632,7 @@ The assessment, produced using Proof of Play — a social value calculator devel
 
 ${qt ? `${qn || '[Name]'}, ${qr || '[Role]'} of ${club}, said: "${qt}"` : `[Quote from club representative to be added here.]`}${ndLine}
 
-What many within the club have long felt can now be expressed in evidence-informed terms. The social value figures are calculated using the Treasury-approved WELLBY framework — the same methodology used by Sport England, NHS commissioners and local authorities to evaluate community investment. Figures are estimates grounded in published national research. A full methodology note is available on request.
+What many within the club have long felt can now be expressed in evidence-informed terms. The social value figures are calculated using the Treasury-approved WELLBY framework and the UK Social Value Model — the same methodology used across the public sector to evaluate community investment. Figures are estimates grounded in published national research. Some outputs also include clearly labelled modelling assumptions. A full methodology note is available on request.
 
 ENDS
 
@@ -3717,13 +3711,13 @@ function updateFunding(r, club, area) {
   const isPriority = hasIMD && decile <= 4;
   const isDecile1  = hasIMD && decile <= 2;
   const imdNote    = hasIMD
-    ? `<div class="imd-note">📍 Based on your postcode lookup: IMD Decile ${decile}. ${decile <= 4 ? 'Your area strengthens eligibility for this fund.' : decile <= 7 ? 'Your area meets general eligibility criteria.' : 'This fund prioritises higher deprivation areas — review eligibility carefully.'}</div>`
+    ? `<div class="imd-note">📍 Based on your postcode lookup: IMD Decile ${decile}. ${decile <= 4 ? 'Your area may strengthen the case for this fund. Check eligibility rules separately.' : decile <= 7 ? 'Your area meets general eligibility criteria.' : 'This fund prioritises higher deprivation areas — review eligibility carefully.'}</div>`
     : `<div class="imd-note">💡 Enter your club postcode in Step 1 to see personalised eligibility notes for each funder.</div>`;
 
   const ineligiblePeterHarrison = hasIMD && decile > 2;
 
   const sroiStr = r.sroi
-    ? `For every £1 invested (using full cost accounting including player costs and volunteer time), ${club} generates an estimated £${r.sroi.toFixed(2)} in social value after a 40% deadweight adjustment — evidence that directly supports the Football Foundation's evidence requirements.`
+    ? `For every £1 invested (including club expenditure and volunteer time), ${club} generates an estimated £${r.sroi.toFixed(2)} in social value after a 40% deadweight assumption — evidence that may support the Football Foundation's evidence requirements.`
     : `${club} generates ${fmt(r.totalValue)} in estimated annual social value, delivered through ${r.totalPlayers.toLocaleString()} players and ${r.numVol.toLocaleString()} volunteers.`;
 
   // Confidence badge helpers
@@ -3821,7 +3815,7 @@ function updateFunding(r, club, area) {
           <div class="funder-crit">Social value ratio evidence is strongest asset with statutory audiences</div>
         </div>
         <div class="funder-statement">
-          <strong>Ready-to-use paragraph:</strong> "Under the Public Services (Social Value) Act 2012, ${area.split(',')[0] || 'your'} Council is required to consider social value when making procurement and planning decisions. ${club} generates a quantified ${fmt(r.totalValue)} ${estimated} in annual social value for the local area — assessed using HM Treasury WELLBY methodology and Sport England\'s Year 2 (November 2025) Social Value Model. ${r.sroi ? `This represents an estimated social value to cost ratio of £${r.sroi.toFixed(2)} per £1 invested (using full cost accounting and a 40% deadweight adjustment). ` : ''}This evidence demonstrates the club's role as a community asset that directly reduces NHS demand and supports public wellbeing."
+          <strong>Ready-to-use paragraph:</strong> "Under the Public Services (Social Value) Act 2012, ${area.split(',')[0] || 'your'} Council is required to consider social value when making procurement and planning decisions. ${club} generates a quantified ${fmt(r.totalValue)} ${estimated} in annual social value for the local area — assessed using HM Treasury WELLBY methodology and Sport England\'s Year 2 (November 2025) Social Value Model. ${r.sroi ? `This represents an estimated social value to cost ratio of £${r.sroi.toFixed(2)} per £1 invested (using full cost accounting and a 40% deadweight assumption). ` : ''}This evidence demonstrates the club's role as a community asset that directly reduces NHS demand and supports public wellbeing."
         </div>
         ${hasIMD ? `<div class="imd-note">📍 IMD Decile ${decile} data for your area can be referenced directly in council submissions — it contextualises the club's role within local public health priorities. Source: OHID Fingertips / English Indices of Multiple Deprivation.</div>` : imdNote}
       </div>
@@ -4570,7 +4564,7 @@ const MODAL_CONTENT = {
     title: 'Participant Wellbeing Value',
     badge: '<span class="conf-badge conf-estimated">Estimated from model</span>',
     desc: 'This figure estimates the wellbeing value generated when people participate regularly in sport and physical activity. It uses the Treasury-approved WELLBY methodology — each year of regular participation is assigned a monetary value based on the measurable improvement in life satisfaction it produces.',
-    formula: 'Under 11s / ages 7–11 (active 2+/wk): × £3,100/yr\nUnder 11s / ages 7–11 (fairly active): × £1,700/yr\nUnder 16s / ages 11–16 (active 2+/wk): × £4,300/yr\nUnder 16s / ages 11–16 (fairly active): × £3,300/yr\nAdult (active 2+/wk): × £2,600/yr\nAdult (fairly active): × £1,200/yr\nDisability participants: × £5,100/yr\nAges 5–6: × £1,500/yr (custom conservative proxy — SE model covers age 7+)\n\nWELLBY unit value: £15,900 per 1-point life satisfaction gain\n(HM Treasury Green Book, uprated to 2024 per SE Year 2 (November 2025) model)',
+    formula: 'Under 11s / ages 7–11 (active 2+/wk): × £3,100/yr\nUnder 11s / ages 7–11 (fairly active): × £1,700/yr\nUnder 16s / ages 11–16 (active 2+/wk): × £4,300/yr\nUnder 16s / ages 11–16 (fairly active): × £3,300/yr\nAdult (active 2+/wk): × £2,600/yr\nAdult (fairly active): × £1,200/yr\nDisability participants: × £5,100/yr\nAges 5–6: Removed (no sourced value — SE model covers age 7+)\n\nWELLBY unit value: £15,900 per 1-point life satisfaction gain\n(HM Treasury Green Book, uprated to 2024 per SE Year 2 (November 2025) model)',
     sources: '<strong>Primary sources:</strong> Sport England Social Value Model Year 2 (November 2025) (Sheffield Hallam University / Manchester Metropolitan University / State of Life) · HM Treasury Green Book Supplementary Guidance on Wellbeing (2021, uprated 2024) · <strong>Confidence:</strong> High where participation figures are directly entered; Medium where age-band assumptions apply'
   },
   nhs: {
@@ -4584,7 +4578,7 @@ const MODAL_CONTENT = {
     title: 'Volunteer Contribution',
     badge: '<span class="conf-badge conf-estimated">Estimated from model</span>',
     desc: 'Volunteer value is calculated across two dimensions: the economic replacement value of their time (what it would cost to hire someone to do the same work), and the personal wellbeing value that volunteering generates for the volunteer themselves. Both are recognised components in formal social value assessment.',
-    formula: 'Economic value: volunteer hours × £13.20/hr (DCMS/London Economics 2024\nreplacement cost methodology based on SOC mapping of volunteer roles)\n\nWellbeing value (SE Year 2 (November 2025) primary value model):\nWeekly volunteers: × £2,100/yr\nMonthly volunteers: × £1,000/yr\n\nTotal = economic value + wellbeing value\n\nVolunteer hours = number of volunteers × selected\nhours/week × 46 active weeks/yr (NCVO benchmark)',
+    formula: 'Economic value: volunteer hours × £13.20/hr (DCMS/London Economics 2024\nreplacement cost methodology based on SOC mapping of volunteer roles)\n\nWellbeing value (UK Social Value Model Year 2):\nRegular volunteers: × £2,100/yr\nCurrent build uses a single volunteer wellbeing rate.\n\nTotal = economic value + wellbeing value\n\nVolunteer hours = number of volunteers × selected\nhours/week × 46 active weeks/yr (NCVO benchmark)',
     sources: '<strong>Primary sources:</strong> DCMS/London Economics 2024 replacement cost methodology — £13.20/hr based on SOC mapping of volunteer roles · Sport England Year 2 (November 2025) (volunteering wellbeing value, median estimate) · NCVO (average volunteer hours benchmark) · <strong>Confidence:</strong> High for economic value where hours are entered; Medium for wellbeing value (population estimate)'
   },
   community: {
@@ -4597,16 +4591,16 @@ const MODAL_CONTENT = {
   nd: {
     title: 'Hidden Need Estimate — ND & Mental Health',
     badge: '<span class="conf-badge conf-estimated">Estimated from model</span>',
-    desc: 'These figures are statistical projections — not identified individuals or confirmed diagnoses. They estimate the likely number of players within your club who may be neurodivergent or experiencing a mental health difficulty, based on published national prevalence data applied to your player numbers. They are planning estimates, not welfare assessments. The mental health figure uses a 1-in-5 prevalence rate (NHS Digital MHCYP 2023), updated from the previously cited 1-in-4 figure.',
-    formula: 'Neurodivergent estimate: total players × selected prevalence %\n(Default 14% — ADHD ~6%, Autism ~1.5%, Dyslexia ~10%,\nadjusted for co-occurrence overlap)\n\nMH difficulty estimate: total players × 20%\n(~1 in 5 children/young people, NHS Digital MHCYP 2023\n— updated from previously cited 1 in 4 estimate)\n\nAdditional support: ND + MH − 30% overlap',
-    sources: '<strong>Primary sources:</strong> NHS Digital Mental Health of Children and Young People in England 2023 · British Dyslexia Association (dyslexia prevalence) · NHS Digital Learning Disabilities and Autism Programme · <strong>Confidence:</strong> Medium — statistical estimate only. These figures should never be presented as confirmed diagnoses or identified individuals'
+    desc: 'These figures are statistical projections — not identified individuals or confirmed diagnoses. They estimate the likely number of players within your club who may be neurodivergent or experiencing a mental health difficulty, based on published national prevalence data applied to your player numbers. They are planning estimates, not welfare assessments. The mental health figure uses a 20% planning proxy from the NHS England MHCYP 2023 survey (ages 8–25, England).',
+    formula: 'Neurodivergent estimate: total players × selected prevalence %\n(Default 14% — ADHD ~6%, Autism ~1.5%, Dyslexia ~10%,\nadjusted for co-occurrence overlap)\n\nMH difficulty estimate: total players × 20% planning proxy\n(NHS England MHCYP 2023, ages 8–25, England)\n\nAdditional support: ND + MH − 30% overlap',
+    sources: '<strong>Primary sources:</strong> NHS England Mental Health of Children and Young People in England 2023 · British Dyslexia Association (dyslexia prevalence) · NHS England Learning Disabilities and Autism Programme · <strong>Confidence:</strong> Medium — statistical estimate only. These figures should never be presented as confirmed diagnoses or identified individuals'
   },
   sroi: {
     title: 'Social Value to Cost Ratio',
     badge: '<span class="conf-badge conf-estimated">Estimated from model</span>',
-    desc: 'This figure expresses the net estimated social value (after deadweight adjustment) as a ratio of the full investment cost — including club expenditure, estimated player costs (£122/yr per player, Sport England), and the economic value of volunteer time. It only appears when annual expenditure has been entered in the Financials section. This is a social value to cost ratio, not a formal SROI — true SROI requires additional deductions for displacement and attribution.',
-    formula: 'Net social value ÷ Full investment cost\n\nNet social value = gross social value × (1 − 40% deadweight)\nFull investment = club expenditure + player costs + volunteer economic value\nPlayer costs = total players × £122/yr (Sport England)\nVolunteer economic value = total volunteer hours × £13.20/hr\n\nThe 40% deadweight adjustment (HM Treasury Green Book)\naccounts for activity that would have occurred anyway\nwithout the club.',
-    sources: '<strong>Methodology:</strong> HM Treasury Green Book deadweight adjustment (40%) · Full cost accounting includes club expenditure, player costs (Sport England £122/yr) and volunteer economic value (DCMS/London Economics 2024 £13.20/hr) · <strong>Note:</strong> This is a social value to cost ratio, not a formal SROI. For independently verified SROI suitable for academic or major institutional submission, commission a full evaluation through Sheffield Hallam SIRC or Portas Consulting · <strong>Confidence:</strong> Medium — ratio is methodologically sound but based on estimated social value figures'
+    desc: 'This figure expresses the net estimated social value (after a 40% deadweight assumption, applied as a modelling choice) as a ratio of the full investment cost — including club expenditure and the replacement-cost value of volunteer time. It only appears when annual expenditure has been entered in the Financials section. This is a social value to cost ratio, not a formal SROI — true SROI requires additional deductions for displacement and attribution.',
+    formula: 'Net social value ÷ Full investment cost\n\nNet social value = gross social value × (1 − 40% deadweight assumption)\nFull investment = club expenditure + volunteer economic value\nVolunteer economic value = total volunteer hours × £13.20/hr\n\n40% deadweight — a reasonable mid-range figure used in\nmultiple social value frameworks, applied here as a\nmodelling assumption.',
+    sources: '<strong>Methodology:</strong> HM Treasury Green Book deadweight assumption (40%) · Full cost accounting includes club expenditure and volunteer economic value (DCMS/London Economics 2024 £13.20/hr) · <strong>Note:</strong> This is a social value to cost ratio, not a formal SROI. For independently verified SROI suitable for academic or major institutional submission, commission a full evaluation through Sheffield Hallam SIRC or Portas Consulting · <strong>Confidence:</strong> Medium — ratio is methodologically sound but based on estimated social value figures'
   },
   imd: {
     title: 'Area Deprivation — IMD Decile',
