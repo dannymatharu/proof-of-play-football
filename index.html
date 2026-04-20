@@ -2387,13 +2387,17 @@ input[type="range"]::-webkit-slider-thumb {
 
       <div class="field-group">
         <div class="field-group-title">Volunteer numbers & hours</div>
+        <div style="background:var(--gold-light); border:1px solid rgba(184,117,14,0.2); border-radius:var(--r-sm); padding:14px 16px; margin-bottom:18px; font-size:13px; color:var(--text-mid); line-height:1.6;">
+          <strong style="color:var(--text); display:block; margin-bottom:6px;">Don't just count the coaches.</strong>
+          Most clubs undercount their volunteers by half. Include everyone who gives unpaid time: committee members, social media, treasurers, kit washers, pitch markers, matchday setup, tea bar, fundraising organisers, first aid trained staff, registration admin, travel coordinators, website managers, photographer. If they give time to make the club run — they count.
+        </div>
         <div class="field-row" style="align-items: flex-end;">
           <div class="field">
             <label>Total volunteers <span class="hint">All club volunteers — coaches, committee, kit washers, everyone</span></label>
             <input type="number" min="0" placeholder="0" oninput="updateState('num_volunteers', +this.value||0)">
           </div>
           <div class="field">
-            <label>Average hours per volunteer per week <span class="hint">Include matchdays and training</span></label>
+            <label>Average hours per volunteer per week <span class="hint">Include matchdays, training, admin and committee time</span></label>
             <select onchange="updateState('vol_hours_per_week', this.value)">
               <option value="2">~2 hours / week</option>
               <option value="4" selected>~4 hours / week</option>
