@@ -4560,26 +4560,30 @@ window.submitEmailCapture = async function() {
     }
   }
 
-  // Write report_text directly to club_submissions — bypasses Apps Script size limits
+  // Write report_text directly to club_submissions — bypasses Apps Script size limits.
+  // Uses return=representation so we can verify the row was actually saved.
+  // Retries once after 3s; shows a non-blocking warning if both attempts fail.
   if (state.token && reportText) {
-    try {
-      await fetch(`${SUPABASE_URL}/rest/v1/club_submissions?token=eq.${encodeURIComponent(state.token)}`, {
-        method: 'PATCH',
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({
-          report_text:  reportText,
-          press_text:   pressText,
-          social_text:  socialText,
-          funding_text: fundingText
-        })
-      });
-    } catch(e) {}
-
+    const textPayload = JSON.stringify({ report_text: reportText, press_text: pressText, social_text: socialText, funding_text: fundingText });
+    const patchUrl    = `${SUPABASE_URL}/rest/v1/club_submissions?token=eq.${encodeURIComponent(state.token)}`;
+    const patchHdrs   = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+    let textSaved = false;
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        if (attempt === 2) await new Promise(r => setTimeout(r, 3000));
+        const r = await fetch(patchUrl, { method: 'PATCH', headers: patchHdrs, body: textPayload });
+        if (r.ok) {
+          const rows = await r.json().catch(() => []);
+          if (rows && rows[0] && rows[0].report_text) { textSaved = true; break; }
+        }
+        console.warn(`Report text save attempt ${attempt} failed — HTTP ${r.status}`);
+      } catch(e) {
+        console.warn(`Report text save attempt ${attempt} threw:`, e);
+      }
+    }
+    if (!textSaved) {
+      showSubmitError("Your results are shown below, but we couldn\u2019t save the full report text to your portal. Please complete the email capture so we can send your results directly.");
+    }
   }
 
   const form = document.getElementById('emailForm');
