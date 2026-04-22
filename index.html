@@ -3013,8 +3013,9 @@ input[type="range"]::-webkit-slider-thumb {
         <span>Send your report to your inbox.</span>
       </div>
       <div class="email-capture-form" id="emailForm">
-        <input type="email" id="captureEmail" placeholder="your@email.com">
-        <input type="text" id="captureName" placeholder="Your name">
+        <input type="email" id="captureEmail" placeholder="your@email.com" required>
+        <p style="font-size:11px; color:var(--text-muted); margin:4px 0 8px; line-height:1.5;">Required — we'll send your report and dashboard link here. We won't use it for anything else.</p>
+        <input type="text" id="captureName" placeholder="Your name (recommended)">
         <button class="btn btn-primary" onclick="submitEmailCapture()">Send my report</button>
         <p style="font-size:11px; color:var(--text-muted); margin-top:10px; line-height:1.6;">Your County FA will see your results so they can help you find the funding your club can now evidence. All data is kept secure and used only for football development purposes.</p>
       </div>
@@ -4473,10 +4474,28 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9wo9uspfI6z6U
 window.submitEmailCapture = async function() {
   const email = document.getElementById('captureEmail')?.value?.trim();
   const name  = document.getElementById('captureName')?.value?.trim();
+
+  // Email is required — block if missing or invalid
   if (!email || !email.includes('@')) {
     const el = document.getElementById('captureEmail');
-    if (el) { el.style.borderColor = '#EA580C'; setTimeout(() => el.style.borderColor = '', 1500); }
+    if (el) {
+      el.style.borderColor = '#EA580C';
+      el.placeholder = 'Please enter your email address';
+      setTimeout(() => { el.style.borderColor = ''; el.placeholder = 'your@email.com'; }, 2500);
+    }
     return;
+  }
+
+  // Name is strongly prompted — warn once, then allow through on second attempt
+  if (!name) {
+    const el = document.getElementById('captureName');
+    if (el && !el.dataset.namePrompted) {
+      el.style.borderColor = '#CA8A04';
+      el.placeholder = 'Your name helps us personalise your report';
+      el.dataset.namePrompted = '1';
+      setTimeout(() => { el.style.borderColor = ''; el.placeholder = 'Your name (recommended)'; }, 2500);
+      return;
+    }
   }
 
   const btn = document.querySelector('#emailForm button');
