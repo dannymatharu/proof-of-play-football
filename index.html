@@ -4525,9 +4525,21 @@ window.submitEmailCapture = async function() {
   params.append('formToken',      state.token);
   params.append('dashboardUrl',   buildDashboardUrl());
 
+  let appsScriptOk = false;
   try {
     await fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
-  } catch(e) {}
+    appsScriptOk = true;
+  } catch(e) {
+    // First attempt failed — wait 3 seconds and retry once
+    console.warn('Apps Script first attempt failed, retrying…', e);
+    try {
+      await new Promise(r => setTimeout(r, 3000));
+      await fetch(APPS_SCRIPT_URL, { method: 'POST', body: params });
+      appsScriptOk = true;
+    } catch(e2) {
+      console.error('Apps Script fetch failed after retry — emails not sent:', e2);
+    }
+  }
 
   // Write report_text directly to club_submissions — bypasses Apps Script size limits
   if (state.token && reportText) {
@@ -4555,6 +4567,14 @@ window.submitEmailCapture = async function() {
   const sent = document.getElementById('emailSent');
   if (form) form.style.display = 'none';
   if (sent) sent.style.display = 'block';
+
+  // If both email attempts failed, show a soft warning so the club knows to follow up
+  if (!appsScriptOk && sent) {
+    const warn = document.createElement('p');
+    warn.style.cssText = 'margin-top:14px;font-size:13px;color:#8B4513;background:#FFF8F0;padding:10px 14px;border-radius:6px;border:1px solid #F0D9C0;';
+    warn.textContent = 'Your report has been saved. If you don\u2019t receive a confirmation email within a few minutes, please contact us at danny@withinu.net and we\u2019ll send it across manually.';
+    sent.appendChild(warn);
+  }
 };
 
 
