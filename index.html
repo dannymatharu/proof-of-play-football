@@ -2647,6 +2647,7 @@ input[type="range"]::-webkit-slider-thumb {
           <span class="sv-line-val" id="svWellbeing">£0</span>
         </div>
         <span class="calc-link" onclick="openModal('wellbeing')">How this is calculated →</span>
+        <div id="imdUpliftNote" style="display:none; font-size:11px; color:#1A6B32; background:#D4EDDA; border:1px solid #A8D5B5; border-radius:4px; padding:4px 8px; margin-top:2px;">↑ 10% deprivation uplift applied — IMD Decile 1–3 area</div>
       </div>
       <div class="sv-line" style="flex-direction:column; align-items:flex-start; gap:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
@@ -2700,7 +2701,7 @@ input[type="range"]::-webkit-slider-thumb {
     <div class="risk-card" id="riskCard">
       <div class="risk-label">⚠ Value at Stake <span class="conf-badge conf-scenario" style="margin-left:6px;">Scenario estimate</span></div>
       <div class="risk-value" id="riskValue">£0</div>
-      <div class="risk-desc">Scenario estimate: what becomes fragile if players with unmet needs disengage. Based on a 12% assumed disengagement rate — a planning assumption, not an evidence claim.</div>
+      <div class="risk-desc">Scenario estimate: what becomes fragile if players with unmet needs disengage. Based on a 12% assumed disengagement rate — conservative relative to Smith et al. (2024) evidence of 7–33% attrition in CYP sport interventions. A planning prompt, not a forecast.</div>
       <span class="calc-link" onclick="openModal('risk')" style="margin-top:6px;">How this is calculated →</span>
     </div>
 
@@ -2992,8 +2993,26 @@ input[type="range"]::-webkit-slider-thumb {
             <tr>
               <td>Value at Stake — scenario model</td>
               <td class="val-cell">12% disengagement assumption</td>
-              <td><strong>This is a scenario model, not an evidence-based projection.</strong> It applies a 12% assumed disengagement rate to the additional-need cohort (players estimated to require additional support), multiplied by average wellbeing value per player. The purpose is to illustrate the fragility of social value when hidden need goes unmet — not to claim precision. The 12% figure is a conservative planning assumption; no published study directly measures dropout rates attributable specifically to unmet neurodivergent or mental health need in football. This figure should be treated as a prompt for reflection, not a forecast.</td>
-              <td>Model assumption</td>
+              <td><strong>This is a scenario model, not an evidence-based projection.</strong> It applies a 12% assumed disengagement rate to the additional-need cohort (players estimated to require additional support), multiplied by average wellbeing value per player. The 12% figure is a deliberate conservative lower bound — Smith et al. (2024), a scoping review of 143 studies commissioned by Sport England (Edge Hill University, October 2024), found attrition rates of 7–33% in single-arm CYP sport intervention studies and 2–51% in RCTs. Using 12% positions this estimate conservatively within that range. This figure should be treated as a prompt for reflection, not a forecast.</td>
+              <td>Smith et al. (2024) — Sport England scoping review</td>
+            </tr>
+            <tr>
+              <td>Group sport effect size — CYP mental health</td>
+              <td class="val-cell">SMD –1.06 (group) vs –0.32 (individual)</td>
+              <td>Smith et al. (2024), Edge Hill University / Sport England — scoping review of 143 studies examining sport and physical activity interventions for children and young people's mental health. Group-based interventions achieved a standardised mean difference of –1.06 (large effect) vs –0.32 for individual programmes. Informs the qualitative youth mental wellbeing narrative in the Full Report. No direct £ proxy applied — cited as qualitative evidence of the group sport advantage.</td>
+              <td>Smith et al. (2024)</td>
+            </tr>
+            <tr>
+              <td>Physical activity, loneliness and wellbeing</td>
+              <td class="val-cell">Narrative only — no £ proxy applied</td>
+              <td>Sport England Active Lives Survey (November 2022–23) — population-level data evidencing the association between physical inactivity and loneliness across all age groups, and lower wellbeing scores in more deprived areas. Cited in the adult players section of the Full Report as a qualitative strength. A £ monetisation of loneliness reduction is not yet included in this model — the evidence base is robust but proxy value methodology is not yet settled at national level.</td>
+              <td>Active Lives Survey, Nov 2022–23</td>
+            </tr>
+            <tr>
+              <td>IMD deprivation wellbeing uplift</td>
+              <td class="val-cell">×1.10 for IMD Deciles 1–3</td>
+              <td>A 10% uplift is applied to participant wellbeing values for clubs in the most deprived areas of England (IMD Deciles 1–3, top 30% most deprived). Grounded in Sport England's Active Lives Survey (November 2022–23) evidence of lower baseline wellbeing and stronger association between inactivity and poor outcomes in deprived communities. The uplift reflects that marginal wellbeing gains from sport participation are larger where baseline conditions are worse. Applied only where the postcode lookup confirms IMD Decile 1–3; 1.0× otherwise.</td>
+              <td>Active Lives Survey, Nov 2022–23</td>
             </tr>
           </tbody>
         </table>
@@ -3247,7 +3266,11 @@ function calculate() {
   const youthWellbeing = yw56 + yw711 + yw1116 + yw1618;
   // Disabled/LTHC adults: SE Year 2 (November 2025) — £5,100
   const adultWellbeing = (adultAble * adultRate) + (adultDis * 5100);
-  const totalWellbeing = youthWellbeing + adultWellbeing;
+  const rawWellbeing   = youthWellbeing + adultWellbeing;
+  // ── IMD DEPRIVATION UPLIFT (Active Lives Survey, Nov 2022–23 / Sport England)
+  // Active Lives evidence: lower wellbeing and higher inactivity-loneliness association in deprived areas
+  const imdMultiplier  = (s.imdDecile && s.imdDecile <= 3) ? 1.10 : 1.0;
+  const totalWellbeing = Math.round(rawWellbeing * imdMultiplier);
 
   // ── HEALTH & PRODUCTIVITY SAVINGS (Sport England Year 2 (November 2025) Secondary Value Model)
   // SE secondary model: £478 active / £330 fairly active for adults 16+.
@@ -3317,7 +3340,7 @@ function calculate() {
     y56, y711, y1116, y1618, totalYouth,
     yw56, yw711, yw1116, yw1618,
     adultAble, adultDis, totalAdult, totalPlayers,
-    youthWellbeing, adultWellbeing, totalWellbeing,
+    youthWellbeing, adultWellbeing, rawWellbeing, totalWellbeing, imdMultiplier,
     nhsAdult, nhsYouth, nhsTotal,
     volEcon, volWell, volTotal, numVol, totalVolHrs,
     communityValue, cr,
@@ -3367,6 +3390,8 @@ function recalculate() {
   setText('sidebarTotal', fmt(r.totalValue));
   setText('sidebarClubName', r.totalValue > 0 ? club : 'Enter your details to calculate');
   setText('svWellbeing',  fmt(r.totalWellbeing));
+  const imdUpliftNote = document.getElementById('imdUpliftNote');
+  if (imdUpliftNote) { imdUpliftNote.style.display = (r.imdMultiplier > 1.0) ? 'block' : 'none'; }
   setText('svNHS',        fmt(r.nhsTotal));
   setText('svVol',        fmt(r.volTotal));
   setText('svCommunity',  fmt(r.communityValue));
@@ -3451,7 +3476,7 @@ function updateFullReport(r, club, area) {
   const foundedStr = state.yearFounded ? ` Founded in ${state.yearFounded}, the` : ' The';
   const cfa = state.countyFA ? `, affiliated with ${state.countyFA}` : '';
 
-  const imdLine = state.imdDecile ? `\n─────────────────────────────────────\n\nLOCAL CONTEXT: AREA DEPRIVATION\n\nThis club is located in IMD Decile ${state.imdDecile} (${state.imdDecile <= 2 ? 'among the most deprived areas in England' : state.imdDecile <= 4 ? 'a priority area for deprivation-targeted funding' : state.imdDecile <= 7 ? 'a mid-range deprivation area' : 'a lower deprivation area'}). The Index of Multiple Deprivation (IMD) measures relative deprivation across income, employment, health, education, housing and crime. Decile 1 = most deprived; Decile 10 = least deprived.\n\n${state.imdDecile <= 4 ? `The club's location in a priority deprivation area strengthens eligibility for Sport England's Movement Fund, National Lottery Community Fund and other targeted programmes. This data is referenced in the Funding Guide.` : `Mainstream funding programmes remain fully accessible. Highly targeted deprivation funds (e.g. Peter Harrison Foundation, which requires Decile 1) are noted in the Funding Guide with eligibility flags.`}\n\nSource: Office for Health Improvement & Disparities / Ministry of Housing, Communities & Local Government — English Indices of Multiple Deprivation (2019, updated). Postcode: ${state.clubPostcode}.` : '';
+  const imdLine = state.imdDecile ? `\n─────────────────────────────────────\n\nLOCAL CONTEXT: AREA DEPRIVATION\n\nThis club is located in IMD Decile ${state.imdDecile} (${state.imdDecile <= 2 ? 'among the most deprived areas in England' : state.imdDecile <= 4 ? 'a priority area for deprivation-targeted funding' : state.imdDecile <= 7 ? 'a mid-range deprivation area' : 'a lower deprivation area'}). The Index of Multiple Deprivation (IMD) measures relative deprivation across income, employment, health, education, housing and crime. Decile 1 = most deprived; Decile 10 = least deprived.\n\n${state.imdDecile <= 4 ? `The club's location in a priority deprivation area strengthens eligibility for Sport England's Movement Fund, National Lottery Community Fund and other targeted programmes. This data is referenced in the Funding Guide.` : `Mainstream funding programmes remain fully accessible. Highly targeted deprivation funds (e.g. Peter Harrison Foundation, which requires Decile 1) are noted in the Funding Guide with eligibility flags.`}${state.imdDecile <= 3 ? `\n\nDEPRIVATION UPLIFT APPLIED: A 10% uplift has been applied to participant wellbeing values in this assessment, reflecting Sport England's Active Lives Survey (November 2022–23) evidence that baseline wellbeing is lower and the association between inactivity and poor outcomes is stronger in the most deprived communities. This uplift is applied at IMD Deciles 1–3 only and is clearly flagged in the Methodology tab. Gross wellbeing before uplift: ${fmt(r.rawWellbeing)}. Uplift applied (×1.10): ${fmt(r.totalWellbeing)}.` : ''}\n\nSource: Office for Health Improvement & Disparities / Ministry of Housing, Communities & Local Government — English Indices of Multiple Deprivation (2019, updated). Postcode: ${state.clubPostcode}.` : '';
 
   const qt = state.quoteText || '';
   const qn = state.quoteName || '';
@@ -3503,7 +3528,7 @@ Regular participation in football and physical activity generates significant we
 WHAT THIS MEANS FOR YOUNG PLAYERS
 Youth football generates value across dimensions that funders, schools, local authorities and health commissioners increasingly want evidenced:
 • Physical health — regular activity reduces obesity risk, improves cardiovascular health and establishes lifelong healthy habits
-• Mental wellbeing — structured team sport is associated with reduced anxiety and depression risk in young people (NHS England, 2023)
+• Mental wellbeing — structured team sport is associated with reduced anxiety and depression risk in young people (NHS England, 2023). A 2024 scoping review of 143 studies commissioned by Sport England (Smith et al., Edge Hill University, October 2024) found that group-based sport and physical activity interventions achieved significantly larger mental health effect sizes for children and young people than individual programmes (group: standardised mean difference –1.06 vs individual: –0.32). Team sport provides not just exercise — the belonging, structure and peer connection are themselves active ingredients.
 • Life skills — communication, resilience, accountability and pressure management; skills transferable directly into education and employment
 • Social connection — belonging to a team reduces isolation, builds peer relationships across backgrounds and supports identity development
 • For families — parents/carers/guardians benefit from social connection with other families, shared purpose and child development support beyond the school gate
@@ -3512,6 +3537,7 @@ WHAT THIS MEANS FOR ADULT PLAYERS
 Adult football generates comparable wellbeing value alongside specific outcomes:
 • Sustained physical activity reducing long-term health risk and NHS demand
 • Mental health protection — social sport is one of the most effective interventions against adult loneliness and depression
+• Social isolation — Sport England's Active Lives Survey (November 2022–23) found a meaningful association between physical inactivity and loneliness across all age groups. Clubs providing regular structured activity and peer contact serve as a direct countermeasure to one of the most significant public health challenges of this decade. Note: a £ monetisation of loneliness reduction is not yet included in this assessment — the evidence base is robust but the proxy value methodology is not yet settled. This is a qualitative strength of your club's case.
 • Community identity — adults who play for their local club are active stakeholders in the community, not just residents
 
 Under 11s (ages 7–11): ${r.y711.toLocaleString()} players × £3,100 = ${fmtFull(r.yw711||0)}
@@ -3594,6 +3620,8 @@ This assessment uses proxy values from the following primary sources:
 • Sport England Year 2 (November 2025) — volunteer wellbeing value (£2,100/yr for regular volunteers)
 • NCVO — volunteer hours data (average 8 hours/month)
 • NHS England Mental Health of Children and Young People Survey 2023 — mental health prevalence
+• Smith et al. (2024), Edge Hill University / Sport England — scoping review of sport interventions for CYP mental health; group effect size data and attrition ranges informing youth narrative and Value at Stake assumption
+• Sport England Active Lives Survey (November 2022–23) — physical activity associations with wellbeing, loneliness and deprivation; basis for IMD deprivation uplift
 
 Full source table is included in the Methodology tab.
 
@@ -4349,6 +4377,7 @@ async function submitToSupabase(r) {
       num_programmes: state.num_programmes || 0,
       total_value: Math.round(r.totalValue),
       wellbeing_value: Math.round(r.totalWellbeing),
+      imd_multiplier: r.imdMultiplier || 1.0,
       nhs_value: Math.round(r.nhsTotal),
       vol_value: Math.round(r.volTotal),
       community_value: Math.round(r.communityValue),
