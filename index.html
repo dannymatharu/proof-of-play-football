@@ -2035,6 +2035,67 @@ input[type="range"]::-webkit-slider-thumb {
   color: rgba(255,255,255,0.85);
   font-weight: 600;
 }
+
+/* ── Field helper text ── */
+.field-hint {
+  font-size: 0.78rem;
+  color: #888;
+  margin: 3px 0 6px;
+  line-height: 1.4;
+}
+
+/* ── FAQ accordion ── */
+.faq-section {
+  margin-top: 52px;
+  padding: 0 0 32px;
+  border-top: 1px solid var(--border, #ddd);
+  padding-top: 36px;
+}
+.faq-section > h3 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #999;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  margin: 0 0 20px;
+}
+.faq-item {
+  border-bottom: 1px solid var(--border, #e5e2d9);
+}
+.faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 14px 2px;
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text, #222);
+  text-align: left;
+  min-height: 44px;
+  gap: 12px;
+  line-height: 1.35;
+}
+.faq-question:hover { color: var(--green, #1a6b32); }
+.faq-chevron {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: #aaa;
+  transition: transform 0.22s ease;
+}
+.faq-item.open .faq-chevron { transform: rotate(180deg); }
+.faq-answer {
+  display: none;
+  padding: 2px 2px 16px;
+  font-size: 0.875rem;
+  color: var(--text-muted, #555);
+  line-height: 1.68;
+}
+.faq-item.open .faq-answer { display: block; }
+
 </style>
 </head>
 <body>
@@ -2164,6 +2225,7 @@ input[type="range"]::-webkit-slider-thumb {
       <div class="field-row">
         <div class="field full">
           <label>Club name <span class="hint">As it appears on your club badge and correspondence</span></label>
+          <p class="field-hint">Your registered club name as it appears with your County FA.</p>
           <input type="text" id="clubName" placeholder="e.g. Ampthill Town FC" oninput="updateState('clubName', this.value)">
         </div>
       </div>
@@ -2171,6 +2233,7 @@ input[type="range"]::-webkit-slider-thumb {
       <div class="field-row">
         <div class="field">
           <label>Club postcode <span class="hint">Used to look up your area's deprivation index — affects funding eligibility</span></label>
+          <p class="field-hint">Used to identify your club's area. Helps match your data to local deprivation and funding context.</p>
           <div class="postcode-row">
             <input type="text" id="clubPostcode" placeholder="e.g. MK45 2HX" oninput="updateState('clubPostcode', this.value.toUpperCase()); this.value = this.value.toUpperCase()">
             <button class="btn-lookup" id="postcodeBtn" onclick="lookupPostcode()">Look up</button>
@@ -2242,6 +2305,7 @@ input[type="range"]::-webkit-slider-thumb {
 
       <div class="field-group" id="youth-players-section">
         <div class="field-group-title">Youth Players</div>
+        <p class="field-hint" style="margin-bottom:10px;">Count registered players by age group. Include anyone who trained or played at least once this season.</p>
 
         <div class="ag-table">
           <!-- column headers -->
@@ -2394,6 +2458,7 @@ input[type="range"]::-webkit-slider-thumb {
         <div class="field-row" style="align-items: flex-end;">
           <div class="field">
             <label>Total volunteers <span class="hint">All club volunteers — coaches, committee, kit washers, everyone</span></label>
+            <p class="field-hint">Anyone giving unpaid time — coaches, managers, committee members, groundstaff, kit washers. Count each person once.</p>
             <input type="number" min="0" placeholder="0" oninput="updateState('num_volunteers', +this.value||0)">
           </div>
           <div class="field">
@@ -2475,11 +2540,13 @@ input[type="range"]::-webkit-slider-thumb {
 
         <div class="field-row" style="margin-bottom:16px;">
           <div class="field">
-            <label>Community events / open days <span class="hint">Total attendees across all events in the year — not your regular players</span></label>
+            <label>Community events / open days <span class="hint">Total attendees across all events — sport and non-sport both count</span></label>
+            <p class="field-hint">Youth tournaments, open days, fundraisers, awareness sessions, community matches — any event your club runs. Sport and non-sport events both count. Enter total attendees across the year (not your regular players — they're already in Step 2). E.g. 200 at a tournament + 50 at an open day = 250.</p>
             <input type="number" min="0" placeholder="0" id="cr_events" oninput="recalcCommunityReach()">
           </div>
           <div class="field">
-            <label>Other community programmes <span class="hint">Any other non-player participants not covered above — mental health sessions, parent groups, etc.</span></label>
+            <label>Other community programmes <span class="hint">Mental health groups, peer support, parent sessions, etc. — enter the number of people, not programmes</span></label>
+            <p class="field-hint">Enter the number of unique people you reach — not the number of programmes or sessions. If you run 4 groups supporting 70 people, enter 70. Count each person once even if they attend multiple groups.</p>
             <input type="number" min="0" placeholder="0" id="cr_other" oninput="recalcCommunityReach()">
           </div>
         </div>
@@ -2557,7 +2624,7 @@ input[type="range"]::-webkit-slider-thumb {
             <span class="suffix-label">£</span>
           </div>
           <div class="field input-suffix">
-            <label>Annual club expenditure <span class="hint">Enter this to see your Social Value to Cost Ratio</span></label>
+            <label>Annual club expenditure <span class="hint">Optional — lets us calculate your Social Value to Cost Ratio (a powerful number for funding bids)</span></label>
             <input type="number" min="0" placeholder="0" oninput="updateState('annual_expenditure', +this.value||0)">
             <span class="suffix-label">£</span>
           </div>
@@ -2627,6 +2694,92 @@ input[type="range"]::-webkit-slider-thumb {
         </button>
       </div>
     </div>
+
+
+  <!-- FAQ ACCORDION -->
+  <div class="faq-section">
+    <h3>Need help filling this in?</h3>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        What counts as a volunteer?
+        <span class="faq-chevron">&#9660;</span>
+      </button>
+      <div class="faq-answer">Anyone giving unpaid time to your club: coaches, assistant coaches, managers, committee members, groundstaff, kit washers, first aiders, social media helpers. If they're not paid and they give time, they count. Include each person once even if they do multiple roles.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Should I count someone who plays AND volunteers?
+        <span class="faq-chevron">&#9660;</span>
+      </button>
+      <div class="faq-answer">Yes, count them in both places. A player-coach contributes as both. The tool models these as separate types of social value so there's no double-counting problem.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        What's the difference between a Community Event and a Community Programme?
+        <span class="faq-chevron">&#9660;</span>
+      </button>
+      <div class="faq-answer">A Community Event is a one-off occasion (tournament, open day, fun day, fundraiser) where attendance goes beyond your registered players. A Community Programme is an ongoing activity (weekly sessions, mental health group, walking football) with a regular group of participants. If it repeats week to week, it's a programme. If it happened once or a few times, it's an event.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        My peer support / mental health group — where does that go?
+        <span class="faq-chevron">&#9660;</span>
+      </button>
+      <div class="faq-answer">Under Community Programmes. Enter the number of unique individuals attending across all your ongoing groups. If you run 4 groups reaching the same 70 people, enter 70 — not 280.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        What if some of my football players also attend a community programme?
+        <span class="faq-chevron">&#9660;</span>
+      </button>
+      <div class="faq-answer">Enter them in both sections. The social value generated through football participation and through community programmes is calculated separately and represents genuinely different outcomes. There's no need to deduplicate.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        What counts as a Community Event attendee?
+        <span class="faq-chevron">&#9660;</span>
+      </button>
+      <div class="faq-answer">Everyone who attended: your players, their families, visiting teams and their supporters, spectators, officials. If they came through the gate, count them.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        My club does things that don't fit any category — what do I do?
+        <span class="faq-chevron">&#9660;</span>
+      </button>
+      <div class="faq-answer">Use your best judgement to find the closest category and note it in any free text field. If you're really unsure, enter what you can and reach out to us — we'd rather help you capture it accurately than have it missing from the picture.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Why does the tool ask for my postcode?
+        <span class="faq-chevron">&#9660;</span>
+      </button>
+      <div class="faq-answer">We use it to understand the local context your club operates in — particularly deprivation level, which affects the weight given to some social value calculations. It's used for analysis only and isn't shared publicly.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        How is social value calculated?
+        <span class="faq-chevron">&#9660;</span>
+      </button>
+      <div class="faq-answer">The tool uses the Sport England Social Value Model, which applies WELLBY (Wellbeing-Adjusted Life Year) proxy values to participation in sport and community activity. These are peer-reviewed values developed from large-scale survey data. The £ figures represent a standardised way to compare wellbeing outcomes across different types of social investment.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Can I save my progress and come back?
+        <span class="faq-chevron">&#9660;</span>
+      </button>
+      <div class="faq-answer">Not currently — we'd recommend completing the form in one sitting. It should take no more than 10–15 minutes if you have your player registration data to hand.</div>
+    </div>
+  </div><!-- /faq-section -->
 
   </div><!-- /input-area -->
 
@@ -4751,6 +4904,13 @@ window.setSessionUnit = function(type, unit) {
 
 // ─── INIT ─────────────────────────────────────────────
 recalculate();
+
+// FAQ accordion
+function toggleFaq(btn) {
+  var item = btn.parentElement;
+  item.classList.toggle('open');
+}
+
 </script>
 <!-- ─── HOW THIS IS CALCULATED MODALS ─────────────────── -->
 <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
