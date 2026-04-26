@@ -3202,6 +3202,14 @@ input[type="range"]::-webkit-slider-thumb {
       <p style="font-size:13px; color:var(--text-mid); margin-bottom:14px; line-height:1.55;">A permanent, shareable version of your report — with the funding guide, press release, and editable figures — saved online under a link unique to your club. Bookmark it for your AGM, grant applications, and committee presentations.</p>
       <a id="dashboardUrl" href="#" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-block; text-decoration:none;">View your full dashboard →</a>
       <p style="font-size:11px; color:var(--text-muted); margin-top:10px;">This link is unique to your club. Share it with your committee. You can also return here later to update your figures.</p>
+
+      <!-- FIND YOUR FUNDING — deep-links to The Funding Bench with this club's PoP token pre-loaded -->
+      <div style="margin-top:22px; padding:18px 20px; background:rgba(110,232,154,0.07); border:1px solid rgba(110,232,154,0.3); border-radius:10px;">
+        <div style="font-size:10px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--green); margin-bottom:6px;">Your profile is ready</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:600; color:var(--text); margin-bottom:8px; line-height:1.35;">See which grants your club is eligible for →</div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.55;">The Funding Bench uses your Proof of Play data to match you to live grants. No re-entry — your club profile loads automatically.</p>
+        <a id="fundingBenchUrl" href="https://thefundingbench.co.uk" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-block; text-decoration:none; background:linear-gradient(135deg,#6EE89A,#39d0c8);">Find Your Funding →</a>
+      </div>
     </div>
   </div>
 
@@ -4122,6 +4130,11 @@ function hydrateDashboardLink() {
   if (!url || !a || !box) return;
   a.href = url;
   box.style.display = 'block';
+  // Wire up the "Find Your Funding" deep-link to The Funding Bench
+  const fbLink = document.getElementById('fundingBenchUrl');
+  if (fbLink && state.token) {
+    fbLink.href = 'https://thefundingbench.co.uk?token=' + encodeURIComponent(state.token);
+  }
 }
 
 function setOutputTab(tab) {
