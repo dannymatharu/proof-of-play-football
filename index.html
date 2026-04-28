@@ -2233,12 +2233,13 @@ input[type="range"]::-webkit-slider-thumb {
       <div class="field-row">
         <div class="field">
           <label>Club postcode <span class="hint">Used to look up your area's deprivation index — affects funding eligibility</span></label>
-          <p class="field-hint">Used to identify your club's area. Helps match your data to local deprivation and funding context.</p>
+          <p class="field-hint">Enter your full postcode (e.g. WF14 6AB). Used to calculate your deprivation band, which affects your social value score and grant matching.</p>
           <div class="postcode-row">
-            <input type="text" id="clubPostcode" placeholder="e.g. MK45 2HX" oninput="updateState('clubPostcode', this.value.toUpperCase()); this.value = this.value.toUpperCase()">
+            <input type="text" id="clubPostcode" placeholder="e.g. MK45 2HX" oninput="updateState('clubPostcode', this.value.toUpperCase()); this.value = this.value.toUpperCase()" onblur="validatePostcode()">
             <button class="btn-lookup" id="postcodeBtn" onclick="lookupPostcode()">Look up</button>
           </div>
           <div class="imd-result" id="imdResult"></div>
+          <div id="postcodeError" style="display:none; color:#c0392b; font-size:13px; margin-top:6px;">Please enter your full postcode (e.g. WF14 6AB) — we need this to calculate your area’s deprivation level and match you to relevant grants.</div>
         </div>
         <div class="field">
           <label>Town / area <span class="hint">Where the club is based — appears in your report</span></label>
@@ -2273,7 +2274,7 @@ input[type="range"]::-webkit-slider-thumb {
       </div>
 
       <div class="nav-buttons">
-        <button class="btn btn-primary" onclick="goToSection('players')">Next: Players →</button>
+        <button class="btn btn-primary" onclick="advanceFromClub()">Next: Players →</button>
       </div>
     </div>
     <div class="section-panel" id="panel-players">
@@ -3306,9 +3307,40 @@ function renderImdResult(decile, admin, ward, result) {
   recalculate();
 }
 
+function normalisePostcode(pc) {
+  const clean = pc.trim().toUpperCase().replace(/\s+/g, '');
+  return clean.slice(0, -3) + ' ' + clean.slice(-3);
+}
+
+function validatePostcode() {
+  const raw = (document.getElementById('clubPostcode')?.value || '').trim();
+  const errEl = document.getElementById('postcodeError');
+  if (!raw) {
+    if (errEl) errEl.style.display = 'none';
+    return true;
+  }
+  const fullPostcodeRe = /^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$/i;
+  if (fullPostcodeRe.test(raw)) {
+    const normalised = normalisePostcode(raw);
+    const input = document.getElementById('clubPostcode');
+    if (input) { input.value = normalised; updateState('clubPostcode', normalised); }
+    if (errEl) errEl.style.display = 'none';
+    return true;
+  }
+  if (errEl) errEl.style.display = 'block';
+  return false;
+}
+
+function advanceFromClub() {
+  const raw = (document.getElementById('clubPostcode')?.value || '').trim();
+  if (raw && !validatePostcode()) return;
+  goToSection('players');
+}
+
 async function lookupPostcode() {
-  const postcode = state.clubPostcode.replace(/\s/g, '');
-  if (!postcode || postcode.length < 5) return;
+  if (!validatePostcode()) return;
+  const normalised = normalisePostcode(state.clubPostcode);
+  const postcode = normalised.replace(/\s/g, '');
 
   const btn = document.getElementById('postcodeBtn');
   const result = document.getElementById('imdResult');
@@ -4529,7 +4561,7 @@ async function submitToSupabase(r) {
       county_fa: cfa,
       county_fa_other: cfaOther,
       region: state.imdArea || null,
-      postcode_district: state.clubPostcode ? state.clubPostcode.split(' ')[0] : null,
+      postcode_district: state.clubPostcode ? normalisePostcode(state.clubPostcode).split(' ')[0] : null,
       imd_decile: state.imdDecile || null,
       charter_level: state.charterLevel || null,
       year_founded: state.yearFounded ? parseInt(state.yearFounded) : null,
