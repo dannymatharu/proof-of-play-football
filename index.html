@@ -2387,8 +2387,12 @@ input[type="range"]::-webkit-slider-thumb {
 
         <div class="field-row">
           <div class="field">
-            <label>Disability participants <span class="hint">Walking football, pan-disability, etc. — value: £5,100/year</span></label>
+            <label>Disability participants — adult (age 16+) <span class="hint">Walking football, pan-disability, etc. — value: £5,300/year</span></label>
             <input type="number" min="0" placeholder="0" oninput="updateState('adult_disability', +this.value||0)">
+          </div>
+          <div class="field">
+            <label>Disability participants — youth (under 16) <span class="hint">Pan-disability youth programmes, etc. — value: £2,800/year</span></label>
+            <input type="number" min="0" placeholder="0" oninput="updateState('youth_disability', +this.value||0)">
           </div>
           <div class="field">
             <label>Adult sessions <span class="hint">Include training sessions and matches</span></label>
@@ -2663,8 +2667,8 @@ input[type="range"]::-webkit-slider-thumb {
             <input type="text" value="20% planning proxy — based on NHS England MHCYP 2023 (ages 8–25)" disabled style="background: var(--cream-dark); color: var(--text-muted);">
           </div>
           <div class="field">
-            <label>ND/MH overlap <span class="hint">Research shows ~30% of ND individuals also experience MH difficulties</span></label>
-            <input type="text" value="30% overlap — fixed (ADHD Foundation; NAS)" disabled style="background: var(--cream-dark); color: var(--text-muted);">
+            <label>ND/MH overlap <span class="hint">Conservative composite — published evidence (POSTnote 733, 2024; NHS England, 2025) supports a higher figure. 30% applied as a deliberate floor to avoid overstating distinct individuals likely needing support.</span></label>
+            <input type="text" value="30% applied — composite floor (POSTnote 733, 2024; NHS England, 2025)" disabled style="background: var(--cream-dark); color: var(--text-muted);">
           </div>
         </div>
       </div>
@@ -3233,7 +3237,7 @@ const state = {
   youth_11_16_m: 0, youth_11_16_f: 0,
   youth_16_18_m: 0, youth_16_18_f: 0,
   youth_sessions: '2',
-  adult_male: 0, adult_female: 0, adult_disability: 0, adult_sessions: '2', adult_sessions_unit: 'week', youth_sessions_unit: 'week',
+  adult_male: 0, adult_female: 0, adult_disability: 0, youth_disability: 0, adult_sessions: '2', adult_sessions_unit: 'week', youth_sessions_unit: 'week',
   num_volunteers: 0, vol_hours_per_week: '4',
   num_coaches: 0, num_dbs: 0, num_paid_staff: 0, has_welfare: 'no',
   num_programmes: 0, community_reach: 0,
@@ -3431,8 +3435,9 @@ function calculate() {
 
   const adultAble = (s.adult_male||0) + (s.adult_female||0);
   const adultDis  = s.adult_disability||0;
+  const youthDis  = s.youth_disability||0;
   const totalAdult = adultAble + adultDis;
-  const totalPlayers = totalYouth + totalAdult;
+  const totalPlayers = totalYouth + totalAdult + youthDis;
 
   // ── WELLBEING (Sport England Social Value Model Year 2 (November 2025), published Oct 2024 / updated Nov 2025)
   // Adult active/fairly-active threshold: 2+ sessions/week = active (£2,600), else fairly active (£1,200)
@@ -3456,9 +3461,11 @@ function calculate() {
   // Ages 16-18: use youth rate (not adult) — conservative approach
   const yw1618 = y1618 * (youthActive ? 4300 : 3300);
 
-  const youthWellbeing = yw56 + yw711 + yw1116 + yw1618;
-  // Disabled/LTHC adults: SE Year 2 (November 2025) — £5,100
-  const adultWellbeing = (adultAble * adultRate) + (adultDis * 5100);
+  // Disabled/LTHC children (under 16): SE Year 2 (November 2025) — £2,800
+  const ywDis  = youthDis * 2800;
+  const youthWellbeing = yw56 + yw711 + yw1116 + yw1618 + ywDis;
+  // Disabled/LTHC adults (16+): SE Year 2 (November 2025) — £5,300
+  const adultWellbeing = (adultAble * adultRate) + (adultDis * 5300);
   const rawWellbeing   = youthWellbeing + adultWellbeing;
   // ── IMD DEPRIVATION UPLIFT (Active Lives Survey, Nov 2022–23 / Sport England)
   // Active Lives evidence: lower wellbeing and higher inactivity-loneliness association in deprived areas
@@ -3530,7 +3537,7 @@ function calculate() {
   const riskVal = Math.round(addNeed * 0.12 * avgWellbeing);
 
   return {
-    y56, y711, y1116, y1618, totalYouth,
+    y56, y711, y1116, y1618, totalYouth, youthDis, ywDis,
     yw56, yw711, yw1116, yw1618,
     adultAble, adultDis, totalAdult, totalPlayers,
     youthWellbeing, adultWellbeing, rawWellbeing, totalWellbeing, imdMultiplier,
@@ -3736,7 +3743,7 @@ Adult football generates comparable wellbeing value alongside specific outcomes:
 Under 11s (ages 7–11): ${r.y711.toLocaleString()} players × £3,100 = ${fmtFull(r.yw711||0)}
 Under 16s (ages 11–16): ${r.y1116.toLocaleString()} players × £${r.youthActive ? '4,300' : '3,300'} = ${fmtFull(r.yw1116||0)}
 Under 18s (ages 16–18): ${r.y1618.toLocaleString()} players × £${r.youthActive ? '4,300' : '3,300'} = ${fmtFull(r.yw1618||0)}
-Adult players: ${r.adultAble.toLocaleString()} players × £${r.adultRate.toLocaleString()} = ${fmtFull(r.adultAble * r.adultRate)}${r.adultDis > 0 ? `\nDisability participants: ${r.adultDis.toLocaleString()} players × £5,100 = ${fmtFull(r.adultDis * 5100)}` : ''}
+Adult players: ${r.adultAble.toLocaleString()} players × £${r.adultRate.toLocaleString()} = ${fmtFull(r.adultAble * r.adultRate)}${r.adultDis > 0 ? `\nDisability participants (adult 16+): ${r.adultDis.toLocaleString()} players × £5,300 = ${fmtFull(r.adultDis * 5300)}` : ''}${r.youthDis > 0 ? `\nDisability participants (youth under 16): ${r.youthDis.toLocaleString()} players × £2,800 = ${fmtFull(r.youthDis * 2800)}` : ''}
 
 2. HEALTH & PRODUCTIVITY SAVINGS: ${fmt(r.nhsTotal)}
 
@@ -4569,6 +4576,7 @@ async function submitToSupabase(r) {
       total_youth: r.totalYouth,
       total_adult: r.totalAdult,
       adult_disability: r.adultDis,
+      youth_disability: r.youthDis,
       num_volunteers: r.numVol,
       total_vol_hrs: Math.round(r.totalVolHrs),
       community_reach: r.cr,
@@ -4928,7 +4936,7 @@ window.setClubType = function(type) {
      'youth_11_16_m','youth_11_16_f','youth_16_18_m','youth_16_18_f'].forEach(k => state[k] = 0);
   }
   if (type === 'youth') {
-    state.adult_male = 0; state.adult_female = 0; state.adult_disability = 0;
+    state.adult_male = 0; state.adult_female = 0; state.adult_disability = 0; state.youth_disability = 0;
   }
   recalculate();
 };
