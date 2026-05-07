@@ -4603,6 +4603,18 @@ async function submitToSupabase(r) {
       form_state: state
     };
 
+    // Capture generated text content at the point of first save — ensures text
+    // is stored even if the club never submits the email form (e.g. no email provided).
+    // innerText falls back to textContent for panels that may be display:none.
+    const _rEl = document.getElementById('panel-output-report');
+    const _pEl = document.getElementById('panel-output-press');
+    const _sEl = document.getElementById('panel-output-social');
+    const _fEl = document.getElementById('panel-output-funding');
+    payload.report_text  = _rEl ? (_rEl.innerText  || _rEl.textContent  || null) : null;
+    payload.press_text   = _pEl ? (_pEl.innerText   || _pEl.textContent   || null) : null;
+    payload.social_text  = _sEl ? (_sEl.innerText   || _sEl.textContent   || null) : null;
+    payload.funding_text = _fEl ? (_fEl.innerText   || _fEl.textContent   || null) : null;
+
     const resp = await fetch(`${SUPABASE_URL}/rest/v1/club_submissions?on_conflict=token`, {
       method: 'POST',
       headers: {
