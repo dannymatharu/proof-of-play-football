@@ -4581,6 +4581,8 @@ async function submitToSupabase(r) {
       total_vol_hrs: Math.round(r.totalVolHrs),
       community_reach: r.cr,
       num_programmes: state.num_programmes || 0,
+      annual_income: state.annual_income || 0,
+      annual_expenditure: state.annual_expenditure || 0,
       total_value: Math.round(r.totalValue),
       wellbeing_value: Math.round(r.totalWellbeing),
       imd_multiplier: r.imdMultiplier || 1.0,
