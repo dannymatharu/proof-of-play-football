@@ -3853,6 +3853,16 @@ function updatePressRelease(r, club, area) {
   const perPlayerPressLine = r.perPlayer ? `\n• Social Value Per Player: ${fmtFull(r.perPlayer)} — Social Value Per Club Member: ${fmtFull(r.perMember)} (players and volunteers combined)` : '';
   const ndLine = r.ndPlayers > 0 ? `\n\nThe assessment also highlights the scale of hidden need within the club environment. Based on published NHS prevalence data, an estimated ${r.ndPlayers.toLocaleString()} players at ${club} may be neurodivergent, and around ${r.mhPlayers.toLocaleString()} players are likely to experience a mental health difficulty during the current season. This underlines the wider duty of care that football clubs carry — often without recognition or resource.` : '';
 
+  const fteEquiv = r.numVol > 0 && r.totalVolHrs > 0 ? Math.round(r.totalVolHrs / 1950) : 0;
+  const fteLine = fteEquiv >= 1
+    ? `\n\nAmong the most significant findings is the scale of the volunteer contribution. ${club}'s ${r.numVol.toLocaleString()} volunteers collectively give an estimated ${Math.round(r.totalVolHrs).toLocaleString()} hours each year — the equivalent of approximately ${fteEquiv} full-time workers — without a salary, without a clocking-in system, and often without the recognition that level of commitment deserves.`
+    : '';
+
+  const decile = state.imdDecile;
+  const imdPressLine = (decile !== null && decile <= 5)
+    ? `\n\n${club} is based in an area ranked IMD Decile ${decile}, placing it among the most deprived ${decile * 10}% of communities in England. In communities facing higher levels of inequality, football clubs often play an even greater role: keeping young people active, connected and supported; giving adults meaningful ways to contribute; and providing families with a trusted local environment.`
+    : '';
+
 
   const text = `FOR IMMEDIATE RELEASE
 
@@ -3866,9 +3876,9 @@ The assessment, produced using Proof of Play — a social value calculator devel
 
 • ${fmt(r.totalWellbeing)} in wellbeing value from ${r.totalPlayers.toLocaleString()} youth and adult players participating regularly in football
 • ${fmt(r.nhsTotal)} in health and productivity savings through improved physical and mental health outcomes
-• ${fmt(r.volTotal)} from the contribution of ${r.numVol.toLocaleString()} volunteers, who collectively give approximately ${Math.round(r.totalVolHrs).toLocaleString()} hours to the club each year${r.cr > 0 ? `\n• ${fmt(r.communityValue)} from community programmes reaching ${r.cr.toLocaleString()} local residents` : ''}${perPlayerPressLine}
+• ${fmt(r.volTotal)} from the contribution of ${r.numVol.toLocaleString()} volunteers, who collectively give approximately ${Math.round(r.totalVolHrs).toLocaleString()} hours to the club each year${r.cr > 0 ? `\n• ${fmt(r.communityValue)} from community programmes reaching ${r.cr.toLocaleString()} local residents` : ''}${perPlayerPressLine}${fteLine}
 
-${qt ? `${qn || '[Name]'}, ${qr || '[Role]'} of ${club}, said: "${qt}"` : `[Quote from club representative to be added here.]`}${ndLine}
+${qt ? `${qn || '[Name]'}, ${qr || '[Role]'} of ${club}, said: "${qt}"` : `[Quote from club representative to be added here.]`}${ndLine}${imdPressLine}
 
 What many within the club have long felt can now be expressed in evidence-informed terms. The social value figures are calculated using the Treasury-approved WELLBY framework and the UK Social Value Model — the same methodology used across the public sector to evaluate community investment. Figures are estimates grounded in published national research. Some outputs also include clearly labelled modelling assumptions. A full methodology note is available on request.
 
