@@ -3521,6 +3521,9 @@ function calculate() {
   const fullInvestment = expenditure + volEcon;
   const sroi = fullInvestment > 0 ? (totalValue / fullInvestment) : null;
   const income = s.annual_income||0;
+  const perPlayer = totalPlayers > 0 ? Math.round(totalValue / totalPlayers) : null;
+  const totalMembers = totalPlayers + numVol;
+  const perMember = totalMembers > 0 ? Math.round(totalValue / totalMembers) : null;
 
   // ── ND/MH (statistical projections — not diagnosed individuals)
   const ndPct     = parseFloat(s.nd_prevalence||14) / 100;
@@ -3545,6 +3548,7 @@ function calculate() {
     volEcon, volWell, volTotal, numVol, totalVolHrs,
     communityValue, cr,
     totalValue, sroi, income, expenditure, fullInvestment,
+    perPlayer, perMember, totalMembers,
     ndPlayers, mhPlayers, overlap, addNeed,
     totalReach, adultRate, adultHealthRate, adultActive, youthActive, riskVal
   };
@@ -3673,6 +3677,7 @@ function updateFullReport(r, club, area) {
   const charter = {none:'', star1:'England Football Accredited — 1 Star', star2:'England Football Accredited — 2 Star', star3:'England Football Accredited — 3 Star'}[state.charterLevel] || '';
   const charterStr = charter ? ` ${club} holds ${charter} status.` : '';
   const sroiStr = r.sroi ? ` For every £1 invested in the club (including club expenditure and the replacement-cost value of volunteer time), this represents an estimated social value to cost ratio of £${r.sroi.toFixed(2)}, after applying a 40% deadweight assumption as a modelling choice.` : '';
+  const perPlayerStr = r.perPlayer ? ` The assessment also estimates ${fmt(r.perPlayer)} in social value per player, and ${fmt(r.perMember)} per club member (players and volunteers combined) — a useful measure when comparing impact across clubs of different sizes.` : '';
   const foundedStr = state.yearFounded ? ` Founded in ${state.yearFounded}, the` : ' The';
   const cfa = state.countyFA ? `, affiliated with ${state.countyFA}` : '';
 
@@ -3707,7 +3712,7 @@ This report is designed to help ${club} explain, communicate and evidence its co
 
 EXECUTIVE SUMMARY
 
-${club} generates an estimated ${fmt(r.totalValue)} in social value annually — supporting the physical health, mental wellbeing, personal development and community connection of ${r.totalReach.toLocaleString()} players, volunteers and community participants in ${area}.${sroiStr}
+${club} generates an estimated ${fmt(r.totalValue)} in social value annually — supporting the physical health, mental wellbeing, personal development and community connection of ${r.totalReach.toLocaleString()} players, volunteers and community participants in ${area}.${sroiStr}${perPlayerStr}
 
 This assessment was produced using Proof of Play, a social value calculator powered by the Football Mental Health Alliance (FMHA), and is grounded in HM Treasury WELLBY methodology and Sport England\'s Year 2 (November 2025) Social Value Model, developed with Sheffield Hallam University, Manchester Metropolitan University and State of Life.
 
@@ -3842,6 +3847,7 @@ function updatePressRelease(r, club, area) {
   const qr = state.quoteRole || '';
   const cfa = state.countyFA || '[County FA]';
   const sroiLine = r.sroi ? ` That is equivalent to an estimated £${r.sroi.toFixed(2)} in social value for every £1 invested in the club (after a 40% deadweight assumption).` : '';
+  const perPlayerPressLine = r.perPlayer ? `\n• Estimated ${fmt(r.perPlayer)} in social value per player — and ${fmt(r.perMember)} per club member (players and volunteers combined)` : '';
   const ndLine = r.ndPlayers > 0 ? `\n\nThe assessment also highlights the scale of hidden need within the club environment. Based on published NHS prevalence data, an estimated ${r.ndPlayers.toLocaleString()} players at ${club} may be neurodivergent, and around ${r.mhPlayers.toLocaleString()} players are likely to experience a mental health difficulty during the current season. This underlines the wider duty of care that football clubs carry — often without recognition or resource.` : '';
 
 
@@ -3857,7 +3863,7 @@ The assessment, produced using Proof of Play — a social value calculator devel
 
 • ${fmt(r.totalWellbeing)} in wellbeing value from ${r.totalPlayers.toLocaleString()} youth and adult players participating regularly in football
 • ${fmt(r.nhsTotal)} in health and productivity savings through improved physical and mental health outcomes
-• ${fmt(r.volTotal)} from the contribution of ${r.numVol.toLocaleString()} volunteers, who collectively give approximately ${Math.round(r.totalVolHrs).toLocaleString()} hours to the club each year${r.cr > 0 ? `\n• ${fmt(r.communityValue)} from community programmes reaching ${r.cr.toLocaleString()} local residents` : ''}
+• ${fmt(r.volTotal)} from the contribution of ${r.numVol.toLocaleString()} volunteers, who collectively give approximately ${Math.round(r.totalVolHrs).toLocaleString()} hours to the club each year${r.cr > 0 ? `\n• ${fmt(r.communityValue)} from community programmes reaching ${r.cr.toLocaleString()} local residents` : ''}${perPlayerPressLine}
 
 ${qt ? `${qn || '[Name]'}, ${qr || '[Role]'} of ${club}, said: "${qt}"` : `[Quote from club representative to be added here.]`}${ndLine}
 
@@ -3880,11 +3886,12 @@ Date: ${new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', yea
 // ─── SOCIAL POSTS ─────────────────────────────────────
 function updateSocialPosts(r, club, area) {
   const sroiLine = r.sroi ? `\n\nThat's £${r.sroi.toFixed(2)} in social value for every £1 invested. ` : ' ';
+  const perPlayerSocial = r.perPlayer ? `\n\nThat's ${fmt(r.perPlayer)} per player — and ${fmt(r.perMember)} per club member (players and volunteers combined).` : '';
 
   setText('post-linkedin',
 `We've used Proof of Play to estimate the wider social value ${club} creates for ${area} each year — through participation, volunteering and community activity. Here's what the evidence-informed assessment shows.
 
-${fmt(r.totalValue)}. That's the annual social and economic value our club generates for ${area}.
+${fmt(r.totalValue)}. That's the annual social and economic value our club generates for ${area}.${perPlayerSocial}
 
 It comes from ${r.totalPlayers.toLocaleString()} players whose health and wellbeing improves through regular football. From ${r.numVol.toLocaleString()} volunteers who give ${Math.round(r.totalVolHrs).toLocaleString()} hours a year — without asking for anything in return.${r.cr > 0 ? ` From ${r.cr.toLocaleString()} community members our programmes reach beyond the pitch.` : ''}${sroiLine}
 We've always known this club matters. Now we can put an evidence-informed number on it.
@@ -3896,7 +3903,7 @@ Assessment produced using Proof of Play, powered by @FMHA. Methodology grounded 
   setText('post-twitter',
 `${club} has used Proof of Play to estimate ${fmt(r.totalValue)} in annual social value for ${area}.
 
-${r.totalPlayers.toLocaleString()} players. ${r.numVol.toLocaleString()} volunteers. ${Math.round(r.totalVolHrs).toLocaleString()} hours given freely.
+${r.totalPlayers.toLocaleString()} players. ${r.numVol.toLocaleString()} volunteers. ${Math.round(r.totalVolHrs).toLocaleString()} hours given freely.${r.perPlayer ? `\n${fmt(r.perPlayer)} per player.` : ''}
 
 That's what a football club actually is.
 
@@ -3911,7 +3918,7 @@ What that adds up to is ${fmt(r.totalValue)} of social and economic value for ${
 
 ${fmt(r.totalWellbeing)} in improved health and wellbeing.
 ${fmt(r.nhsTotal)} in health and productivity savings.
-${fmt(r.volTotal)} from the incredible contribution of our ${r.numVol.toLocaleString()} volunteers.
+${fmt(r.volTotal)} from the incredible contribution of our ${r.numVol.toLocaleString()} volunteers.${r.perPlayer ? `\n${fmt(r.perPlayer)} per player — ${fmt(r.perMember)} per club member.` : ''}
 
 This is what football really means. Proud of every single person involved with this club. 🏆
 
@@ -3922,7 +3929,7 @@ This is what football really means. Proud of every single person involved with t
 
 That's our evidence-informed estimate of the annual social value ${club} creates for ${area}.
 
-${r.totalPlayers.toLocaleString()} players. ${r.numVol.toLocaleString()} volunteers. Immeasurable community spirit.
+${r.totalPlayers.toLocaleString()} players. ${r.numVol.toLocaleString()} volunteers. Immeasurable community spirit.${r.perPlayer ? `\n\n${fmt(r.perPlayer)} per player. ${fmt(r.perMember)} per club member.` : ''}
 
 Now it's measured.
 
