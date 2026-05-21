@@ -3846,8 +3846,11 @@ function updatePressRelease(r, club, area) {
   const qn = state.quoteName || '';
   const qr = state.quoteRole || '';
   const cfa = state.countyFA || '[County FA]';
+  const charter = {none:'', star1:'England Football Accredited — 1 Star', star2:'England Football Accredited — 2 Star', star3:'England Football Accredited — 3 Star'}[state.charterLevel] || '';
+  const foundedNote = state.yearFounded ? `${club} was founded in ${state.yearFounded} and is` : `${club} is`;
+  const charterNote = charter ? ` The club holds ${charter} status.` : '';
   const sroiLine = r.sroi ? ` That is equivalent to an estimated £${r.sroi.toFixed(2)} in social value for every £1 invested in the club (after a 40% deadweight assumption).` : '';
-  const perPlayerPressLine = r.perPlayer ? `\n• Estimated ${fmtFull(r.perPlayer)} in social value per player — and ${fmtFull(r.perMember)} per club member (players and volunteers combined)` : '';
+  const perPlayerPressLine = r.perPlayer ? `\n• Social Value Per Player: ${fmtFull(r.perPlayer)} — Social Value Per Club Member: ${fmtFull(r.perMember)} (players and volunteers combined)` : '';
   const ndLine = r.ndPlayers > 0 ? `\n\nThe assessment also highlights the scale of hidden need within the club environment. Based on published NHS prevalence data, an estimated ${r.ndPlayers.toLocaleString()} players at ${club} may be neurodivergent, and around ${r.mhPlayers.toLocaleString()} players are likely to experience a mental health difficulty during the current season. This underlines the wider duty of care that football clubs carry — often without recognition or resource.` : '';
 
 
@@ -3873,11 +3876,31 @@ ENDS
 
 NOTES TO EDITORS:
 
-About Proof of Play: Proof of Play is a social value calculator for football clubs and professional academies, developed by the Football Mental Health Alliance (FMHA). It uses proxy values drawn from Sport England\'s Social Value Model Year 2 (November 2025) (produced with Sheffield Hallam University, Manchester Metropolitan University and State of Life), HM Treasury's Green Book WELLBY methodology, and the ONS Annual Survey of Hours and Earnings. Outputs are evidence-informed estimates and are not independently audited. All figures should be presented as estimates in any external communication. Full methodology available at fmha.academy.
+About ${club}: ${foundedNote} affiliated to ${cfa}.${charterNote} The club supports players, volunteers and families across the local community.
 
-About FMHA: The Football Mental Health Alliance delivers mental health and neurodiversity training across all levels of football in the UK. fmha.academy
+About the figures: The social value figures are evidence-informed estimates produced using HM Treasury's WELLBY methodology and Sport England's Social Value Model Year 2. A 40% deadweight assumption has been applied to benefit values. These are not independently audited valuations and should be presented as estimates.
 
-Media contact: [Insert contact details]
+Clubs may wish to lead with the figure most relevant to their context. Clubs with higher operating costs may find the Social Value Per Player or Social Value Per Club Member figure more representative of their community contribution than the Social Value to Cost Ratio.
+
+About Proof of Play: Proof of Play is a social value calculator for football clubs and academies. It helps clubs turn participation, volunteering and community activity into funder-ready evidence, including a social value report, one-page summary, press release, social media posts and funding guidance.
+
+Proof of Play also connects to The Funding Bench, helping clubs move from evidence to action. Once a club has completed its Proof of Play submission, its profile can be used to match and rank live funding opportunities based on factors such as sport, location, legal structure, funding need and deprivation status. This gives clubs a clearer route to relevant grants, helps them understand which funds they can realistically apply for, and strengthens conversations with funders, sponsors, councils and local partners.
+
+About the Football Mental Health Alliance: The Football Mental Health Alliance delivers mental health and neurodiversity training, tools and resources across football, supporting clubs, academies, coaches, players, families, volunteers and all football organisations.
+
+COMPLETE THIS SECTION BEFORE DISTRIBUTING:
+Name:
+Position:
+${club}
+Your Telephone Number:
+Your email address:
+
+Proof of Play / FMHA contact: Danny Matharu | danny@withinu.net | 03330 500 399
+
+www.proofofplay.uk
+www.thefundingbench.uk
+www.vault.thefmha.com
+
 Date: ${new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'})}`;
 
   setText('pressText', text);
