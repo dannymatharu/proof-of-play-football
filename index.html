@@ -3363,10 +3363,11 @@ async function lookupPostcode() {
     }
 
     const d = data.result;
-    let decile = d.index_of_multiple_deprivation?.decile ?? null;
+    let decile = null;
     const admin = d.admin_district || '';
     const ward  = d.admin_ward || '';
     const lsoa  = d.lsoa || '';
+    const lsoaCode = d.codes?.lsoa || '';
 
     state.imdArea = admin || state.area;
     if (!state.area && admin) {
@@ -3375,21 +3376,14 @@ async function lookupPostcode() {
       if (areaInput && !areaInput.value) areaInput.value = admin;
     }
 
-    // If postcodes.io has the decile, use it directly
-    if (decile !== null) {
-      renderImdResult(decile, admin, ward, result);
-      return;
-    }
-
-    // Step 2: postcodes.io missing decile — query our Supabase district_imd table
-    // postcodes.io returns admin_district_code which maps to our district table
-    const districtCode = d.codes?.admin_district || '';
-    if (districtCode) {
+    // Step 1: query our lsoa_imd table first — MHCLG IMD 2019, all 32,844 English LSOAs.
+    // More complete than postcodes.io's IMD field (which has gaps, e.g. rural postcodes).
+    if (lsoaCode) {
       try {
         result.className = 'imd-result visible imd-low';
         result.innerHTML = '<strong>Checking deprivation data...</strong>';
         const sbRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/district_imd?district_code=eq.${encodeURIComponent(districtCode)}&select=imd_decile,district_name`,
+          `${SUPABASE_URL}/rest/v1/lsoa_imd?lsoa_code=eq.${encodeURIComponent(lsoaCode)}&select=imd_decile`,
           { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
         );
         const sbData = await sbRes.json();
@@ -3398,10 +3392,17 @@ async function lookupPostcode() {
           renderImdResult(decile, admin, ward, result);
           return;
         }
-      } catch(e) { /* silent */ }
+      } catch(e) { /* silent — fall through to postcodes.io field */ }
     }
 
-    // All lookups exhausted — show area but no decile
+    // Step 2: lsoa_imd had no match — try postcodes.io's own IMD field as last resort
+    decile = d.index_of_multiple_deprivation?.decile ?? null;
+    if (decile !== null) {
+      renderImdResult(decile, admin, ward, result);
+      return;
+    }
+
+    // All sources exhausted — show area but no decile
     state.imdDecile = null;
     result.className = 'imd-result visible imd-low';
     result.innerHTML = `<strong>Location confirmed: ${admin || postcode}</strong>Deprivation index not available for this postcode. Your report will still generate correctly — enter your area manually below if not already filled.`;
