@@ -2233,9 +2233,9 @@ input[type="range"]::-webkit-slider-thumb {
 
       <div class="field-row">
         <div class="field">
-          <label>Your name <span class="hint">So your report is addressed to you</span></label>
+          <label>Your name <span class="hint">Required — so your report is addressed to you</span></label>
           <input type="text" id="contactName" placeholder="e.g. Sam Taylor" autocomplete="name" oninput="updateState('contactName', this.value.trim())">
-          <div id="contactNameHint" style="display:none; color:#CA8A04; font-size:13px; margin-top:6px;">Add your name so your report is addressed to you — or press Next again to skip.</div>
+          <div id="contactNameError" style="display:none; color:#c0392b; font-size:13px; margin-top:6px;">Please enter your name — it's how we address your report.</div>
         </div>
         <div class="field">
           <label>Your email <span class="hint">Required — this is where we send your report and dashboard link</span></label>
@@ -2920,8 +2920,8 @@ input[type="range"]::-webkit-slider-thumb {
       </div>
       <div class="email-capture-form" id="emailForm">
         <input type="email" id="captureEmail" placeholder="your@email.com" required>
-        <p style="font-size:11px; color:var(--text-muted); margin:4px 0 8px; line-height:1.5;">Required — we'll send your report and dashboard link here. We won't use it for anything else.</p>
-        <input type="text" id="captureName" placeholder="Your name (recommended)">
+        <p style="font-size:11px; color:var(--text-muted); margin:4px 0 8px; line-height:1.5;">Both required — we'll send your report and dashboard link here. We won't use it for anything else.</p>
+        <input type="text" id="captureName" placeholder="Your name">
         <button class="btn btn-primary" onclick="submitEmailCapture()">Send my report</button>
         <p style="font-size:11px; color:var(--text-muted); margin-top:10px; line-height:1.6;">Your data is kept secure. We'll only ever use it to send you your report.</p>
       </div>
@@ -4191,24 +4191,21 @@ let _supabaseSubmitted = false;
 
 // Name and email are asked for up front in Step 1 so every submission has a
 // contact, even if the club never uses the email capture on the results.
-// Email is required; name is prompted once, then allowed through.
+// Both are required.
 function validateContactDetails() {
+  const nameInput = document.getElementById('contactName');
+  const nameErr = document.getElementById('contactNameError');
+  const nameOk = !!(nameInput?.value || '').trim();
+  if (nameErr) nameErr.style.display = nameOk ? 'none' : 'block';
+
   const input = document.getElementById('contactEmail');
   const errEl = document.getElementById('contactEmailError');
   const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((input?.value || '').trim());
   if (errEl) errEl.style.display = ok ? 'none' : 'block';
-  if (!ok && input) input.focus();
-  if (!ok) return false;
-  const nameInput = document.getElementById('contactName');
-  const nameHint = document.getElementById('contactNameHint');
-  if (nameInput && !nameInput.value.trim() && !nameInput.dataset.namePrompted) {
-    nameInput.dataset.namePrompted = '1';
-    if (nameHint) nameHint.style.display = 'block';
-    nameInput.focus();
-    return false;
-  }
-  if (nameHint) nameHint.style.display = 'none';
-  return true;
+
+  if (!nameOk && nameInput) nameInput.focus();
+  else if (!ok && input) input.focus();
+  return nameOk && ok;
 }
 
 // Send the report automatically when results are first shown, using the
@@ -4832,17 +4829,15 @@ window.submitEmailCapture = async function(opts = {}) {
     return;
   }
 
-  // Name is strongly prompted — warn once, then allow through on second attempt
-  // (skipped for the automatic send, which happens without the club clicking anything)
-  if (!name && !opts.auto) {
+  // Name is required — the report email is addressed to it
+  if (!name) {
     const el = document.getElementById('captureName');
-    if (el && !el.dataset.namePrompted) {
-      el.style.borderColor = '#CA8A04';
-      el.placeholder = 'Your name helps us personalise your report';
-      el.dataset.namePrompted = '1';
-      setTimeout(() => { el.style.borderColor = ''; el.placeholder = 'Your name (recommended)'; }, 2500);
-      return;
+    if (el) {
+      el.style.borderColor = '#EA580C';
+      el.placeholder = 'Please enter your name';
+      setTimeout(() => { el.style.borderColor = ''; el.placeholder = 'Your name'; }, 2500);
     }
+    return;
   }
 
   const btn = document.querySelector('#emailForm button');
