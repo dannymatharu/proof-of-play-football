@@ -4195,6 +4195,17 @@ function validateContactEmail() {
   return ok;
 }
 
+// Send the report automatically when results are first shown, using the
+// email from Step 1 — clubs shouldn't have to find the email capture to get it.
+let _autoEmailSent = false;
+function autoSendReport() {
+  const sent = document.getElementById('emailSent');
+  if (_autoEmailSent || !state.contactEmail || (sent && sent.style.display === 'block')) return;
+  if (!document.getElementById('captureEmail')?.value) return;
+  _autoEmailSent = true;
+  submitEmailCapture({ auto: true });
+}
+
 function scrollToOutputs() {
   // Pre-fill the results email capture with the email given in Step 1
   const captureEmail = document.getElementById('captureEmail');
@@ -4211,7 +4222,7 @@ function scrollToOutputs() {
     const r = calculate();
     if (r.totalPlayers > 0 || r.numVol > 0) {
       _supabaseSubmitted = true;
-      submitToSupabase(r);
+      submitToSupabase(r).then(autoSendReport);
     }
   }
   // Hydrate the dashboard link client-side using state.token — the same UUID
@@ -4787,7 +4798,7 @@ function restoreFormDOM() {
 // Apps Script deployment URL
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9wo9uspfI6z6UNVRtmD9e088eWI6Z9oUo1kEBmkIm4aZgq9tOYSVOTJ52VpVlDt_mpQ/exec';
 
-window.submitEmailCapture = async function() {
+window.submitEmailCapture = async function(opts = {}) {
   const email = document.getElementById('captureEmail')?.value?.trim();
   const name  = document.getElementById('captureName')?.value?.trim();
 
@@ -4803,7 +4814,8 @@ window.submitEmailCapture = async function() {
   }
 
   // Name is strongly prompted — warn once, then allow through on second attempt
-  if (!name) {
+  // (skipped for the automatic send, which happens without the club clicking anything)
+  if (!name && !opts.auto) {
     const el = document.getElementById('captureName');
     if (el && !el.dataset.namePrompted) {
       el.style.borderColor = '#CA8A04';
@@ -4906,6 +4918,27 @@ window.submitEmailCapture = async function() {
   const sent = document.getElementById('emailSent');
   if (form) form.style.display = 'none';
   if (sent) sent.style.display = 'block';
+  if (opts.auto && sent && !sent.querySelector('.resend-link')) {
+    const msg = sent.querySelector('span');
+    const originalMsg = msg ? msg.textContent : '';
+    if (msg) msg.textContent = `\u2713 We\u2019ve emailed your report to ${email} \u2014 check your inbox.`;
+    const resend = document.createElement('a');
+    resend.href = '#';
+    resend.className = 'resend-link';
+    resend.textContent = 'Send it to a different address';
+    resend.style.cssText = 'display:block;margin-top:8px;font-size:13px;color:var(--text-muted);';
+    resend.onclick = (e) => {
+      e.preventDefault();
+      if (msg) msg.textContent = originalMsg;
+      resend.remove();
+      sent.style.display = 'none';
+      if (form) form.style.display = '';
+      if (btn) { btn.disabled = false; btn.textContent = 'Send my report'; }
+      const input = document.getElementById('captureEmail');
+      if (input) { input.value = ''; input.focus(); }
+    };
+    sent.appendChild(resend);
+  }
 
   // If both email attempts failed, show a soft warning so the club knows to follow up
   if (!appsScriptOk && sent) {
