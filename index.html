@@ -466,6 +466,7 @@ label .hint {
 }
 
 input[type="text"],
+input[type="email"],
 input[type="number"],
 select,
 textarea {
@@ -2232,6 +2233,19 @@ input[type="range"]::-webkit-slider-thumb {
 
       <div class="field-row">
         <div class="field">
+          <label>Your name <span class="hint">Required — so your report is addressed to you</span></label>
+          <input type="text" id="contactName" placeholder="e.g. Sam Taylor" autocomplete="name" oninput="updateState('contactName', this.value.trim())">
+          <div id="contactNameError" style="display:none; color:#c0392b; font-size:13px; margin-top:6px;">Please enter your name — it's how we address your report.</div>
+        </div>
+        <div class="field">
+          <label>Your email <span class="hint">Required — this is where we send your report and dashboard link</span></label>
+          <input type="email" id="contactEmail" placeholder="your@email.com" autocomplete="email" oninput="updateState('contactEmail', this.value.trim())">
+          <div id="contactEmailError" style="display:none; color:#c0392b; font-size:13px; margin-top:6px;">Please enter a valid email address — without it we can't send you your report.</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
           <label>Club postcode <span class="hint">Used to look up your area's deprivation index — affects funding eligibility</span></label>
           <p class="field-hint">Enter your full postcode (e.g. WF14 6AB). Used to calculate your deprivation band, which affects your social value score and grant matching.</p>
           <div class="postcode-row">
@@ -2897,6 +2911,42 @@ input[type="range"]::-webkit-slider-thumb {
     </div>
   </div>
 
+  <!-- EMAIL CAPTURE — top of the results so it's seen before the report tabs -->
+  <div class="email-capture" id="emailCapture" style="margin:24px 24px 0;">
+    <div class="email-capture-inner">
+      <div class="email-capture-text">
+        <strong>Your club has been worth this the whole time. Keep the proof.</strong>
+        <span>Send your report to your inbox.</span>
+      </div>
+      <div class="email-capture-form" id="emailForm">
+        <input type="email" id="captureEmail" placeholder="your@email.com" required>
+        <p style="font-size:11px; color:var(--text-muted); margin:4px 0 8px; line-height:1.5;">Both required — we'll send your report and dashboard link here. We won't use it for anything else.</p>
+        <input type="text" id="captureName" placeholder="Your name">
+        <button class="btn btn-primary" onclick="submitEmailCapture()">Send my report</button>
+        <p style="font-size:11px; color:var(--text-muted); margin-top:10px; line-height:1.6;">Your data is kept secure. We'll only ever use it to send you your report.</p>
+      </div>
+      <div class="email-capture-sent" id="emailSent" style="display:none;">
+        <span>✓ Done — check your inbox. FMHA will be in touch.</span>
+      </div>
+    </div>
+
+    <!-- DASHBOARD LINK — constructed client-side from state.token, guaranteed to match club_submissions -->
+    <div id="dashboardLinkBlock" style="display:none; margin-top:24px; padding-top:24px; border-top:1px solid var(--border);">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:18px; color:var(--green); margin-bottom:6px; font-weight:600;">Your full dashboard is ready.</div>
+      <p style="font-size:13px; color:var(--text-mid); margin-bottom:14px; line-height:1.55;">A permanent, shareable version of your report — with the funding guide, press release, and editable figures — saved online under a link unique to your club. Bookmark it for your AGM, grant applications, and committee presentations.</p>
+      <a id="dashboardUrl" href="#" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-block; text-decoration:none;">View your full dashboard →</a>
+      <p style="font-size:11px; color:var(--text-muted); margin-top:10px;">This link is unique to your club. Share it with your committee. You can also return here later to update your figures.</p>
+
+      <!-- FIND YOUR FUNDING — deep-links to The Funding Bench with this club's PoP token pre-loaded -->
+      <div style="margin-top:22px; padding:18px 20px; background:rgba(110,232,154,0.07); border:1px solid rgba(110,232,154,0.3); border-radius:10px;">
+        <div style="font-size:10px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--green); margin-bottom:6px;">Your profile is ready</div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:600; color:var(--text); margin-bottom:8px; line-height:1.35;">See which grants your club is eligible for →</div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.55;">The Funding Bench uses your Proof of Play data to match you to live grants. No re-entry — your club profile loads automatically.</p>
+        <a id="fundingBenchUrl" href="https://thefundingbench.uk" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-block; text-decoration:none; background:linear-gradient(135deg,#6EE89A,#39d0c8);">Find Your Funding →</a>
+      </div>
+    </div>
+  </div>
+
   <div class="output-body">
 
     <!-- CHAIRMAN'S SUMMARY -->
@@ -3182,41 +3232,6 @@ input[type="range"]::-webkit-slider-thumb {
 
   </div><!-- /output-body -->
 
-  <!-- EMAIL CAPTURE — persistent below every tab so it's always reachable -->
-  <div class="email-capture" id="emailCapture" style="margin:0 24px 24px; border-top:1px solid var(--border);">
-    <div class="email-capture-inner">
-      <div class="email-capture-text">
-        <strong>Your club has been worth this the whole time. Keep the proof.</strong>
-        <span>Send your report to your inbox.</span>
-      </div>
-      <div class="email-capture-form" id="emailForm">
-        <input type="email" id="captureEmail" placeholder="your@email.com" required>
-        <p style="font-size:11px; color:var(--text-muted); margin:4px 0 8px; line-height:1.5;">Required — we'll send your report and dashboard link here. We won't use it for anything else.</p>
-        <input type="text" id="captureName" placeholder="Your name (recommended)">
-        <button class="btn btn-primary" onclick="submitEmailCapture()">Send my report</button>
-        <p style="font-size:11px; color:var(--text-muted); margin-top:10px; line-height:1.6;">Your data is kept secure. We'll only ever use it to send you your report.</p>
-      </div>
-      <div class="email-capture-sent" id="emailSent" style="display:none;">
-        <span>✓ Done — check your inbox. FMHA will be in touch.</span>
-      </div>
-    </div>
-
-    <!-- DASHBOARD LINK — constructed client-side from state.token, guaranteed to match club_submissions -->
-    <div id="dashboardLinkBlock" style="display:none; margin-top:24px; padding-top:24px; border-top:1px solid var(--border);">
-      <div style="font-family:'Cormorant Garamond',serif; font-size:18px; color:var(--green); margin-bottom:6px; font-weight:600;">Your full dashboard is ready.</div>
-      <p style="font-size:13px; color:var(--text-mid); margin-bottom:14px; line-height:1.55;">A permanent, shareable version of your report — with the funding guide, press release, and editable figures — saved online under a link unique to your club. Bookmark it for your AGM, grant applications, and committee presentations.</p>
-      <a id="dashboardUrl" href="#" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-block; text-decoration:none;">View your full dashboard →</a>
-      <p style="font-size:11px; color:var(--text-muted); margin-top:10px;">This link is unique to your club. Share it with your committee. You can also return here later to update your figures.</p>
-
-      <!-- FIND YOUR FUNDING — deep-links to The Funding Bench with this club's PoP token pre-loaded -->
-      <div style="margin-top:22px; padding:18px 20px; background:rgba(110,232,154,0.07); border:1px solid rgba(110,232,154,0.3); border-radius:10px;">
-        <div style="font-size:10px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--green); margin-bottom:6px;">Your profile is ready</div>
-        <div style="font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:600; color:var(--text); margin-bottom:8px; line-height:1.35;">See which grants your club is eligible for →</div>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.55;">The Funding Bench uses your Proof of Play data to match you to live grants. No re-entry — your club profile loads automatically.</p>
-        <a id="fundingBenchUrl" href="https://thefundingbench.uk" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-block; text-decoration:none; background:linear-gradient(135deg,#6EE89A,#39d0c8);">Find Your Funding →</a>
-      </div>
-    </div>
-  </div>
 
 </div><!-- /outputs-section -->
 
@@ -3338,6 +3353,7 @@ function validatePostcode() {
 function advanceFromClub() {
   const raw = (document.getElementById('clubPostcode')?.value || '').trim();
   if (raw && !validatePostcode()) return;
+  if (!validateContactDetails()) return;
   goToSection('players');
 }
 
@@ -4173,7 +4189,42 @@ function goToSection(section) {
 
 let _supabaseSubmitted = false;
 
+// Name and email are asked for up front in Step 1 so every submission has a
+// contact, even if the club never uses the email capture on the results.
+// Both are required.
+function validateContactDetails() {
+  const nameInput = document.getElementById('contactName');
+  const nameErr = document.getElementById('contactNameError');
+  const nameOk = !!(nameInput?.value || '').trim();
+  if (nameErr) nameErr.style.display = nameOk ? 'none' : 'block';
+
+  const input = document.getElementById('contactEmail');
+  const errEl = document.getElementById('contactEmailError');
+  const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((input?.value || '').trim());
+  if (errEl) errEl.style.display = ok ? 'none' : 'block';
+
+  if (!nameOk && nameInput) nameInput.focus();
+  else if (!ok && input) input.focus();
+  return nameOk && ok;
+}
+
+// Send the report automatically when results are first shown, using the
+// email from Step 1 — clubs shouldn't have to find the email capture to get it.
+let _autoEmailSent = false;
+function autoSendReport() {
+  const sent = document.getElementById('emailSent');
+  if (_autoEmailSent || !state.contactEmail || (sent && sent.style.display === 'block')) return;
+  if (!document.getElementById('captureEmail')?.value) return;
+  _autoEmailSent = true;
+  submitEmailCapture({ auto: true });
+}
+
 function scrollToOutputs() {
+  // Pre-fill the results email capture with the name and email given in Step 1
+  const captureEmail = document.getElementById('captureEmail');
+  if (captureEmail && !captureEmail.value && state.contactEmail) captureEmail.value = state.contactEmail;
+  const captureName = document.getElementById('captureName');
+  if (captureName && !captureName.value && state.contactName) captureName.value = state.contactName;
   setTimeout(() => {
     document.getElementById('outputs-section').scrollIntoView({behavior:'smooth', block:'start'});
   }, 100);
@@ -4186,7 +4237,7 @@ function scrollToOutputs() {
     const r = calculate();
     if (r.totalPlayers > 0 || r.numVol > 0) {
       _supabaseSubmitted = true;
-      submitToSupabase(r);
+      submitToSupabase(r).then(autoSendReport);
     }
   }
   // Hydrate the dashboard link client-side using state.token — the same UUID
@@ -4643,6 +4694,8 @@ async function submitToSupabase(r) {
       nd_prevalence: parseFloat(state.nd_prevalence || 14),
       consent_given: true,
       token: state.token,
+      email: state.contactEmail || undefined,
+      submitter_name: state.contactName || undefined,
       form_state: state
     };
 
@@ -4761,7 +4814,7 @@ function restoreFormDOM() {
 // Apps Script deployment URL
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx9wo9uspfI6z6UNVRtmD9e088eWI6Z9oUo1kEBmkIm4aZgq9tOYSVOTJ52VpVlDt_mpQ/exec';
 
-window.submitEmailCapture = async function() {
+window.submitEmailCapture = async function(opts = {}) {
   const email = document.getElementById('captureEmail')?.value?.trim();
   const name  = document.getElementById('captureName')?.value?.trim();
 
@@ -4776,16 +4829,15 @@ window.submitEmailCapture = async function() {
     return;
   }
 
-  // Name is strongly prompted — warn once, then allow through on second attempt
+  // Name is required — the report email is addressed to it
   if (!name) {
     const el = document.getElementById('captureName');
-    if (el && !el.dataset.namePrompted) {
-      el.style.borderColor = '#CA8A04';
-      el.placeholder = 'Your name helps us personalise your report';
-      el.dataset.namePrompted = '1';
-      setTimeout(() => { el.style.borderColor = ''; el.placeholder = 'Your name (recommended)'; }, 2500);
-      return;
+    if (el) {
+      el.style.borderColor = '#EA580C';
+      el.placeholder = 'Please enter your name';
+      setTimeout(() => { el.style.borderColor = ''; el.placeholder = 'Your name'; }, 2500);
     }
+    return;
   }
 
   const btn = document.querySelector('#emailForm button');
@@ -4880,6 +4932,27 @@ window.submitEmailCapture = async function() {
   const sent = document.getElementById('emailSent');
   if (form) form.style.display = 'none';
   if (sent) sent.style.display = 'block';
+  if (opts.auto && sent && !sent.querySelector('.resend-link')) {
+    const msg = sent.querySelector('span');
+    const originalMsg = msg ? msg.textContent : '';
+    if (msg) msg.textContent = `\u2713 We\u2019ve emailed your report to ${email} \u2014 check your inbox.`;
+    const resend = document.createElement('a');
+    resend.href = '#';
+    resend.className = 'resend-link';
+    resend.textContent = 'Send it to a different address';
+    resend.style.cssText = 'display:block;margin-top:8px;font-size:13px;color:var(--text-muted);';
+    resend.onclick = (e) => {
+      e.preventDefault();
+      if (msg) msg.textContent = originalMsg;
+      resend.remove();
+      sent.style.display = 'none';
+      if (form) form.style.display = '';
+      if (btn) { btn.disabled = false; btn.textContent = 'Send my report'; }
+      const input = document.getElementById('captureEmail');
+      if (input) { input.value = ''; input.focus(); }
+    };
+    sent.appendChild(resend);
+  }
 
   // If both email attempts failed, show a soft warning so the club knows to follow up
   if (!appsScriptOk && sent) {
