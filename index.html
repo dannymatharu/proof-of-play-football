@@ -2232,7 +2232,12 @@ input[type="range"]::-webkit-slider-thumb {
       </div>
 
       <div class="field-row">
-        <div class="field full">
+        <div class="field">
+          <label>Your name <span class="hint">So your report is addressed to you</span></label>
+          <input type="text" id="contactName" placeholder="e.g. Sam Taylor" autocomplete="name" oninput="updateState('contactName', this.value.trim())">
+          <div id="contactNameHint" style="display:none; color:#CA8A04; font-size:13px; margin-top:6px;">Add your name so your report is addressed to you — or press Next again to skip.</div>
+        </div>
+        <div class="field">
           <label>Your email <span class="hint">Required — this is where we send your report and dashboard link</span></label>
           <input type="email" id="contactEmail" placeholder="your@email.com" autocomplete="email" oninput="updateState('contactEmail', this.value.trim())">
           <div id="contactEmailError" style="display:none; color:#c0392b; font-size:13px; margin-top:6px;">Please enter a valid email address — without it we can't send you your report.</div>
@@ -3348,7 +3353,7 @@ function validatePostcode() {
 function advanceFromClub() {
   const raw = (document.getElementById('clubPostcode')?.value || '').trim();
   if (raw && !validatePostcode()) return;
-  if (!validateContactEmail()) return;
+  if (!validateContactDetails()) return;
   goToSection('players');
 }
 
@@ -4184,15 +4189,26 @@ function goToSection(section) {
 
 let _supabaseSubmitted = false;
 
-// Email is asked for up front in Step 1 so every submission has a contact,
-// even if the club never uses the email capture on the results.
-function validateContactEmail() {
+// Name and email are asked for up front in Step 1 so every submission has a
+// contact, even if the club never uses the email capture on the results.
+// Email is required; name is prompted once, then allowed through.
+function validateContactDetails() {
   const input = document.getElementById('contactEmail');
   const errEl = document.getElementById('contactEmailError');
   const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((input?.value || '').trim());
   if (errEl) errEl.style.display = ok ? 'none' : 'block';
   if (!ok && input) input.focus();
-  return ok;
+  if (!ok) return false;
+  const nameInput = document.getElementById('contactName');
+  const nameHint = document.getElementById('contactNameHint');
+  if (nameInput && !nameInput.value.trim() && !nameInput.dataset.namePrompted) {
+    nameInput.dataset.namePrompted = '1';
+    if (nameHint) nameHint.style.display = 'block';
+    nameInput.focus();
+    return false;
+  }
+  if (nameHint) nameHint.style.display = 'none';
+  return true;
 }
 
 // Send the report automatically when results are first shown, using the
@@ -4207,9 +4223,11 @@ function autoSendReport() {
 }
 
 function scrollToOutputs() {
-  // Pre-fill the results email capture with the email given in Step 1
+  // Pre-fill the results email capture with the name and email given in Step 1
   const captureEmail = document.getElementById('captureEmail');
   if (captureEmail && !captureEmail.value && state.contactEmail) captureEmail.value = state.contactEmail;
+  const captureName = document.getElementById('captureName');
+  if (captureName && !captureName.value && state.contactName) captureName.value = state.contactName;
   setTimeout(() => {
     document.getElementById('outputs-section').scrollIntoView({behavior:'smooth', block:'start'});
   }, 100);
@@ -4680,6 +4698,7 @@ async function submitToSupabase(r) {
       consent_given: true,
       token: state.token,
       email: state.contactEmail || undefined,
+      submitter_name: state.contactName || undefined,
       form_state: state
     };
 
