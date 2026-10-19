@@ -4640,16 +4640,40 @@ async function submitToSupabase(r) {
     payload.social_text  = _sEl ? (_sEl.innerText   || _sEl.textContent   || null) : null;
     payload.funding_text = _fEl ? (_fEl.innerText   || _fEl.textContent   || null) : null;
 
-    const resp = await fetch(`${SUPABASE_URL}/rest/v1/club_submissions?on_conflict=token`, {
+    // NOTE: we used to do this as a single upsert (POST ?on_conflict=token with
+    // Prefer: resolution=merge-duplicates). That stopped working once RLS was
+    // enabled on club_submissions on 18 Oct — Postgres requires SELECT
+    // visibility on the existing row to even detect an ON CONFLICT, and anon
+    // deliberately has no SELECT policy on this table (that's the whole point
+    // of the lockdown migration — a club's token must not be listable by
+    // anyone holding the public anon key). A plain INSERT and a plain
+    // UPDATE ... WHERE token = ... don't have that requirement, so we try the
+    // insert first and fall back to an update on conflict instead.
+    const supabaseHeaders = {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    };
+
+    let resp = await fetch(`${SUPABASE_URL}/rest/v1/club_submissions`, {
       method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates,return=minimal'
-      },
+      headers: supabaseHeaders,
       body: JSON.stringify(payload)
     });
+
+    if (resp.status === 409) {
+      // Row for this token already exists (resubmission / recalculation) —
+      // update it in place. token is the identity column here, so leave it
+      // out of the SET list.
+      const { token: _tok, ...updatePayload } = payload;
+      resp = await fetch(`${SUPABASE_URL}/rest/v1/club_submissions?token=eq.${encodeURIComponent(payload.token)}`, {
+        method: 'PATCH',
+        headers: supabaseHeaders,
+        body: JSON.stringify(updatePayload)
+      });
+    }
+
     if (!resp.ok) {
       const errText = await resp.text().catch(() => '');
       console.error('Supabase write failed:', resp.status, errText);
