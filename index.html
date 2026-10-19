@@ -4867,21 +4867,23 @@ window.submitEmailCapture = async function(opts = {}) {
   }
 
   // Write report_text directly to club_submissions — bypasses Apps Script size limits.
-  // Uses return=representation so we can verify the row was actually saved.
+  // Uses return=minimal: anon has no SELECT policy on this table (by design — see
+  // submitToSupabase), and under RLS a PATCH with return=representation can't build
+  // its RETURNING result set without SELECT visibility, so it silently comes back as
+  // zero rows even when the update itself went through. return=minimal sidesteps that
+  // — we already confirmed above (via submitToSupabase) that a row exists for this
+  // token, so resp.ok on the PATCH is all we need here.
   // Retries once after 3s; shows a non-blocking warning if both attempts fail.
   if (state.token && reportText) {
     const textPayload = JSON.stringify({ report_text: reportText, press_text: pressText, social_text: socialText, funding_text: fundingText });
     const patchUrl    = `${SUPABASE_URL}/rest/v1/club_submissions?token=eq.${encodeURIComponent(state.token)}`;
-    const patchHdrs   = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+    const patchHdrs   = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' };
     let textSaved = false;
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
         if (attempt === 2) await new Promise(r => setTimeout(r, 3000));
         const r = await fetch(patchUrl, { method: 'PATCH', headers: patchHdrs, body: textPayload });
-        if (r.ok) {
-          const rows = await r.json().catch(() => []);
-          if (rows && rows[0] && rows[0].report_text) { textSaved = true; break; }
-        }
+        if (r.ok) { textSaved = true; break; }
         console.warn(`Report text save attempt ${attempt} failed — HTTP ${r.status}`);
       } catch(e) {
         console.warn(`Report text save attempt ${attempt} threw:`, e);
