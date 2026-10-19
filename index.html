@@ -4152,12 +4152,16 @@ function scrollToOutputs() {
   // We surface a banner at the top of the outputs but don't block the submission —
   // that's a deliberate soft-required pattern (blocking would frustrate edge cases).
   showCountyFAReminderIfNeeded();
-  // Fire Supabase on first view of results — only if club has entered meaningful data
+  // Fire Supabase on first view of results — only if club has entered meaningful data.
+  // The email report must never fire unless the submission actually saved —
+  // otherwise a club gets a report with a dashboard link to a row that doesn't exist
+  // (see: Didcot Dynamos FC, 19 Oct 2026, where the write failed silently and the
+  // email went out anyway with a dead token).
   if (!_supabaseSubmitted) {
     const r = calculate();
     if (r.totalPlayers > 0 || r.numVol > 0) {
       _supabaseSubmitted = true;
-      submitToSupabase(r).then(autoSendReport);
+      submitToSupabase(r).then(saved => { if (saved) autoSendReport(); });
     }
   }
   // Hydrate the dashboard link client-side using state.token — the same UUID
@@ -4652,11 +4656,14 @@ async function submitToSupabase(r) {
       showSubmitError(`We couldn't save your submission (error ${resp.status}). Your results are still shown, but please try the email capture below — we'll catch it that way.`);
       // Reset the guard so the next trigger can retry.
       _supabaseSubmitted = false;
+      return false;
     }
+    return true;
   } catch(e) {
     console.error('Supabase write error:', e);
     showSubmitError("We couldn't save your submission — the connection failed. Your results are still shown, but please try the email capture below.");
     _supabaseSubmitted = false;
+    return false;
   }
 }
 
@@ -4769,8 +4776,16 @@ window.submitEmailCapture = async function(opts = {}) {
   if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
 
   const r = calculate();
-  // Supabase already fired when they viewed results — don't double-submit
-  // submitToSupabase(r); 
+  // Re-confirm the row actually exists before sending anything. The first fire on
+  // viewing results may have failed silently (network blip, RLS, etc.) — this is
+  // the one retry path a club actually sees, so it has to be the one that's reliable.
+  // submitToSupabase upserts on token, so this is a no-op if the row is already there.
+  const rowSaved = await submitToSupabase(r);
+  if (!rowSaved) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Send my report'; }
+    showSubmitError("We still couldn't save your submission, so we haven't sent the email yet — a report pointing at an unsaved record would just be a dead link. Please try again in a moment, or email danny@withinu.net and we'll sort it manually.");
+    return;
+  }
 
   const club    = state.clubName || 'Club not named';
   const area    = state.area     || 'your community';
