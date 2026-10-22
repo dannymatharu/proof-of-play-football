@@ -4344,6 +4344,19 @@ function showCountyFAReminderIfNeeded() {
   document.getElementById('cfa-reminder-dismiss').addEventListener('click', () => banner.remove());
 }
 
+// club_submissions is locked to the public key (RLS, no SELECT/UPDATE). Every write goes
+// through save_club_submission, which inserts or updates by the club's secret token and
+// only accepts whitelisted columns. Throws unless the database confirms the row.
+async function sbSave(fields) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/save_club_submission`, {
+    method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ p: fields })
+  });
+  if (!res.ok) { const t = await res.text().catch(() => ''); throw new Error(`save failed ${res.status} ${t}`); }
+  const out = await res.json();
+  if (!out || !out.id) throw new Error('save returned no id');
+  return out;
+}
+
 async function submitToSupabase(r) {
   try {
     // Map admin_district to Active Partnership
@@ -4640,52 +4653,14 @@ async function submitToSupabase(r) {
     payload.social_text  = _sEl ? (_sEl.innerText   || _sEl.textContent   || null) : null;
     payload.funding_text = _fEl ? (_fEl.innerText   || _fEl.textContent   || null) : null;
 
-    // NOTE: we used to do this as a single upsert (POST ?on_conflict=token with
-    // Prefer: resolution=merge-duplicates). That stopped working once RLS was
-    // enabled on club_submissions on 18 Oct — Postgres requires SELECT
-    // visibility on the existing row to even detect an ON CONFLICT, and anon
-    // deliberately has no SELECT policy on this table (that's the whole point
-    // of the lockdown migration — a club's token must not be listable by
-    // anyone holding the public anon key). A plain INSERT and a plain
-    // UPDATE ... WHERE token = ... don't have that requirement, so we try the
-    // insert first and fall back to an update on conflict instead.
-    const supabaseHeaders = {
-      'apikey': SUPABASE_KEY,
-      'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=minimal'
-    };
-
-    let resp = await fetch(`${SUPABASE_URL}/rest/v1/club_submissions`, {
-      method: 'POST',
-      headers: supabaseHeaders,
-      body: JSON.stringify(payload)
-    });
-
-    if (resp.status === 409) {
-      // Row for this token already exists (resubmission / recalculation) —
-      // update it in place. token is the identity column here, so leave it
-      // out of the SET list.
-      const { token: _tok, ...updatePayload } = payload;
-      resp = await fetch(`${SUPABASE_URL}/rest/v1/club_submissions?token=eq.${encodeURIComponent(payload.token)}`, {
-        method: 'PATCH',
-        headers: supabaseHeaders,
-        body: JSON.stringify(updatePayload)
-      });
-    }
-
-    if (!resp.ok) {
-      const errText = await resp.text().catch(() => '');
-      console.error('Supabase write failed:', resp.status, errText);
-      showSubmitError(`We couldn't save your submission (error ${resp.status}). Your results are still shown, but please try the email capture below — we'll catch it that way.`);
-      // Reset the guard so the next trigger can retry.
-      _supabaseSubmitted = false;
-      return false;
-    }
+    // Saved through save_club_submission (see sbSave). The old INSERT then
+    // 409->PATCH path silently updated 0 rows under RLS on every resubmission.
+    const saved = await sbSave(payload);
+    window._submissionId = saved.id;
     return true;
   } catch(e) {
-    console.error('Supabase write error:', e);
-    showSubmitError("We couldn't save your submission — the connection failed. Your results are still shown, but please try the email capture below.");
+    console.error('Supabase save failed:', e);
+    showSubmitError("We couldn't save your submission. Your results are still shown, but please press 'Send my report' below to try again.");
     _supabaseSubmitted = false;
     return false;
   }
@@ -4751,10 +4726,9 @@ function restoreFormDOM() {
   const urlToken = new URLSearchParams(window.location.search).get('token');
   if (!urlToken) return;
   try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/club_submissions?token=eq.${encodeURIComponent(urlToken)}&select=form_state`,
-      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
-    );
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_club_submission_by_token`, {
+      method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_token: urlToken })
+    });
     if (!res.ok) return;
     const rows = await res.json();
     if (!rows || !rows[0] || !rows[0].form_state) return;
@@ -4803,7 +4777,7 @@ window.submitEmailCapture = async function(opts = {}) {
   // Re-confirm the row actually exists before sending anything. The first fire on
   // viewing results may have failed silently (network blip, RLS, etc.) — this is
   // the one retry path a club actually sees, so it has to be the one that's reliable.
-  // submitToSupabase upserts on token, so this is a no-op if the row is already there.
+  // submitToSupabase saves by token, so re-saving an existing row is safe.
   const rowSaved = await submitToSupabase(r);
   if (!rowSaved) {
     if (btn) { btn.disabled = false; btn.textContent = 'Send my report'; }
@@ -4866,27 +4840,18 @@ window.submitEmailCapture = async function(opts = {}) {
     }
   }
 
-  // Write report_text directly to club_submissions — bypasses Apps Script size limits.
-  // Uses return=minimal: anon has no SELECT policy on this table (by design — see
-  // submitToSupabase), and under RLS a PATCH with return=representation can't build
-  // its RETURNING result set without SELECT visibility, so it silently comes back as
-  // zero rows even when the update itself went through. return=minimal sidesteps that
-  // — we already confirmed above (via submitToSupabase) that a row exists for this
-  // token, so resp.ok on the PATCH is all we need here.
+  // Write report_text to club_submissions through save_club_submission (see sbSave).
+  // The old PATCH returned 204 under RLS while updating 0 rows, so it never saved.
   // Retries once after 3s; shows a non-blocking warning if both attempts fail.
   if (state.token && reportText) {
-    const textPayload = JSON.stringify({ report_text: reportText, press_text: pressText, social_text: socialText, funding_text: fundingText });
-    const patchUrl    = `${SUPABASE_URL}/rest/v1/club_submissions?token=eq.${encodeURIComponent(state.token)}`;
-    const patchHdrs   = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' };
+    const textFields = Object.assign({ token: state.token }, { report_text: reportText, press_text: pressText, social_text: socialText, funding_text: fundingText });
     let textSaved = false;
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
         if (attempt === 2) await new Promise(r => setTimeout(r, 3000));
-        const r = await fetch(patchUrl, { method: 'PATCH', headers: patchHdrs, body: textPayload });
-        if (r.ok) { textSaved = true; break; }
-        console.warn(`Report text save attempt ${attempt} failed — HTTP ${r.status}`);
+        await sbSave(textFields); textSaved = true; break;
       } catch(e) {
-        console.warn(`Report text save attempt ${attempt} threw:`, e);
+        console.warn(`Report text save attempt ${attempt} failed:`, e);
       }
     }
     if (!textSaved) {
