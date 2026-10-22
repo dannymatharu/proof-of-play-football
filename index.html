@@ -2909,6 +2909,13 @@ input[type="range"]::-webkit-slider-thumb {
     </div>
   </div>
 
+  <!-- INPUT CHECKS (M13): soft warnings, never block -->
+  <div id="inputChecks" style="display:none; margin:24px 24px 0; background:#FFFBEB; border:1px solid #F59E0B; color:#78350F; border-radius:10px; padding:16px 18px; font-size:14px; line-height:1.6;">
+    <strong style="display:block; font-size:15px; margin-bottom:6px;">Worth a quick check</strong>
+    <ul id="inputChecksList" style="margin:0 0 8px 18px; padding:0;"></ul>
+    <span style="font-size:13px;">These don't stop your report. If the numbers are right, ignore this. If not, change them above and your report and saved record will update.</span>
+  </div>
+
   <!-- EMAIL CAPTURE — top of the results so it's seen before the report tabs -->
   <div class="email-capture" id="emailCapture" style="margin:24px 24px 0;">
     <div class="email-capture-inner">
@@ -3528,8 +3535,44 @@ function updateDataSharingNotice() {
 }
 
 // ─── RECALCULATE & UPDATE UI ──────────────────────────
+// ─── INPUT CHECKS (M13) ───────────────────────────────
+// Soft warnings only. The codes are saved with the submission (flags) so totals can
+// exclude or review them. Thresholds are review thresholds, not evidence values:
+// 1,500 players and a 10:1 ratio sit well outside what clubs have entered so far.
+const INPUT_CHECK_LIMITS = { maxPlayers: 1500, maxRatio: 10 };
+function inputFlags(r) {
+  const out = [];
+  const n = x => Math.round(x).toLocaleString('en-GB');
+  if (r.totalPlayers > INPUT_CHECK_LIMITS.maxPlayers)
+    out.push({ code: 'players_over_1500', msg: `You've entered ${n(r.totalPlayers)} players. That's far more than almost any club we've seen. Only count people who play or train regularly, not every member or parent.` });
+  if (r.totalPlayers > 0 && r.numVol > r.totalPlayers)
+    out.push({ code: 'volunteers_over_players', msg: `You've entered more volunteers (${n(r.numVol)}) than players (${n(r.totalPlayers)}). Only count people who help at least once a month.` });
+  if (r.sroi && r.sroi > INPUT_CHECK_LIMITS.maxRatio)
+    out.push({ code: 'ratio_over_10', msg: `Your ratio comes out at £${r.sroi.toFixed(2)} for every £1. Most clubs come out between £1 and £5. A very high ratio usually means some running costs are missing from annual spending, such as pitch hire, kit, affiliation fees or insurance.` });
+  if (!r.sroi && (r.totalPlayers > 0 || r.numVol > 0))
+    out.push({ code: 'no_expenditure', quiet: true });
+  return out;
+}
+function renderInputChecks(r) {
+  const box = document.getElementById('inputChecks');
+  const list = document.getElementById('inputChecksList');
+  if (!box || !list) return;
+  const shown = inputFlags(r).filter(f => !f.quiet);
+  list.innerHTML = shown.map(f => `<li>${f.msg}</li>`).join('');
+  box.style.display = shown.length ? 'block' : 'none';
+}
+// After the first successful save, keep the saved record in step with corrections.
+let _supabaseSaved = false, _resaveTimer = null;
+function scheduleResave() {
+  if (!_supabaseSaved) return;
+  clearTimeout(_resaveTimer);
+  _resaveTimer = setTimeout(() => submitToSupabase(calculate()), 4000);
+}
+
 function recalculate() {
   const r = calculate();
+  renderInputChecks(r);
+  scheduleResave();
   const club = state.clubName || 'Your club';
   const area = state.area || 'your community';
 
@@ -4655,8 +4698,10 @@ async function submitToSupabase(r) {
 
     // Saved through save_club_submission (see sbSave). The old INSERT then
     // 409->PATCH path silently updated 0 rows under RLS on every resubmission.
+    payload.flags = inputFlags(r).map(f => f.code);
     const saved = await sbSave(payload);
     window._submissionId = saved.id;
+    _supabaseSaved = true;
     return true;
   } catch(e) {
     console.error('Supabase save failed:', e);
