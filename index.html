@@ -4059,13 +4059,13 @@ function updateFunding(r, club, area) {
       </div>
       <div class="funder-body">
         <div class="funder-criteria">
-          <div class="funder-crit">Social Value Act 2012: councils must factor social value into planning and procurement</div>
+          <div class="funder-crit">Social Value Act 2012: councils must consider social value when they buy services</div>
           <div class="funder-crit">Most powerful when tied to a specific decision — pitch threat, planning application, asset transfer</div>
           <div class="funder-crit">Public health grant opportunities via Integrated Care Boards</div>
           <div class="funder-crit">Social value ratio evidence is strongest asset with statutory audiences</div>
         </div>
         <div class="funder-statement">
-          <strong>Ready-to-use paragraph:</strong> "Under the Public Services (Social Value) Act 2012, ${area.split(',')[0] || 'your'} Council is required to consider social value when making procurement and planning decisions. ${club} generates a quantified ${fmt(r.totalValue)} ${estimated} in annual social value for the local area — estimated using Sport England\'s social value model (Year 2, November 2025). ${r.sroi ? `This represents a social value to cost ratio of £${r.sroi.toFixed(2)} for every £1 the club costs to run. ` : ''}This evidence demonstrates the club's role as a community asset that supports public health and wellbeing."
+          <strong>Ready-to-use paragraph:</strong> "When ${area.split(',')[0] || 'your'} Council buys services, the Public Services (Social Value) Act 2012 requires it to consider how that spending can improve the economic, social and environmental wellbeing of the area. ${club} generates an estimated ${fmt(r.totalValue)} ${estimated} in annual social value for the local area, estimated using Sport England\'s social value model (Year 2, November 2025). ${r.sroi ? `This represents a social value to cost ratio of £${r.sroi.toFixed(2)} for every £1 the club costs to run. ` : ''}This evidence shows the club's role as a community asset supporting public health and wellbeing, which is relevant to council decisions on facilities, leases and community partnerships."
         </div>
         ${hasIMD ? `<div class="imd-note">📍 IMD Decile ${decile} data for your area can be referenced directly in council submissions — it contextualises the club's role within local public health priorities. Source: OHID Fingertips / English Indices of Multiple Deprivation.</div>` : imdNote}
       </div>
