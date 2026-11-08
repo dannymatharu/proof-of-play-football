@@ -2698,7 +2698,8 @@ input[type="range"]::-webkit-slider-thumb {
         <div class="info-box" style="margin-bottom:14px;">Now you've seen the figures, add a short quote from someone at the club. This appears in your chairman's summary report and press release. Keep it genuine — a sentence or two is plenty.</div>
         <div class="field" style="margin-bottom: 14px;">
           <label>Quote text <span class="hint">Optional</span></label>
-          <textarea id="quoteText" placeholder="e.g. We've always known this club matters to our community, but seeing the scale of it laid out like this really brings it home." oninput="updateState('quoteText', this.value)"></textarea>
+          <textarea id="quoteText" placeholder="e.g. We've always known this club matters to our community, but seeing the scale of it laid out like this really brings it home." oninput="updateState('quoteText', this.value); onQuoteTextInput(this.value)"></textarea>
+          <span id="quoteTextHint" style="font-size:12px;color:var(--text-muted);display:none;margin-top:4px;">A quote needs to be a real sentence (8+ words) to appear in your report and press release — short placeholders like "Test" are left out automatically.</span>
         </div>
         <div class="field-row">
           <div class="field">
@@ -3629,6 +3630,29 @@ function recalculate() {
   updateFunding(r, club, area);
 }
 
+// A quote only prints if it reads like a genuine testimonial — guards against a
+// placeholder ("Test", "N/A", "asdf") going out in a club's press release or
+// report as if someone really said it (see: Canterbury Eagles FC, Oct 2026,
+// where "Test" was attributed to the Chair by name in a live, shareable report).
+const QUOTE_PLACEHOLDER_WORDS = new Set(['test','testing','tests','test.','x','xx','xxx','n/a','na','tbc','tbd','placeholder','asdf','lorem','sample','example','none','nil','.','-','quote']);
+function isUsableQuote(text) {
+  const t = (text || '').trim();
+  if (!t) return false;
+  if (QUOTE_PLACEHOLDER_WORDS.has(t.toLowerCase())) return false;
+  const wordCount = t.split(/\s+/).filter(Boolean).length;
+  return wordCount >= 8;
+}
+
+// Live warning under the quote field — shown once something's been typed
+// that isn't yet a usable quote, so the club finds out before the report
+// does, not after it's gone to a funder or a partner.
+function onQuoteTextInput(value) {
+  const hint = document.getElementById('quoteTextHint');
+  if (!hint) return;
+  const t = (value || '').trim();
+  hint.style.display = (t.length > 0 && !isUsableQuote(t)) ? 'block' : 'none';
+}
+
 // ─── CHAIRMAN'S SUMMARY ───────────────────────────────
 function updateChairman(r, club, area) {
   setText('ch-clubName',  club);
@@ -3647,8 +3671,9 @@ function updateChairman(r, club, area) {
   const qt = state.quoteText || '';
   const qn = state.quoteName || '';
   const qr = state.quoteRole || '';
-  setText('ch-quote', qt ? `"${qt}"` : '');
-  setText('ch-attribution', qn ? `— ${qn}${qr ? ', ' + qr : ''}` : '');
+  const chHasQuote = isUsableQuote(qt);
+  setText('ch-quote', chHasQuote ? `"${qt}"` : '');
+  setText('ch-attribution', chHasQuote && qn ? `— ${qn}${qr ? ', ' + qr : ''}` : '');
 }
 
 // ─── FULL REPORT ──────────────────────────────────────
@@ -3669,7 +3694,7 @@ function updateFullReport(r, club, area) {
   const qt = state.quoteText || '';
   const qn = state.quoteName || '';
   const qr = state.quoteRole || '';
-  const hasQuote = qt.trim().length > 0;
+  const hasQuote = isUsableQuote(qt);
   const quotesSection = hasQuote
     ? `\n─────────────────────────────────────\n\nIN THEIR OWN WORDS\n\n"${qt}"\n— ${qn}${qr ? ', ' + qr : ''}\n\n`
     : '';
@@ -3826,6 +3851,7 @@ function updatePressRelease(r, club, area) {
   const qt = state.quoteText || '';
   const qn = state.quoteName || '';
   const qr = state.quoteRole || '';
+  const hasPressQuote = isUsableQuote(qt);
   const cfa = state.countyFA || '[County FA]';
   const charter = {none:'', star1:'England Football Accredited — 1 Star', star2:'England Football Accredited — 2 Star', star3:'England Football Accredited — 3 Star'}[state.charterLevel] || '';
   const foundedNote = state.yearFounded ? `${club} was founded in ${state.yearFounded} and is` : `${club} is`;
@@ -3859,7 +3885,7 @@ The assessment, produced using Proof of Play — a social value calculator devel
 • ${fmt(r.nhsTotal)} in health and productivity value from adult players
 • ${fmt(r.volTotal)} from the contribution of ${r.numVol.toLocaleString()} volunteers, who collectively give approximately ${Math.round(r.totalVolHrs).toLocaleString()} hours to the club each year${r.cr > 0 ? `\n• Community programmes reaching ${r.cr.toLocaleString()} local residents (recorded, not given a £ value)` : ''}${perPlayerPressLine}${fteLine}
 
-${qt ? `${qn || '[Name]'}, ${qr || '[Role]'} of ${club}, said: "${qt}"` : `[Quote from club representative to be added here.]`}${ndLine}${imdPressLine}
+${hasPressQuote ? `${qn || '[Name]'}, ${qr || '[Role]'} of ${club}, said: "${qt}"` : `[Quote from club representative to be added here.]`}${ndLine}${imdPressLine}
 
 What many within the club have long felt can now be expressed in evidence-informed terms. The figures apply Sport England\'s published social value values, which use the WELLBY approach in HM Treasury\'s wellbeing guidance, to the club\'s own numbers. Figures are estimates grounded in published national research. Some outputs also include clearly labelled modelling assumptions. A full methodology note is available on request.
 
