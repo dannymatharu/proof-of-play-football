@@ -2267,7 +2267,7 @@ input[type="range"]::-webkit-slider-thumb {
         </div>
       </div>
 
-      <div class="field-row">
+      <div class="field-row-3">
         <div class="field">
           <label>Year founded</label>
           <input type="number" id="yearFounded" placeholder="e.g. 1992" min="1850" max="2025" oninput="updateState('yearFounded', this.value)">
@@ -2279,6 +2279,15 @@ input[type="range"]::-webkit-slider-thumb {
             <option value="star1">England Football Accredited — 1 Star</option>
             <option value="star2">England Football Accredited — 2 Star</option>
             <option value="star3">England Football Accredited — 3 Star</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Charity / CASC status <span class="hint" style="color:var(--text-muted);">Some funders — e.g. Peter Harrison Foundation — only accept registered charities or CASCs</span></label>
+          <select id="charityStatus" onchange="updateState('charityStatus', this.value)">
+            <option value="">Not sure / prefer not to say</option>
+            <option value="charity">Registered charity</option>
+            <option value="casc">Registered CASC (Community Amateur Sports Club)</option>
+            <option value="neither">Neither — unincorporated / other structure</option>
           </select>
         </div>
       </div>
@@ -3157,6 +3166,7 @@ input[type="range"]::-webkit-slider-thumb {
 const state = {
   token: '',
   clubName: '', area: '', countyFA: '', countyFAOther: '', yearFounded: '', clubType: 'mixed', charterLevel: 'none',
+  charityStatus: '',
   quoteText: '', quoteName: '', quoteRole: '',
   youth_5_6_m: 0, youth_5_6_f: 0,
   youth_7_11_m: 0, youth_7_11_f: 0,
@@ -3170,7 +3180,7 @@ const state = {
   facility_community: false, has_mental_health: false, school_links: false,
   annual_income: 0, annual_expenditure: 0,
   nd_prevalence: '14',
-  clubPostcode: '', imdDecile: null, imdArea: '',
+  clubPostcode: '', imdDecile: null, imdArea: '', localAuthority: '',
   participantQuotes: [{text:'',name:'',role:''},{text:'',name:'',role:''},{text:'',name:'',role:''}],
   activeSection: 'club', activeOutput: 'summary'
 };
@@ -3297,6 +3307,7 @@ async function lookupPostcode() {
     const lsoaCode = d.codes?.lsoa || '';
 
     state.imdArea = admin || state.area;
+    state.localAuthority = admin || '';
     if (!state.area && admin) {
       state.area = admin;
       const areaInput = document.getElementById('area');
@@ -3684,12 +3695,15 @@ function updateFullReport(r, club, area) {
 
   const charter = {none:'', star1:'England Football Accredited — 1 Star', star2:'England Football Accredited — 2 Star', star3:'England Football Accredited — 3 Star'}[state.charterLevel] || '';
   const charterStr = charter ? ` ${club} holds ${charter} status.` : '';
+  const charityStr = state.charityStatus === 'charity' ? ` ${club} is a registered charity.`
+    : state.charityStatus === 'casc' ? ` ${club} is a registered Community Amateur Sports Club (CASC).` : '';
   const sroiStr = r.sroi ? ` Its social value to cost ratio is £${r.sroi.toFixed(2)} of wellbeing and health value for every £1 the club costs to run.` : '';
   const perPlayerStr = r.perPlayer ? ` The assessment also estimates ${fmtFull(r.perPlayer)} in social value per player, and ${fmtFull(r.perMember)} per club member (players and volunteers combined) — a useful measure when comparing impact across clubs of different sizes.` : '';
   const foundedStr = state.yearFounded ? ` Founded in ${state.yearFounded}, the` : ' The';
   const cfa = state.countyFA ? `, affiliated with ${state.countyFA}` : '';
 
-  const imdLine = state.imdDecile ? `\n─────────────────────────────────────\n\nLOCAL CONTEXT: AREA DEPRIVATION\n\nThis club is located in IMD Decile ${state.imdDecile} (${state.imdDecile <= 2 ? 'among the most deprived areas in England' : state.imdDecile <= 4 ? 'a priority area for deprivation-targeted funding' : state.imdDecile <= 7 ? 'a mid-range deprivation area' : 'a lower deprivation area'}). The Index of Multiple Deprivation (IMD) measures relative deprivation across income, employment, health, education, housing and crime. Decile 1 = most deprived; Decile 10 = least deprived.\n\n${state.imdDecile <= 4 ? `The club's location in a priority deprivation area strengthens eligibility for Sport England's Movement Fund, National Lottery Community Fund and other targeted programmes. This data is referenced in the Funding Guide.` : `Mainstream funding programmes remain fully accessible. Highly targeted deprivation funds (e.g. Peter Harrison Foundation, which requires Decile 1) are noted in the Funding Guide with eligibility flags.`}\n\nArea deprivation is used for funding context only. It does not change the £ figure: Sport England\'s own analysis does not find a higher value for active people in deprived areas.\n\nSource: Office for Health Improvement & Disparities / Ministry of Housing, Communities & Local Government — English Indices of Multiple Deprivation (2019, updated). Postcode: ${state.clubPostcode}.` : '';
+  const localAuthorityStr = state.localAuthority ? ` This places the club within ${state.localAuthority}, the local authority relevant to council-administered grants, Section 106 and public health budget submissions — see the Funding Guide for a ready-to-use paragraph addressed to this council.` : '';
+  const imdLine = (state.imdDecile || state.localAuthority) ? `\n─────────────────────────────────────\n\nLOCAL CONTEXT: AREA${state.imdDecile ? ' DEPRIVATION' : ''}\n\n${state.imdDecile ? `This club is located in IMD Decile ${state.imdDecile} (${state.imdDecile <= 2 ? 'among the most deprived areas in England' : state.imdDecile <= 4 ? 'a priority area for deprivation-targeted funding' : state.imdDecile <= 7 ? 'a mid-range deprivation area' : 'a lower deprivation area'}).${localAuthorityStr} The Index of Multiple Deprivation (IMD) measures relative deprivation across income, employment, health, education, housing and crime. Decile 1 = most deprived; Decile 10 = least deprived.\n\n${state.imdDecile <= 4 ? `The club's location in a priority deprivation area strengthens eligibility for Sport England's Movement Fund, National Lottery Community Fund and other targeted programmes. This data is referenced in the Funding Guide.` : `Mainstream funding programmes remain fully accessible. Highly targeted deprivation funds (e.g. Peter Harrison Foundation, which requires Decile 1) are noted in the Funding Guide with eligibility flags.`}\n\nArea deprivation is used for funding context only. It does not change the £ figure: Sport England\'s own analysis does not find a higher value for active people in deprived areas.\n\n` : `The club's deprivation decile isn't available for this postcode, but it has been matched to ${state.localAuthority} as its local authority.${localAuthorityStr}\n\n`}Source: Office for Health Improvement & Disparities / Ministry of Housing, Communities & Local Government — English Indices of Multiple Deprivation (2019, updated). Postcode: ${state.clubPostcode}.` : '';
 
   const qt = state.quoteText || '';
   const qn = state.quoteName || '';
@@ -3717,14 +3731,20 @@ function updateFullReport(r, club, area) {
   const summaryYouthShare = r.totalPlayers > 0 ? Math.round((r.totalYouth / r.totalPlayers) * 100) : 0;
   const summaryDecile = state.imdDecile;
   // Priority order, matching the drafted template: volunteer scale, youth reach,
-  // accreditation, area context. (Gender balance, disability provision and
-  // walking-football/community-session detail are also in the template, but
-  // there's no field in the form or the data model to gate them on yet.)
+  // accreditation, charity/CASC status, area context. (Gender balance, disability
+  // provision and walking-football/community-session detail are also in the
+  // template, but there's no field in the form or the data model to gate them on yet.)
   const summaryCandidates = [];
   if (summaryFte >= 1) summaryCandidates.push(`Volunteer scale: ${Math.round(r.totalVolHrs).toLocaleString()} hours a year is the equivalent of ${summaryFte} full-time workers.`);
   if (r.totalPlayers > 0 && summaryYouthShare > 50) summaryCandidates.push(`Youth reach: ${r.totalYouth.toLocaleString()} young people play at the club, ${summaryYouthShare}% of all players.`);
   if (charter) summaryCandidates.push(`Accreditation: ${charter}.`);
-  if (summaryDecile !== null && summaryDecile !== undefined && summaryDecile !== '') summaryCandidates.push(`Area context: ${area} sits in IMD decile ${summaryDecile}.`);
+  if (state.charityStatus === 'charity') summaryCandidates.push(`Structure: registered charity — opens up charity-only funders such as Peter Harrison Foundation (subject to their other criteria).`);
+  if (state.charityStatus === 'casc') summaryCandidates.push(`Structure: registered CASC — opens up charity/CASC-only funders such as Peter Harrison Foundation (subject to their other criteria).`);
+  if (summaryDecile !== null && summaryDecile !== undefined && summaryDecile !== '') {
+    summaryCandidates.push(`Area context: ${area} sits in IMD decile ${summaryDecile}${state.localAuthority ? ` (${state.localAuthority})` : ''}.`);
+  } else if (state.localAuthority) {
+    summaryCandidates.push(`Area context: the club sits within ${state.localAuthority} — the relevant council for local funding submissions.`);
+  }
   const summaryThreeThings = summaryCandidates.slice(0, 3).map(c => `• ${c}`).join('\n');
   const summaryNd = r.ndPlayers > 0
     ? `\n\nESTIMATED SUPPORT NEEDS\n\nBased on national prevalence, a club of this size could expect around ${r.ndPlayers.toLocaleString()} neurodivergent players and around ${r.mhPlayers.toLocaleString()} with a mental health condition. These are statistical estimates, not diagnoses.`
@@ -3776,7 +3796,7 @@ This assessment was produced using Proof of Play (methodology v2.0), powered by 
 
 CLUB PROFILE
 
-${foundedStr} club is based in ${area}${cfa}.${charterStr} It currently supports ${r.totalPlayers.toLocaleString()} registered players — ${r.totalYouth.toLocaleString()} youth players across multiple age groups and ${r.totalAdult.toLocaleString()} adult players — alongside ${r.numVol.toLocaleString()} volunteers who collectively contribute approximately ${Math.round(r.totalVolHrs).toLocaleString()} hours per year to the running of the club.${r.cr > 0 ? ` The club also delivers community programmes reaching a further ${r.cr.toLocaleString()} individuals.` : ''}
+${foundedStr} club is based in ${area}${cfa}.${charterStr}${charityStr} It currently supports ${r.totalPlayers.toLocaleString()} registered players — ${r.totalYouth.toLocaleString()} youth players across multiple age groups and ${r.totalAdult.toLocaleString()} adult players — alongside ${r.numVol.toLocaleString()} volunteers who collectively contribute approximately ${Math.round(r.totalVolHrs).toLocaleString()} hours per year to the running of the club.${r.cr > 0 ? ` The club also delivers community programmes reaching a further ${r.cr.toLocaleString()} individuals.` : ''}
 
 ─────────────────────────────────────
 
@@ -4043,7 +4063,16 @@ function updateFunding(r, club, area) {
     ? `<div class="imd-note">📍 Based on your postcode lookup: IMD Decile ${decile}. ${decile <= 4 ? 'Your area may strengthen the case for this fund. Check eligibility rules separately.' : decile <= 7 ? 'Your area meets general eligibility criteria.' : 'This fund prioritises higher deprivation areas — review eligibility carefully.'}</div>`
     : `<div class="imd-note">💡 Enter your club postcode in Step 1 to see personalised eligibility notes for each funder.</div>`;
 
-  const ineligiblePeterHarrison = hasIMD && decile > 2;
+  // Peter Harrison needs BOTH IMD Decile 1 and registered charity/CASC status.
+  // "Not sure / prefer not to say" (charityStatus === '') is treated as unknown,
+  // not as a fail — we flag it as the thing to check rather than ruling the club out.
+  const hasCharityStatus = state.charityStatus === 'charity' || state.charityStatus === 'casc';
+  const charityStatusKnown = state.charityStatus !== '';
+  const charityStatusLabel = state.charityStatus === 'charity' ? 'a registered charity'
+    : state.charityStatus === 'casc' ? 'a registered CASC'
+    : state.charityStatus === 'neither' ? 'not currently a registered charity or CASC' : '';
+  const ineligiblePeterHarrison = (hasIMD && decile > 2) || state.charityStatus === 'neither';
+  const eligiblePeterHarrison = isDecile1 && hasCharityStatus;
 
   const sroiStr = r.sroi
     ? `${club}'s social value to cost ratio is £${r.sroi.toFixed(2)} of wellbeing and health value for every £1 the club costs to run (club spending plus volunteer time) — evidence that may support the Football Foundation's evidence requirements.`
@@ -4131,7 +4160,7 @@ function updateFunding(r, club, area) {
     <div class="funder-card">
       <div class="funder-header">
         <div>
-          <div class="funder-name">Local Authority & Council Funding</div>
+          <div class="funder-name">${state.localAuthority ? `${state.localAuthority} &amp; Local Authority Funding` : 'Local Authority & Council Funding'}</div>
           <div class="funder-amount">Planning decisions · Asset protection · Public health budgets · Section 106</div>
         </div>
         <span class="funder-tag tag-rolling">Ongoing</span>
@@ -4144,16 +4173,16 @@ function updateFunding(r, club, area) {
           <div class="funder-crit">Social value ratio evidence is strongest asset with statutory audiences</div>
         </div>
         <div class="funder-statement">
-          <strong>Ready-to-use paragraph:</strong> "When ${area.split(',')[0] || 'your'} Council buys services, the Public Services (Social Value) Act 2012 requires it to consider how that spending can improve the economic, social and environmental wellbeing of the area. ${club} generates an estimated ${fmt(r.totalValue)} ${estimated} in annual social value for the local area, estimated using Sport England\'s social value model (Year 2, November 2025). ${r.sroi ? `This represents a social value to cost ratio of £${r.sroi.toFixed(2)} for every £1 the club costs to run. ` : ''}This evidence shows the club's role as a community asset supporting public health and wellbeing, which is relevant to council decisions on facilities, leases and community partnerships."
+          <strong>Ready-to-use paragraph:</strong> "When ${state.localAuthority || area.split(',')[0] || 'your'} Council buys services, the Public Services (Social Value) Act 2012 requires it to consider how that spending can improve the economic, social and environmental wellbeing of the area. ${club} generates an estimated ${fmt(r.totalValue)} ${estimated} in annual social value for the local area, estimated using Sport England\'s social value model (Year 2, November 2025). ${r.sroi ? `This represents a social value to cost ratio of £${r.sroi.toFixed(2)} for every £1 the club costs to run. ` : ''}This evidence shows the club's role as a community asset supporting public health and wellbeing, which is relevant to council decisions on facilities, leases and community partnerships."
         </div>
-        ${hasIMD ? `<div class="imd-note">📍 IMD Decile ${decile} data for your area can be referenced directly in council submissions — it contextualises the club's role within local public health priorities. Source: OHID Fingertips / English Indices of Multiple Deprivation.</div>` : imdNote}
+        ${hasIMD ? `<div class="imd-note">📍 IMD Decile ${decile}${state.localAuthority ? ` (${state.localAuthority})` : ''} data for your area can be referenced directly in council submissions — it contextualises the club's role within local public health priorities. Source: OHID Fingertips / English Indices of Multiple Deprivation.</div>` : (state.localAuthority ? `<div class="imd-note">📍 Your club sits within ${state.localAuthority}. Address submissions to this council — deprivation decile isn't available for this postcode, but the local authority name is enough to direct the ask correctly.</div>` : imdNote)}
       </div>
     </div>
 
     <div class="funder-card${ineligiblePeterHarrison ? ' ineligible' : ''}">
       <div class="funder-header">
         <div>
-          <div class="funder-name">Peter Harrison Foundation — Active Lives${isDecile1 ? '<span class="funder-priority-badge">✓ Eligible</span>' : ''}</div>
+          <div class="funder-name">Peter Harrison Foundation — Active Lives${eligiblePeterHarrison ? '<span class="funder-priority-badge">✓ Eligible</span>' : ''}</div>
           <div class="funder-amount">£5,000–£30,000 · Registered charities and CASCs only</div>
         </div>
         <span class="funder-tag tag-rolling">Highly competitive — 7% success rate</span>
@@ -4161,14 +4190,20 @@ function updateFunding(r, club, area) {
       <div class="funder-body">
         <div class="funder-criteria">
           <div class="funder-crit">Must operate in IMD Decile 1 (top 10% most deprived areas in England)</div>
-          <div class="funder-crit">Registered charity or CASC status required</div>
+          <div class="funder-crit">Registered charity or CASC status required${charityStatusKnown ? ` — ${club} is ${charityStatusLabel}` : ''}</div>
           <div class="funder-crit">Focus on disability and disadvantage in sport</div>
           <div class="funder-crit">78% increase in applications in 2024/25 — evidence quality is critical</div>
         </div>
         <div class="funder-statement">
           <strong>Ready-to-use paragraph:</strong> "${club} operates in ${hasIMD ? `IMD Decile ${decile}` : 'a deprived area of'} ${area}, serving a community where sport is not a given. Our ${r.totalPlayers.toLocaleString()} ${verified} players include ${r.adultDis > 0 ? `${r.adultDis.toLocaleString()} disability participants and ` : ''}a youth cohort generating ${fmt(r.totalWellbeing)} ${estimated} in annual wellbeing value. This Proof of Play assessment provides the quantitative foundation for demonstrating our community impact."
         </div>
-        ${hasIMD ? `<div class="imd-note">${isDecile1 ? '✓ Your IMD Decile 1 status makes you eligible for Peter Harrison Foundation. This is one of the most competitive funds available — ensure your application leads with local qualitative evidence alongside this data.' : `⚠️ Peter Harrison Foundation now requires IMD Decile 1 (top 10% most deprived). Your club is in Decile ${decile}. Unless your postcode boundary places you in an eligible LSOA, you are unlikely to qualify. Focus on the other programmes above.`}</div>` : `<div class="imd-note">💡 Enter your postcode in Step 1 to check whether your club is in IMD Decile 1 — a requirement for this fund.</div>`}
+        ${(() => {
+          if (eligiblePeterHarrison) return `<div class="imd-note">✓ Your IMD Decile 1 status and ${charityStatusLabel} status make you eligible for Peter Harrison Foundation. This is one of the most competitive funds available — ensure your application leads with local qualitative evidence alongside this data.</div>`;
+          if (isDecile1 && !charityStatusKnown) return `<div class="imd-note">💡 Your club is in IMD Decile 1 — the hardest eligibility bar for this fund. The only thing left to confirm is registered charity or CASC status. Set this in Step 1 above once you know, or check with your committee.</div>`;
+          if (isDecile1 && state.charityStatus === 'neither') return `<div class="imd-note">⚠️ Your club is in IMD Decile 1, but Peter Harrison Foundation requires registered charity or CASC status, which you've indicated the club doesn't currently have. Registering as a CASC is usually the quicker route for a club in this position — HMRC's CASC scheme exists specifically for clubs like this.</div>`;
+          if (hasIMD && decile > 2) return `<div class="imd-note">⚠️ Peter Harrison Foundation requires IMD Decile 1 (top 10% most deprived). Your club is in Decile ${decile}. Unless your postcode boundary places you in an eligible LSOA, you are unlikely to qualify. Focus on the other programmes above.</div>`;
+          return `<div class="imd-note">💡 Enter your postcode in Step 1 to check whether your club is in IMD Decile 1, and confirm charity/CASC status above — both are required for this fund.</div>`;
+        })()}
         <a href="https://peterharrisonfoundation.org/about-our-grant-programmes/" target="_blank" class="copy-btn">Visit Peter Harrison Foundation →</a>
       </div>
     </div>
