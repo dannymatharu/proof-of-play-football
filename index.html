@@ -3701,7 +3701,56 @@ function updateFullReport(r, club, area) {
 
   const confNote = `\n─────────────────────────────────────\n\nDATA CONFIDENCE GUIDE\n\n[REPORTED BY CLUB] Hard data entered directly by the club — player numbers, volunteer hours, community reach, income. These figures are factual inputs and can be cited as club records.\n\n[ESTIMATED FROM MODEL] Figures derived from national proxy values applied to your club's data — wellbeing values, health and productivity value, volunteer wellbeing contribution. Statistically sound estimates grounded in published sources, but not independently audited. Present as evidence-informed estimates and pair with local qualitative evidence.\n\n[CONTEXTUAL AREA DATA] Information from official area-level datasets — IMD deprivation decile, local authority profile. Sourced from government data via postcode lookup, not entered by the club.\n`;
 
-  const text = `HOW TO READ THIS REPORT
+  // ─── ONE-PAGE SUMMARY (v2) ───────────────────────────
+  // Sits above "How to read this report" so the headline number and the
+  // breakdown land in the first few lines, with the full report unchanged
+  // underneath as reference. Only includes what the data actually supports —
+  // no item is padded in with a generic statement.
+  const summaryMonthYear = new Date().toLocaleDateString('en-GB', {month:'long', year:'numeric'});
+  const summaryPerPlayerLine = r.perPlayer
+    ? ` That is ${fmtFull(r.perPlayer)} per player and ${fmtFull(r.perMember)} per club member (players and volunteers combined). Before the 40% deduction for activity that would have happened anyway, the figure is ${fmt(r.grossValue)}.`
+    : ` Before the 40% deduction for activity that would have happened anyway, the figure is ${fmt(r.grossValue)}.`;
+  const summaryCommunityLine = r.cr > 0
+    ? `\n• Community programmes: ${r.cr.toLocaleString()} people reached (recorded, not given a £ value)`
+    : '';
+  const summaryFte = r.numVol > 0 && r.totalVolHrs > 0 ? Math.round(r.totalVolHrs / 1950) : 0;
+  const summaryYouthShare = r.totalPlayers > 0 ? Math.round((r.totalYouth / r.totalPlayers) * 100) : 0;
+  const summaryDecile = state.imdDecile;
+  // Priority order, matching the drafted template: volunteer scale, youth reach,
+  // accreditation, area context. (Gender balance, disability provision and
+  // walking-football/community-session detail are also in the template, but
+  // there's no field in the form or the data model to gate them on yet.)
+  const summaryCandidates = [];
+  if (summaryFte >= 1) summaryCandidates.push(`Volunteer scale: ${Math.round(r.totalVolHrs).toLocaleString()} hours a year is the equivalent of ${summaryFte} full-time workers.`);
+  if (r.totalPlayers > 0 && summaryYouthShare > 50) summaryCandidates.push(`Youth reach: ${r.totalYouth.toLocaleString()} young people play at the club, ${summaryYouthShare}% of all players.`);
+  if (charter) summaryCandidates.push(`Accreditation: ${charter}.`);
+  if (summaryDecile !== null && summaryDecile !== undefined && summaryDecile !== '') summaryCandidates.push(`Area context: ${area} sits in IMD decile ${summaryDecile}.`);
+  const summaryThreeThings = summaryCandidates.slice(0, 3).map(c => `• ${c}`).join('\n');
+  const summaryNd = r.ndPlayers > 0
+    ? `\n\nESTIMATED SUPPORT NEEDS\n\nBased on national prevalence, a club of this size could expect around ${r.ndPlayers.toLocaleString()} neurodivergent players and around ${r.mhPlayers.toLocaleString()} with a mental health condition. These are statistical estimates, not diagnoses.`
+    : '';
+
+  const summaryBlock = `THE SOCIAL VALUE OF ${club.toUpperCase()}
+Summary · Proof of Play · Methodology v2.0 · ${summaryMonthYear}
+
+THE HEADLINE
+
+${club} adds an estimated ${fmt(r.totalValue)} in social value to ${area} every year.${summaryPerPlayerLine}
+
+WHERE IT COMES FROM
+
+• Participant wellbeing: ${fmt(r.totalWellbeing)}, from ${r.totalPlayers.toLocaleString()} players
+• Health and productivity: ${fmt(r.nhsTotal)}, from ${r.healthPeople.toLocaleString()} adult players
+• Volunteer contribution: ${fmt(r.volTotal)}, from ${r.numVol.toLocaleString()} volunteers giving around ${Math.round(r.totalVolHrs).toLocaleString()} hours a year${summaryCommunityLine}
+${summaryThreeThings ? `\nTHREE THINGS SPECIFIC TO ${club.toUpperCase()}\n\n${summaryThreeThings}\n` : ''}${summaryNd}
+
+The full report below includes the working behind every figure, the methodology and sources, and ready-to-use text for grant applications. Treat all figures as evidence-informed estimates, not an audited valuation, and pair them with local stories for the strongest case.
+
+─────────────────────────────────────
+
+`;
+
+  const text = `${summaryBlock}HOW TO READ THIS REPORT
 ───────────────────────────────────────
 
 This report combines two types of information:
@@ -3846,7 +3895,9 @@ ${new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'num
   setText('fullReportText', text);
 }
 
-// ─── PRESS RELEASE ────────────────────────────────────
+// ─── PRESS RELEASE (v2 — people-first headline, quote/ND lines never print a
+// placeholder, club-facing guidance moved out, ND/MH framed as a statistical
+// estimate, deprivation claims gated on real postcode data) ─────────────────
 function updatePressRelease(r, club, area) {
   const qt = state.quoteText || '';
   const qn = state.quoteName || '';
@@ -3854,38 +3905,49 @@ function updatePressRelease(r, club, area) {
   const hasPressQuote = isUsableQuote(qt);
   const cfa = state.countyFA || '[County FA]';
   const charter = {none:'', star1:'England Football Accredited — 1 Star', star2:'England Football Accredited — 2 Star', star3:'England Football Accredited — 3 Star'}[state.charterLevel] || '';
-  const foundedNote = state.yearFounded ? `${club} was founded in ${state.yearFounded} and is` : `${club} is`;
   const charterNote = charter ? ` The club holds ${charter} status.` : '';
-  const sroiLine = r.sroi ? ` That is a social value to cost ratio of £${r.sroi.toFixed(2)} for every £1 the club costs to run, including the value of volunteer time.` : '';
-  const perPlayerPressLine = r.perPlayer ? `\n• Social Value Per Player: ${fmtFull(r.perPlayer)} — Social Value Per Club Member: ${fmtFull(r.perMember)} (players and volunteers combined)` : '';
-  const ndLine = r.ndPlayers > 0 ? `\n\nThe assessment also highlights the scale of hidden need within the club environment. Based on national figures, an estimated ${r.ndPlayers.toLocaleString()} players at ${club} may be neurodivergent, and around ${r.mhPlayers.toLocaleString()} players are likely to have a mental health condition (national prevalence for their age). This underlines the wider duty of care that football clubs carry — often without recognition or resource.` : '';
+  const perPlayerPressLine = r.perPlayer ? `\n• ${fmtFull(r.perPlayer)} in social value per player` : '';
+  const ndLine = r.ndPlayers > 0 ? `\n\nThe assessment also gives a picture of the support needs any club is likely to be managing. Based on national prevalence figures, a club of this size could expect around ${r.ndPlayers.toLocaleString()} players to be neurodivergent and around ${r.mhPlayers.toLocaleString()} to have a mental health condition. These are statistical estimates, not diagnoses or counts of individual players.` : '';
 
   const fteEquiv = r.numVol > 0 && r.totalVolHrs > 0 ? Math.round(r.totalVolHrs / 1950) : 0;
-  const fteLine = fteEquiv >= 1
-    ? `\n\nAmong the most significant findings is the scale of the volunteer contribution. ${club}'s ${r.numVol.toLocaleString()} volunteers collectively give an estimated ${Math.round(r.totalVolHrs).toLocaleString()} hours each year — the equivalent of approximately ${fteEquiv} full-time workers — without a salary, without a clocking-in system, and often without the recognition that level of commitment deserves.`
-    : '';
+  // A volunteer-led headline only works when there's a real volunteer story behind it.
+  const hasVolunteerStory = fteEquiv >= 1;
 
   const decile = state.imdDecile;
   const imdPressLine = (decile !== null && decile <= 5)
     ? `\n\n${club} is based in an area ranked IMD Decile ${decile}, placing it among the most deprived ${decile * 10}% of communities in England. In communities facing higher levels of inequality, football clubs often play an even greater role: keeping young people active, connected and supported; giving adults meaningful ways to contribute; and providing families with a trusted local environment.`
     : '';
 
+  // Lead with people, not the assessment.
+  const headline = hasVolunteerStory
+    ? `${club.toUpperCase()} VOLUNTEERS GIVE ${Math.round(r.totalVolHrs).toLocaleString()} HOURS A YEAR, HELPING THE CLUB ADD AN ESTIMATED ${fmt(r.totalValue).toUpperCase()} TO ${area.toUpperCase()}`
+    : `${club.toUpperCase()} ADDS AN ESTIMATED ${fmt(r.totalValue).toUpperCase()} IN SOCIAL VALUE TO ${area.toUpperCase()} EACH YEAR`;
+
+  const volunteerOpeningSentence = hasVolunteerStory
+    ? ` At the heart of it are ${r.numVol.toLocaleString()} volunteers, who give around ${Math.round(r.totalVolHrs).toLocaleString()} hours a year, the equivalent of ${fteEquiv} full-time workers, without a salary and often without the recognition that deserves.`
+    : '';
+
+  const foundedClause = state.yearFounded
+    ? `Founded in ${state.yearFounded} and affiliated to ${cfa}.`
+    : `Affiliated to ${cfa}.`;
 
   const text = `FOR IMMEDIATE RELEASE
 
-${club.toUpperCase()} PUBLISHES SOCIAL VALUE ASSESSMENT SHOWING ${fmt(r.totalValue).toUpperCase()} ESTIMATED ANNUAL CONTRIBUTION TO ${area.toUpperCase()}
+${headline}
 
-New social value assessment shows ${area} football club delivers far more than football — adding an estimated ${fmt(r.totalValue)} in social value every year.
+New social value assessment shows ${club} delivers far more than football.
 
-${club}, based in ${area} and affiliated with ${cfa}, has today published the results of an evidence-informed social value assessment estimating the club adds ${fmt(r.totalValue)} a year in social value for the local community. The figure is an evidence-based estimate produced using published national methodology, not an independently audited valuation.${sroiLine}
+${club}, based in ${area} and affiliated with ${cfa}, has published an assessment estimating the club adds ${fmt(r.totalValue)} a year in social value for its community.${volunteerOpeningSentence}
 
-The assessment, produced using Proof of Play — a social value calculator developed by the Football Mental Health Alliance (FMHA) and using Sport England\'s published social value model (Year 2, November 2025) — breaks down the club's contribution as follows (after a 40% deduction for what would have happened anyway):
+The figure is an evidence-based estimate, not an audited valuation. It was produced using Proof of Play, a social value calculator developed by the Football Mental Health Alliance, which applies Sport England\'s published social value model (Year 2, November 2025) to the club's own numbers. A 40% deduction is applied for activity that would have happened anyway.
 
-• ${fmt(r.totalWellbeing)} in wellbeing value from ${r.totalPlayers.toLocaleString()} youth and adult players participating regularly in football
+The estimate breaks down as follows:
+
+• ${fmt(r.totalWellbeing)} in wellbeing value for ${r.totalPlayers.toLocaleString()} players
 • ${fmt(r.nhsTotal)} in health and productivity value from adult players
-• ${fmt(r.volTotal)} from the contribution of ${r.numVol.toLocaleString()} volunteers, who collectively give approximately ${Math.round(r.totalVolHrs).toLocaleString()} hours to the club each year${r.cr > 0 ? `\n• Community programmes reaching ${r.cr.toLocaleString()} local residents (recorded, not given a £ value)` : ''}${perPlayerPressLine}${fteLine}
+• ${fmt(r.volTotal)} from the contribution of volunteers${r.cr > 0 ? `\n• ${r.cr.toLocaleString()} people reached through community programmes (recorded, not given a £ value)` : ''}${perPlayerPressLine}
 
-${hasPressQuote ? `${qn || '[Name]'}, ${qr || '[Role]'} of ${club}, said: "${qt}"` : `[Quote from club representative to be added here.]`}${ndLine}${imdPressLine}
+${hasPressQuote ? `${qn || '[Name]'}, ${qr || '[Role]'} of ${club}, said: "${qt}"` : ''}${ndLine}${imdPressLine}
 
 What many within the club have long felt can now be expressed in evidence-informed terms. The figures apply Sport England\'s published social value values, which use the WELLBY approach in HM Treasury\'s wellbeing guidance, to the club\'s own numbers. Figures are estimates grounded in published national research. Some outputs also include clearly labelled modelling assumptions. A full methodology note is available on request.
 
@@ -3893,26 +3955,17 @@ ENDS
 
 NOTES TO EDITORS:
 
-About ${club}: ${foundedNote} affiliated to ${cfa}.${charterNote} The club supports players, volunteers and families across the local community.
+About ${club}: ${foundedClause}${charterNote} The club supports ${r.totalPlayers.toLocaleString()} players and ${r.numVol.toLocaleString()} volunteers.
 
-About the figures: The social value figures are evidence-informed estimates produced by applying Sport England's social value model (Year 2, Nov 2025) to the club's own numbers, with a 40% deduction (Proof of Play's own assumption) for what would have happened anyway. Methodology v2.0. These are not independently audited valuations and should be presented as estimates.
+About the figures: Evidence-informed estimates produced by applying Sport England's social value model (Year 2, November 2025) to the club's own numbers, with a 40% deduction for what would have happened anyway. Methodology v2.0. Not independently audited and should be presented as estimates.
 
-Clubs may wish to lead with the figure most relevant to their context. Clubs with higher operating costs may find the Social Value Per Player or Social Value Per Club Member figure more representative of their community contribution than the Social Value to Cost Ratio.
+About Proof of Play: A social value calculator for football clubs and academies, developed by the Football Mental Health Alliance. It turns participation, volunteering and community activity into funder-ready evidence.
 
-About Proof of Play: Proof of Play is a social value calculator for football clubs and academies. It helps clubs turn participation, volunteering and community activity into funder-ready evidence, including a social value report, one-page summary, press release, social media posts and funding guidance.
+About the Football Mental Health Alliance: Delivers mental health and neurodiversity training, tools and resources across football.
 
-Proof of Play also connects to The Funding Bench, helping clubs move from evidence to action. Once a club has completed its Proof of Play submission, its profile can be used to match and rank live funding opportunities based on factors such as sport, location, legal structure, funding need and deprivation status. This gives clubs a clearer route to relevant grants, helps them understand which funds they can realistically apply for, and strengthens conversations with funders, sponsors, councils and local partners.
+Media contact: Danny Matharu, danny@withinu.net, 03330 500 399
 
-About the Football Mental Health Alliance: The Football Mental Health Alliance delivers mental health and neurodiversity training, tools and resources across football, supporting clubs, academies, coaches, players, families, volunteers and all football organisations.
-
-COMPLETE THIS SECTION BEFORE DISTRIBUTING:
-Name:
-Position:
-${club}
-Your Telephone Number:
-Your email address:
-
-Proof of Play / FMHA contact: Danny Matharu | danny@withinu.net | 03330 500 399
+Club contact: [CLUB CONTACT NAME, POSITION, PHONE, EMAIL]
 
 www.proofofplay.uk
 www.thefundingbench.uk
